@@ -7,16 +7,17 @@ using System.Threading.Tasks;
 using Lokad.Cqrs.Core.Envelope;
 using Lokad.Cqrs.Core.Outbox;
 using System.Linq;
+using Lokad.Cqrs.Feature.StreamingStorage;
 
 namespace Lokad.Cqrs.Feature.TimerService
 {
     public sealed class FileTimerService : IEngineProcess
     {
         readonly IQueueWriter _target;
-        readonly DirectoryInfo _storage;
+        readonly IStreamingContainer _storage;
         readonly string _suffix;
         readonly IEnvelopeStreamer _streamer;
-        public FileTimerService(IQueueWriter target, DirectoryInfo storage, IEnvelopeStreamer streamer)
+        public FileTimerService(IQueueWriter target, IStreamingContainer storage, IEnvelopeStreamer streamer)
         {
             _target = target;
             _storage = storage;
@@ -54,32 +55,44 @@ namespace Lokad.Cqrs.Feature.TimerService
             var id = Interlocked.Increment(ref _universalCounter);
             var s = "{0:yyyy-MM-dd-HH-mm-ss}-{1:00000000}-{2}.future";
             var fileName = string.Format(s, envelope.DeliverOnUtc, id, _suffix);
-            var full = Path.Combine(_storage.FullName, fileName);
+
+            // persist
+            var item = _storage.GetItem(fileName);
+
             var data = _streamer.SaveEnvelopeData(envelope);
-            File.WriteAllBytes(full, data);
+
+            item.Write(x => x.Write(data, 0, data.Length));
+
             // add to in-memory scheduler
             lock (_scheduler)
             {
-                _scheduler.Add(new Record(full, envelope.DeliverOnUtc));
+                _scheduler.Add(new Record(fileName, envelope.DeliverOnUtc));
             }
         }
 
         public void Initialize()
         {
-            if (!_storage.Exists)
-            {
-                _storage.Create();
-                return;
-            }
-
-            var messages = _storage.GetFiles("*.future")
-                .Select(fi =>
+            _storage.Create();
+            var messages = _storage.ListItems().Select(fi =>
                     {
-                        var bytes = File.ReadAllBytes(fi.FullName);
-                        var data = _streamer.ReadAsEnvelopeData(bytes);
-                        return new Record(fi.FullName, data.DeliverOnUtc);
-                       
-                    }).ToList();
+                        var item = _storage.GetItem(fi);
+                        try
+                        {
+                            using (var mem = new MemoryStream())
+                            {
+                                item.ReadInto((x,y) => y.CopyTo(mem));
+                                var data = _streamer.ReadAsEnvelopeData(mem.ToArray());
+                                return new Record(fi, data.DeliverOnUtc);
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Trace.WriteLine(ex);
+                            return null;
+                        }
+
+                    }).Where(n => null != n).ToList();
             lock (_scheduler)
             {
                 _scheduler.AddRange(messages);
@@ -111,17 +124,27 @@ namespace Lokad.Cqrs.Feature.TimerService
                     {
                         foreach (var record in list)
                         {
-                            var e = _streamer.ReadAsEnvelopeData(File.ReadAllBytes(record.Name));
+                            var item = _storage.GetItem(record.Name);
+
+                            ImmutableEnvelope e;
+                            using (var mem = new MemoryStream())
+                            {
+                                item.ReadInto((x, y) => y.CopyTo(mem));
+                                e = _streamer.ReadAsEnvelopeData(mem.ToArray());
+                            }
+
                             // we need to reset the timer here.
                             var newEnvelope = EnvelopeBuilder.CloneProperties(e.EnvelopeId + "-future", e);
                             newEnvelope.DeliverOnUtc(DateTime.MinValue);
                             newEnvelope.AddString("original-id", e.EnvelopeId);
                             _target.PutMessage(newEnvelope.Build());
+                            
+                            item.Delete();
                             lock(_scheduler)
                             {
                                 _scheduler.Remove(record);
                             }
-                            File.Delete(record.Name);
+                            
                         }
                     }
                     token.WaitHandle.WaitOne(5000);

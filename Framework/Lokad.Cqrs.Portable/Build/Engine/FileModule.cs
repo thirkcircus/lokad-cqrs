@@ -3,6 +3,7 @@ using System.IO;
 using Lokad.Cqrs.Core;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Feature.FilePartition;
+using Lokad.Cqrs.Feature.StreamingStorage;
 using Lokad.Cqrs.Feature.TimerService;
 
 namespace Lokad.Cqrs.Build.Engine
@@ -39,7 +40,9 @@ namespace Lokad.Cqrs.Build.Engine
                     var writer = registry.GetOrAdd(folder.AccountName, s => new FileQueueWriterFactory(folder, streamer));
                     var queue = writer.GetWriteQueue(replyQueue);
                     var storage = Path.Combine(folder.FullPath, incomingQueue + "-future");
-                    var service = new FileTimerService(queue, new DirectoryInfo(storage), streamer);
+
+                    var c = new FileStreamingContainer(storage);
+                    var service = new FileTimerService(queue, c, streamer);
                     setup.AddProcess(service);
                     return (envelope => service.PutMessage(envelope));
                 });
