@@ -19,14 +19,14 @@ namespace Lokad.Cqrs.Core.Dispatch
     /// </summary>
     public sealed class DispatcherProcess : IEngineProcess
     {
-        readonly ISingleThreadMessageDispatcher _dispatcher;
+        readonly Action<ImmutableEnvelope> _dispatcher;
         readonly ISystemObserver _observer;
         readonly IPartitionInbox _inbox;
         readonly IEnvelopeQuarantine _quarantine;
 
         public DispatcherProcess(
             ISystemObserver observer,
-            ISingleThreadMessageDispatcher dispatcher, 
+            Action<ImmutableEnvelope> dispatcher, 
             IPartitionInbox inbox,
             IEnvelopeQuarantine quarantine,
             MessageDuplicationManager manager)
@@ -103,7 +103,7 @@ namespace Lokad.Cqrs.Core.Dispatch
                 }
                 else
                 {
-                    _dispatcher.DispatchMessage(context.Unpacked);
+                    _dispatcher(context.Unpacked);
                     _memory.Memorize(context.Unpacked.EnvelopeId);
                 }
 

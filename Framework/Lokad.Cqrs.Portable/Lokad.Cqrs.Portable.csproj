@@ -53,7 +53,6 @@
     <Compile Include="Feature.HandlerClasses\IConsumeMessage.cs" />
     <Compile Include="Feature.HandlerClasses\IMessage.cs" />
     <Compile Include="Core.Serialization\ContractEvil.cs" />
-    <Compile Include="Core.Dispatch\ActionDispatcher.cs" />
     <Compile Include="Core.Dispatch\Events\DispatchRecoveryFailed.cs" />
     <Compile Include="Core.Dispatch\Events\EnvelopeDuplicateDiscarded.cs" />
     <Compile Include="Core.Dispatch\IEnvelopeQuarantine.cs" />
@@ -125,6 +124,7 @@
     <Compile Include="Feature.TapeStorage\FileTapeStream.cs" />
     <Compile Include="Feature.TapeStorage\TapeRecord.cs" />
     <Compile Include="FileStorageConfig.cs" />
+    <Compile Include="Feature.TimerService\FileTimerService.cs" />
     <Compile Include="HandlerFactory.cs" />
     <Compile Include="IAfterConfigurationTask.cs" />
     <Compile Include="IEngineStartupTask.cs" />

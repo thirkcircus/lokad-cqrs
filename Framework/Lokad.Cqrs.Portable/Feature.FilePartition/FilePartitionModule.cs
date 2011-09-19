@@ -23,8 +23,8 @@ namespace Lokad.Cqrs.Feature.FilePartition
         readonly string[] _fileQueues;
         Func<uint, TimeSpan> _decayPolicy;
         
-
-        Func<Container, ISingleThreadMessageDispatcher> _dispatcher;
+        
+        HandlerFactory _dispatcher;
         Func<Container, IEnvelopeQuarantine> _quarantineFactory;
 
         /// <summary>
@@ -66,17 +66,18 @@ namespace Lokad.Cqrs.Feature.FilePartition
         /// <param name="factory">The factory.</param>
         public void DispatcherIsLambda(HandlerFactory factory)
         {
-            _dispatcher = context =>
-            {
-                var lambda = factory(context);
-                return new ActionDispatcher(lambda);
-            };
+            _dispatcher = factory;
         }
         
 
         public void DispatcherIs(Func<Container, ISingleThreadMessageDispatcher> factory)
         {
-            _dispatcher = factory;
+            _dispatcher = container =>
+                {
+                    var d = factory(container);
+                    d.Init();
+                    return (envelope => d.DispatchMessage(envelope));
+                };
         }
 
 
@@ -84,28 +85,6 @@ namespace Lokad.Cqrs.Feature.FilePartition
         {
             _quarantineFactory = factory;
         }
-
-        ///// <summary>
-        ///// <para>Wires <see cref="DispatchOneEvent"/> implementation of <see cref="ISingleThreadMessageDispatcher"/> 
-        ///// into this partition. It allows dispatching a single event to zero or more consumers.</para>
-        ///// <para> Additional information is available in project docs.</para>
-        ///// </summary>
-        //public void DispatchAsEvents(Action<MessageDirectoryFilter> optionalFilter = null)
-        //{
-        //    var action = optionalFilter ?? (x => { });
-        //    _dispatcher = ctx => DirectoryDispatchFactory.OneEvent(ctx, action);
-        //}
-
-        ///// <summary>
-        ///// <para>Wires <see cref="DispatchCommandBatch"/> implementation of <see cref="ISingleThreadMessageDispatcher"/> 
-        ///// into this partition. It allows dispatching multiple commands (in a single envelope) to one consumer each.</para>
-        ///// <para> Additional information is available in project docs.</para>
-        ///// </summary>
-        //public void DispatchAsCommandBatch(Action<MessageDirectoryFilter> optionalFilter = null)
-        //{
-        //    var action = optionalFilter ?? (x => { });
-        //    _dispatcher = ctx => DirectoryDispatchFactory.CommandBatch(ctx, action);
-        //}
 
         public void DispatchToRoute(Func<ImmutableEnvelope, string> route)
         {
@@ -116,10 +95,8 @@ namespace Lokad.Cqrs.Feature.FilePartition
         {
             var log = context.Resolve<ISystemObserver>();
             var streamer = context.Resolve<IEnvelopeStreamer>();
-            
-            var dispatcher = _dispatcher(context);
-            dispatcher.Init();
 
+            var dispatcher = _dispatcher(context);
 
             var queues = _fileQueues
                 .Select(n => Path.Combine(_fullPath.Folder.FullName, n))

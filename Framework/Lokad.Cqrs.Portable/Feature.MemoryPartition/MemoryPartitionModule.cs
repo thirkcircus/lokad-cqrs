@@ -17,7 +17,7 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
     {
         readonly string[] _memoryQueues;
 
-        Func<Container, ISingleThreadMessageDispatcher> _dispatcher;
+        HandlerFactory _dispatcher;
         Func<Container, IEnvelopeQuarantine> _quarantineFactory;
 
         public MemoryPartitionModule(string[] memoryQueues)
@@ -28,7 +28,12 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
 
         public void DispatcherIs(Func<Container, ISingleThreadMessageDispatcher> factory)
         {
-            _dispatcher = factory;
+            _dispatcher = container =>
+            {
+                var d = factory(container);
+                d.Init();
+                return (envelope => d.DispatchMessage(envelope));
+            };
         }
 
         /// <summary>
@@ -37,11 +42,7 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
         /// <param name="factory">The factory.</param>
         public void DispatcherIsLambda(HandlerFactory factory)
         {
-            _dispatcher = context =>
-                {
-                    var lambda = factory(context);
-                    return new ActionDispatcher(lambda);
-                };
+            _dispatcher = factory;
         }
 
         public void Quarantine(Func<Container, IEnvelopeQuarantine> factory)
@@ -60,7 +61,6 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
         {
             var log = context.Resolve<ISystemObserver>();
             var dispatcher = _dispatcher(context);
-            dispatcher.Init();
 
             var account = context.Resolve<MemoryAccount>();
             var factory = new MemoryPartitionFactory(account);
