@@ -28,15 +28,15 @@ namespace Lokad.Cqrs.Feature.FilePartition
             Suffix = Guid.NewGuid().ToString().Substring(0, 4);
         }
 
-        static long UniversalCounter;
+            static long UniversalCounter;
 
-        public void PutMessage(ImmutableEnvelope envelope)
-        {
-            var id = Interlocked.Increment(ref UniversalCounter);
-            var fileName = string.Format("{0:yyyy-MM-dd-HH-mm-ss}-{1:00000000}-{2}", envelope.CreatedOnUtc, id, Suffix);
-            var full = Path.Combine(_folder.FullName, fileName);
-            var data = _streamer.SaveEnvelopeData(envelope);
-            File.WriteAllBytes(full, data);
-        }
+            public void PutMessage(ImmutableEnvelope envelope)
+            {
+                var id = Interlocked.Increment(ref UniversalCounter);
+                var fileName = string.Format("{0:yyyy-MM-dd-HH-mm-ss}-{1:00000000}-{2}", envelope.CreatedOnUtc, id, Suffix);
+                var full = Path.Combine(_folder.FullName, fileName);
+                var data = _streamer.SaveEnvelopeData(envelope);
+                File.WriteAllBytes(full, data);
+            }
     }
 }

@@ -50,8 +50,6 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
             _quarantineFactory = factory;
         }
 
-        
-
         public void DispatchToRoute(Func<ImmutableEnvelope, string> route)
         {
             DispatcherIs(ctx => new DispatchMessagesToRoute(ctx.Resolve<QueueWriterRegistry>(), route));
