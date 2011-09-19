@@ -14,6 +14,7 @@ using Lokad.Cqrs.Core;
 using Lokad.Cqrs.Core.Dispatch;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Evil;
+using Lokad.Cqrs.Feature.TimerService;
 
 namespace Lokad.Cqrs.Feature.FilePartition
 {
@@ -69,7 +70,6 @@ namespace Lokad.Cqrs.Feature.FilePartition
             _dispatcher = factory;
         }
         
-
         public void DispatcherIs(Func<Container, ISingleThreadMessageDispatcher> factory)
         {
             _dispatcher = container =>
@@ -79,7 +79,6 @@ namespace Lokad.Cqrs.Feature.FilePartition
                     return (envelope => d.DispatchMessage(envelope));
                 };
         }
-
 
         public void Quarantine(Func<Container, IEnvelopeQuarantine> factory)
         {

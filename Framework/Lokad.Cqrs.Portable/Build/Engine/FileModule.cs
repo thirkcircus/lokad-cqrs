@@ -3,6 +3,7 @@ using System.IO;
 using Lokad.Cqrs.Core;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Feature.FilePartition;
+using Lokad.Cqrs.Feature.TimerService;
 
 namespace Lokad.Cqrs.Build.Engine
 {
@@ -24,6 +25,25 @@ namespace Lokad.Cqrs.Build.Engine
         public void AddFileProcess(FileStorageConfig folder, string queues, HandlerFactory handler)
         {
             AddFileProcess(folder, queues, m => m.DispatcherIsLambda(handler));
+        }
+
+        public void AddFileTimer(FileStorageConfig folder, string incomingQueue, string replyQueue)
+        {
+            var module = new FilePartitionModule(folder, new[] {incomingQueue});
+            
+            module.DispatcherIsLambda(container =>
+                {
+                    var setup = container.Resolve<EngineSetup>();
+                    var registry = container.Resolve<QueueWriterRegistry>();
+                    var streamer = container.Resolve<IEnvelopeStreamer>();
+                    var writer = registry.GetOrAdd(folder.AccountName, s => new FileQueueWriterFactory(folder, streamer));
+                    var queue = writer.GetWriteQueue(replyQueue);
+                    var storage = Path.Combine(folder.FullPath, incomingQueue + "-future");
+                    var service = new FileTimerService(queue, new DirectoryInfo(storage), streamer);
+                    setup.AddProcess(service);
+                    return (envelope => service.PutMessage(envelope));
+                });
+            _funqlets += module.Configure;
         }
 
         public void AddFileSender(FileStorageConfig folder, string queueName)

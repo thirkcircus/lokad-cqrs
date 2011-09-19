@@ -85,8 +85,6 @@
     <Compile Include="SimpleEventSourcing\Testing\TestSyntax.cs" />
     <Compile Include="SimpleEventSourcing\_Usage.cs" />
     <Compile Include="HttpEndpoint\_Usage.cs" />
-    <Compile Include="SimpleTimerService\SecondPassed.cs" />
-    <Compile Include="SimpleTimerService\SimpleTimerService.cs" />
     <Compile Include="SimpleTimerService\SimpleTimerService_Usage.cs" />
   </ItemGroup>
   <ItemGroup>

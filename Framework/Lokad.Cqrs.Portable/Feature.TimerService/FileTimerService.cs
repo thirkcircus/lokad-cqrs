@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Lokad.Cqrs.Core.Envelope;
 using Lokad.Cqrs.Core.Outbox;
 using System.Linq;
 
@@ -110,8 +111,12 @@ namespace Lokad.Cqrs.Feature.TimerService
                     {
                         foreach (var record in list)
                         {
-                            var readAsEnvelopeData = _streamer.ReadAsEnvelopeData(File.ReadAllBytes(record.Name));
-                            _target.PutMessage(readAsEnvelopeData);
+                            var e = _streamer.ReadAsEnvelopeData(File.ReadAllBytes(record.Name));
+                            // we need to reset the timer here.
+                            var newEnvelope = EnvelopeBuilder.CloneProperties(e.EnvelopeId + "-future", e);
+                            newEnvelope.DeliverOnUtc(DateTime.MinValue);
+                            newEnvelope.AddString("original-id", e.EnvelopeId);
+                            _target.PutMessage(newEnvelope.Build());
                             lock(_scheduler)
                             {
                                 _scheduler.Remove(record);
