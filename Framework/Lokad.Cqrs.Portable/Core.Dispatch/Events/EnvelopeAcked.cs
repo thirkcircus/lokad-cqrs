@@ -22,4 +22,20 @@ namespace Lokad.Cqrs.Core.Dispatch.Events
             return string.Format("[{0}] acked at '{1}'", EnvelopeId, QueueName);
         }
     }
+    [Serializable]
+    public sealed class EnvelopeInboxFailed : ISystemEvent
+    {
+        public Exception Exception { get; private set; }
+        public string InboxName { get; private set; }
+        public EnvelopeInboxFailed(Exception exception, string inboxName)
+        {
+            Exception = exception;
+            InboxName = inboxName;
+        }
+
+        public override string ToString()
+        {
+            return string.Format("Failed to retrieve message from {0}: {1}.", InboxName, Exception.Message);
+        }
+    }
 }

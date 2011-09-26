@@ -8,6 +8,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Transactions;
 using Lokad.Cqrs.Core.Dispatch.Events;
 using Lokad.Cqrs.Core.Inbox;
 
@@ -67,14 +68,29 @@ namespace Lokad.Cqrs.Core.Dispatch
                     }, token);
         }
 
-
         void ReceiveMessages(CancellationToken outer)
         {
             using (var source = CancellationTokenSource.CreateLinkedTokenSource(_disposal.Token, outer))
             {
-                EnvelopeTransportContext context;
-                while (_inbox.TakeMessage(source.Token, out context))
+                while (true)
                 {
+                    EnvelopeTransportContext context;
+                    try
+                    {
+                        if (!_inbox.TakeMessage(source.Token, out context))
+                        {
+                            // we didn't retrieve message within the token lifetime.
+                            // it's time to shutdown the server
+                            break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        // unexpected but possible: retry
+                        _observer.Notify(new EnvelopeInboxFailed(ex, _inbox.ToString()));
+                        continue;
+                    }
+                    
                     try
                     {
                         ProcessMessage(context);

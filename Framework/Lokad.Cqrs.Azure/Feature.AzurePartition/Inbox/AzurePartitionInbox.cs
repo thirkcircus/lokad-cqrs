@@ -8,6 +8,7 @@
 using System;
 using System.Threading;
 using Lokad.Cqrs.Core.Inbox;
+using System.Linq;
 
 namespace Lokad.Cqrs.Feature.AzurePartition.Inbox
 {
@@ -20,11 +21,20 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Inbox
         readonly Func<uint, TimeSpan> _waiter;
         uint _emptyCycles;
 
+        readonly string _name;
+
+        public override string ToString()
+        {
+            return _name;
+        }
+
         public AzurePartitionInbox(StatelessAzureQueueReader[] readers,
             Func<uint, TimeSpan> waiter)
         {
             _readers = readers;
             _waiter = waiter;
+
+            _name = string.Format("Azure Inbox [{0}]", string.Join(",", readers.Select(r => r.Name).ToArray()));
         }
 
         public void Init()
