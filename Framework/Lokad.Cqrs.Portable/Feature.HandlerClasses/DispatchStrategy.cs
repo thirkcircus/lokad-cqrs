@@ -61,9 +61,9 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
                         
                         var messageItem = tuple.Item2;
                         var consume = _hint(handlerType, messageItem.MappedType);
-                        _context.SetContext(envelope, messageItem);
                         try
                         {
+                            _context.SetContext(envelope, messageItem);
                             consume.Invoke(handlerInstance, new[] {messageItem.Content});
                         }
                         catch (TargetInvocationException e)
