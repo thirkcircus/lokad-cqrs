@@ -6,6 +6,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 
 namespace Lokad.Cqrs.Core.Reactive
 {
@@ -27,7 +28,15 @@ namespace Lokad.Cqrs.Core.Reactive
         {
             foreach (var observer in _observers)
             {
-                observer.OnNext(@event);
+                try
+                {
+                    observer.OnNext(@event);
+                }
+                catch (Exception ex)
+                {
+                    var message = string.Format("Observer {0} failed with {1}", observer, ex);
+                    Trace.WriteLine(message);
+                }
             }
         }
 
