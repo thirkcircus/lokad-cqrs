@@ -57,12 +57,12 @@ namespace Lokad.Cqrs.Core.Outbox
         /// <summary>
         /// Uses Id generator designed for the testing
         /// </summary>
-        public void IdGeneratorForTests()
+        public void IdGeneratorForTests(string name = null)
         {
             long id = 0;
             var counter = _counter++;
-            var prefix = Domain.ToString("00") + "-" + counter.ToString("00") + "-";
-
+            var prefix = (name ?? (Domain.ToString("00") + "-" + counter.ToString("00"))) + "-";
+          
             IdGenerator(() =>
                 {
                     Interlocked.Increment(ref id);
