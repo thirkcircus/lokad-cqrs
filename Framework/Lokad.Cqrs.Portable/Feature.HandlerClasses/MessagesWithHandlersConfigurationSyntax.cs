@@ -26,6 +26,7 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
         readonly DomainAssemblyScanner _scanner = new DomainAssemblyScanner();
         IMethodContextManager _contextManager;
         MethodInvokerHint _hint;
+        HandlerClassTransactionFactory _scopeFactory;
 
         readonly BuildsContainerForMessageHandlerClasses _nestedResolver;
 
@@ -39,6 +40,7 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
                 (envelope, message) => new MessageContext(envelope.EnvelopeId, message.Index, envelope.CreatedOnUtc));
 
             _nestedResolver = factory;
+            _scopeFactory = Factory(TransactionScopeOption.RequiresNew);
         }
 
 
@@ -76,6 +78,15 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
         {
             if (handlerSampleExpression == null) throw new ArgumentNullException("handlerSampleExpression");
             _hint = MethodInvokerHint.FromConsumerSample(handlerSampleExpression);
+        }
+
+        /// <summary>ss
+        /// Sets the default transaction scope factory (to be used in handler classes).
+        /// </summary>
+        /// <param name="factory">The factory of transaction scopes.</param>
+        public void SetTransactionScope(HandlerClassTransactionFactory factory)
+        {
+            _scopeFactory = factory;
         }
 
 
@@ -130,23 +141,20 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
                 .ToArray();
 
             var nesting = _nestedResolver(container, consumers);
-
-            var tx = Factory(TransactionScopeOption.RequiresNew);
-
-            var strategy = new DispatchStrategy(nesting, tx, _hint.Lookup, _contextManager);
+            var strategy = new DispatchStrategy(nesting, _scopeFactory, _hint.Lookup, _contextManager);
 
             container.Register(strategy);
             container.Register(builder);
         }
 
-        static Func<TransactionScope> Factory(TransactionScopeOption option,
+        static HandlerClassTransactionFactory Factory(TransactionScopeOption option,
             IsolationLevel level = IsolationLevel.Serializable, TimeSpan timeout = default(TimeSpan))
         {
             if (timeout == (default(TimeSpan)))
             {
                 timeout = TimeSpan.FromMinutes(10);
             }
-            return () => new TransactionScope(option, new TransactionOptions
+            return envelope => new TransactionScope(option, new TransactionOptions
                 {
                     IsolationLevel = level,
                     Timeout = Debugger.IsAttached ? TimeSpan.MaxValue : timeout

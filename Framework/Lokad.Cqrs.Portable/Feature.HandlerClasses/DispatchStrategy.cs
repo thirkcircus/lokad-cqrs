@@ -24,11 +24,11 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
     public sealed class DispatchStrategy
     {
         readonly IContainerForHandlerClasses _scope;
-        readonly Func<TransactionScope> _scopeFactory;
+        readonly HandlerClassTransactionFactory _scopeFactory;
         readonly Func<Type, Type, MethodInfo> _hint;
         readonly IMethodContextManager _context;
 
-        public DispatchStrategy(IContainerForHandlerClasses scope, Func<TransactionScope> scopeFactory,
+        public DispatchStrategy(IContainerForHandlerClasses scope, HandlerClassTransactionFactory scopeFactory,
             Func<Type, Type, MethodInfo> hint, IMethodContextManager context)
         {
             _scope = scope;
@@ -39,7 +39,7 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
 
         public void Dispatch(ImmutableEnvelope envelope, IEnumerable<Tuple<Type, ImmutableMessage>> pairs)
         {
-            using (var tx = _scopeFactory())
+            using (var tx = _scopeFactory(envelope))
             using (var envelopeScope = _scope.GetChildContainer(ContainerScopeLevel.Envelope))
             {
                 foreach (var tuple in pairs)
