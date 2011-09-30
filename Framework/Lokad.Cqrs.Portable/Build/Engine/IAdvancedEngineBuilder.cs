@@ -15,12 +15,27 @@ namespace Lokad.Cqrs.Build.Engine
     public interface IAdvancedEngineBuilder : IHideObjectMembersFromIntelliSense
     {
         void RegisterQueueWriterFactory(Func<Container, IQueueWriterFactory> activator);
+        /// <summary>
+        /// Registers custom module.
+        /// </summary>
+        /// <param name="module">The module.</param>
         void RegisterModule(IFunqlet module);
         void ConfigureContainer(Action<Container> build);
-        void RegisterObserver(IObserver<ISystemEvent> observer);
+
+        /// <summary>
+        /// Gets the list of system observers to be used by the engine.
+        /// </summary>
         IList<IObserver<ISystemEvent>> Observers { get; }
         EngineSetup Setup { get; }
+        /// <summary>
+        /// Allows to specify custom serializer for message envelopes (headers and transport information)
+        /// </summary>
+        /// <param name="serializer">The serializer.</param>
         void CustomEnvelopeSerializer(IEnvelopeSerializer serializer);
+        /// <summary>
+        /// Allows to specify custom serializer for messages
+        /// </summary>
+        /// <param name="serializer">The serializer.</param>
         void CustomDataSerializer(Func<Type[], IDataSerializer> serializer);
     }
 }

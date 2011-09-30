@@ -28,7 +28,7 @@ namespace Lokad.Cqrs.Synthetic
                     m.AddMemoryRouter("in", c => "memory:null");
                 });
             var observer = new ImmediateEventsObserver();
-            builder.Advanced.RegisterObserver(observer);
+            builder.Advanced.Observers.Add(observer);
 
             using (var token = new CancellationTokenSource())
             using (var build = builder.Build())

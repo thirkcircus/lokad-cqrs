@@ -76,7 +76,10 @@ namespace Lokad.Cqrs.Build.Engine
         }
 
         /// <summary>
-        /// Lightweight message configuration that wires in message contract classes.
+        /// <para>Lightweight message configuration that wires in message contract classes, 
+        /// assuming message handlers will be defined as lambdas.</para>
+        /// <para>See <see cref="MessagesWithHandlers"/> if you are used to handler classes
+        /// that inherit from one or more interfaces that look like: <c>IConsume[SomeMessage]</c>.</para> 
         /// </summary>
         /// <param name="config">The config.</param>
         public void Messages(Action<MessagesConfigurationSyntax> config)
@@ -87,7 +90,10 @@ namespace Lokad.Cqrs.Build.Engine
         }
 
         /// <summary>
-        /// Lightweight message configuration that wires in message contract classes.
+        /// <para>Lightweight message configuration that wires in message contract classes, 
+        /// assuming message handlers will be defined as lambdas.</para>
+        /// <para>See <see cref="MessagesWithHandlers"/> if you are used to handler classes
+        /// that inherit from one or more interfaces that look like: <c>IConsume[SomeMessage]</c>.</para> 
         /// </summary>
         /// <param name="messageTypes">The message types.</param>
         public void Messages(IEnumerable<Type> messageTypes)
@@ -99,7 +105,7 @@ namespace Lokad.Cqrs.Build.Engine
         /// <summary>
         /// Heavy-weight configuration that discovers and wires in both message contracts 
         /// and messages handlers in an enterprise service bus style. Use <em>Messages</em>
-        /// overload, if you want to use just lean and fast lambda delegates.
+        /// overloads, if you want to use just lean and fast lambda delegates.
         /// </summary>
         /// <param name="factory">The factory that will add in a your favorite container.</param>
         /// <param name="config">The configuration for dispatch directory module.</param>
@@ -155,17 +161,16 @@ namespace Lokad.Cqrs.Build.Engine
             _moduleEnlistments += build;
         }
 
-        void IAdvancedEngineBuilder.RegisterObserver(IObserver<ISystemEvent> observer)
-        {
-            _observers.Add(observer);
-        }
-
         IList<IObserver<ISystemEvent>> IAdvancedEngineBuilder.Observers
         {
             get { return _observers; }
         }
 
 
+        /// <summary>
+        /// Allows to configure in-memory queues and processing
+        /// </summary>
+        /// <param name="configure">The configuration syntax.</param>
         public void Memory(Action<MemoryModule> configure)
         {
             var m = new MemoryModule();
@@ -173,6 +178,10 @@ namespace Lokad.Cqrs.Build.Engine
             _moduleEnlistments += m.Configure;
         }
 
+        /// <summary>
+        /// Allows to configure file queues and processing
+        /// </summary>
+        /// <param name="configure">The configure.</param>
         public void File(Action<FileModule> configure)
         {
             var m = new FileModule();
