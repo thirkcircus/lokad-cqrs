@@ -51,9 +51,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyInfo.cs">
-      <Link>AssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="Build\AzureStorageConfig.cs" />
     <Compile Include="Build\AzureClientModule.cs" />
     <Compile Include="Build\Engine\AzureEngineModule.cs" />
@@ -67,6 +64,7 @@
     <Compile Include="Feature.TapeStorage\BlobTapeStorageFactory.cs" />
     <Compile Include="Feature.TapeStorage\BlobTapeStream.cs" />
     <Compile Include="Feature.TapeStorage\PageBlobAppendStream.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WipeAzureAccount.cs" />
     <Compile Include="ExtendStorageModule.cs" />
     <Compile Include="ExtendSerializationModule.cs" />

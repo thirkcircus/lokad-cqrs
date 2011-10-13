@@ -225,6 +225,7 @@
     <Compile Include="EnvelopeReference.cs" />
     <Compile Include="Partial.cs" />
     <Compile Include="Core.Serialization\DataSerializerWithDataContracts.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="unit.cs" />
   </ItemGroup>
   <ItemGroup>

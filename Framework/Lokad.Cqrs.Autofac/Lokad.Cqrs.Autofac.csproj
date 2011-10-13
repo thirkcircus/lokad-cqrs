@@ -37,13 +37,11 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\AssemblyInfo.cs">
-      <Link>AssemblyInfo.cs</Link>
-    </Compile>
     <Compile Include="Feature.HandlerClasses\AutofacContainerForHandlerClasses.cs" />
     <Compile Include="Feature.HandlerClasses\AutofacContainerProvider.cs" />
     <Compile Include="ExtendCqrsEngineBuilder.cs" />
     <Compile Include="Feature.HandlerClasses\FunqAdapterForAutofac.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Lokad.Cqrs.Portable\Lokad.Cqrs.Portable.csproj">
