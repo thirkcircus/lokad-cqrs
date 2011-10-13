@@ -37,6 +37,9 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Feature.Http\Handlers\AbstractHttpRequestHandler.cs" />
     <Compile Include="ExtendCqrsEngineBuilder.cs" />
     <Compile Include="Feature.Http\ExtendIHttpContext.cs" />

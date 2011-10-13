@@ -51,6 +51,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\AssemblyInfo.cs">
+      <Link>AssemblyInfo.cs</Link>
+    </Compile>
     <Compile Include="Build\AzureStorageConfig.cs" />
     <Compile Include="Build\AzureClientModule.cs" />
     <Compile Include="Build\Engine\AzureEngineModule.cs" />
