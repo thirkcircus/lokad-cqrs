@@ -73,5 +73,18 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
             Write(TestItem, Guid.Empty);
             Write(TestItem, Guid.Empty);
         }
+
+        [Test]
+        public void Writing_less_shrunk_data()
+        {
+            TestContainer.Create();
+            var bytes = new byte[100];
+            Write(TestItem, bytes);
+            ShouldHaveBytes(TestItem, bytes);
+
+            bytes = new byte[2];
+            Write(TestItem, bytes);
+            ShouldHaveBytes(TestItem, bytes);
+        }
     }
 }

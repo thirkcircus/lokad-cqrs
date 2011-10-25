@@ -6,6 +6,7 @@
 #endregion
 
 using System;
+using System.IO;
 using NUnit.Framework;
 
 namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
@@ -78,6 +79,10 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
             streamingItem.Write(stream => stream.Write(g.ToByteArray(), 0, 16), condition, WriteOptions);
         }
 
+        protected void Write(IStreamingItem streamingItem, byte[] bytes, StreamingCondition condition = default(StreamingCondition))
+        {
+            streamingItem.Write(stream => stream.Write(bytes, 0, bytes.Length), condition, WriteOptions);
+        }
 
         protected void TryToRead(IStreamingItem item, StreamingCondition condition = default(StreamingCondition))
         {
@@ -106,6 +111,26 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
             set = true;
 
             Assert.IsTrue(set);
+        }
+
+        protected void ShouldHaveBytes(IStreamingItem streamingItem, byte[] bytes,
+            StreamingCondition condition = default(StreamingCondition))
+        {
+            StreamingItemInfo streamingItemInfo = null;
+            byte[] actualBytes = null;
+
+            using (var ms = new MemoryStream())
+            {
+                streamingItem.ReadInto((properties, stream) =>
+                    {
+                        stream.CopyTo(ms);
+                        actualBytes = ms.ToArray();
+                        streamingItemInfo = properties;
+                    }, condition);
+
+            }
+            Assert.AreEqual(bytes, actualBytes);
+            Assert.That(streamingItemInfo.ETag, Is.Not.Empty);
         }
     }
 }
