@@ -74,7 +74,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
         {
             // we allow concurrent reading
             // no more writers are allowed
-            return _file.Open(FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            return _file.Open(FileMode.Create, FileAccess.ReadWrite, FileShare.None);
         }
 
         FileStream OpenForRead()
