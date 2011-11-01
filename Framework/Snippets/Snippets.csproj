@@ -62,6 +62,8 @@
     <Compile Include="HttpEndpoint\MouseStatsRequestHandler.cs" />
     <Compile Include="HttpEndpoint\MyAnonymousCommandSender.cs" />
     <Compile Include="HttpEndpoint\MyJsonSerializer.cs" />
+    <Compile Include="HttpEndpoint\View\HeatMapView.cs" />
+    <Compile Include="HttpEndpoint\View\PointsView.cs" />
     <Compile Include="MailQuarantine\SmtpHandlerCore.cs" />
     <Compile Include="PubSubRouter\PubSubRouter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
