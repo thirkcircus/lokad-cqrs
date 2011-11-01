@@ -47,12 +47,15 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HttpEndpoint\Util\HeatMap.cs" />
+    <Compile Include="HttpEndpoint\HeatPoint.cs" />
     <Compile Include="HttpEndpoint\MouseEventsRequestHandler.cs" />
     <Compile Include="HttpEndpoint\MouseMoved.cs" />
     <Compile Include="HttpEndpoint\MouseStats.cs" />
