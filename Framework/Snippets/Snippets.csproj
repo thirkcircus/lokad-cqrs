@@ -55,6 +55,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="HttpEndpoint\Util\HeatMap.cs" />
+    <Compile Include="HttpEndpoint\HeatMapGenerateTask.cs" />
+    <Compile Include="HttpEndpoint\HeatMapRequestHandler.cs" />
     <Compile Include="HttpEndpoint\HeatPoint.cs" />
     <Compile Include="HttpEndpoint\MouseEventsRequestHandler.cs" />
     <Compile Include="HttpEndpoint\MouseMoved.cs" />

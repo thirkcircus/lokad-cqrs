@@ -55,6 +55,7 @@ namespace Snippets.HttpEndpoint
             builder.HttpServer(environment,
                 c => new EmbeddedResourceHttpRequestHandler(typeof(MouseMoved).Assembly, "Snippets.HttpEndpoint"),
                 c => new MouseStatsRequestHandler(stats),
+                c => new HeatMapRequestHandler(c.Resolve<IAtomicReader<unit, HeatMapView>>()),
                 ConfigureMyCommandSender);
 
             // we'll use in-memory queues for faster processing
@@ -71,6 +72,12 @@ namespace Snippets.HttpEndpoint
                     }
                 })));
             
+            builder.Advanced.ConfigureContainer(c => builder.Advanced.Setup.AddProcess(
+                new HeatMapGenerateTask(
+                    c.Resolve<IAtomicReader<unit, PointsView>>(),
+                    c.Resolve<IAtomicWriter<unit, HeatMapView>>()
+                    )));
+
             // this is a test, so let's block everything
             builder.Build().RunForever();
         }
