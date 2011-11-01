@@ -57,10 +57,8 @@ namespace Snippets.HttpEndpoint
                         _mapWriter.AddOrUpdate(unit.it, () => new HeatMapView(),
                             v =>
                                 {
-                                    //var ms = new MemoryStream();
-                                    //heatmap.Save(ms, ImageFormat.Jpeg);
-                                    //ms.Flush();
                                     v.Heatmap = heatmap;
+                                    v.Thumbnail = new Bitmap(heatmap, 320, 256);
                                 });
                     }
                     

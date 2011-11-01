@@ -13,7 +13,16 @@ namespace Snippets.HttpEndpoint.View
     [DataContract]
     public class HeatMapView : Define.AtomicSingleton
     {
+        public HeatMapView()
+        {
+            Heatmap = new Bitmap(1,1);
+            Thumbnail = new Bitmap(1, 1);
+        }
+
         [DataMember]
         public Bitmap Heatmap { get; set; }
+        
+        [DataMember]
+        public Bitmap Thumbnail { get; set; }
     }
 }

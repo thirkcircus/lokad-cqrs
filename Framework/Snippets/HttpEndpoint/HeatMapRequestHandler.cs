@@ -4,6 +4,7 @@
 // Homepage: http://lokad.github.com/lokad-cqrs/
 #endregion
 
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Net;
@@ -26,7 +27,7 @@ namespace Snippets.HttpEndpoint
 
         public override string UrlPattern
         {
-            get { return "/heatmap.jpg"; }
+            get { return "/heatmap"; }
         }
 
         public override string[] SupportedVerbs
@@ -40,13 +41,27 @@ namespace Snippets.HttpEndpoint
 
             if (view.HasValue)
             {
-                //var ms = new MemoryStream(view.Value.Heatmap);
-                view.Value.Heatmap.Save(context.Response.OutputStream, ImageFormat.Jpeg);
-
-                //ms.CopyTo(context.Response.OutputStream);
+                if (context.GetRequestUrl().Contains("thumb"))
+                {
+                    view.Value.Thumbnail.Save(context.Response.OutputStream, ImageFormat.Jpeg);
+                }
+                else
+                {
+                    view.Value.Heatmap.Save(context.Response.OutputStream, ImageFormat.Jpeg);
+                }
+            }
+            else
+            {
+                ReturnEmptyImage(context);
             }
 
             context.SetStatusTo(HttpStatusCode.OK);
+        }
+
+        static void ReturnEmptyImage(IHttpContext context)
+        {
+            var bitmap = new Bitmap(1, 1);
+            bitmap.Save(context.Response.OutputStream, ImageFormat.Jpeg);
         }
     }
 }
