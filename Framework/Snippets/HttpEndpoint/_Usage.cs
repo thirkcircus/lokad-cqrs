@@ -7,13 +7,16 @@
 #endregion
 
 using System;
+using System.Linq;
 using Lokad.Cqrs;
 using Lokad.Cqrs.Build.Engine;
 using Lokad.Cqrs.Core;
 using Lokad.Cqrs.Core.Outbox;
+using Lokad.Cqrs.Feature.AtomicStorage;
 using Lokad.Cqrs.Feature.Http;
 using Lokad.Cqrs.Feature.Http.Handlers;
 using NUnit.Framework;
+using Snippets.HttpEndpoint.View;
 
 // ReSharper disable InconsistentNaming
 
@@ -41,7 +44,7 @@ namespace Snippets.HttpEndpoint
             var stats = new MouseStats();
 
             // we accept a message just of this type, using a serializer
-            builder.Messages(new[] { typeof(MouseMoved) });
+            builder.Messages(new[] { typeof(MouseMoved), typeof(MouseClick) });
             builder.Advanced.CustomDataSerializer(s => new MyJsonSerializer(s));
 
             // let's configure our custom Http server to 
@@ -56,7 +59,18 @@ namespace Snippets.HttpEndpoint
 
             // we'll use in-memory queues for faster processing
             // you can use files or azure in real world.
-            builder.Memory(x => x.AddMemoryProcess("inbox", container => (envelope => MouseStatHandler(envelope, stats))));
+            builder.Memory(x => x.AddMemoryProcess("inbox", container => (envelope =>
+                {
+                    if (envelope.Items.Any(i => i.Content is MouseMoved))
+                    {
+                        MouseStatHandler(envelope, stats);
+                    }
+                    else if (envelope.Items.Any(i => i.Content is MouseClick))
+                    {
+                        MouseClickHandler(envelope, container.Resolve<IAtomicWriter<unit, PointsView>>());
+                    }
+                })));
+            
             // this is a test, so let's block everything
             builder.Build().RunForever();
         }
@@ -70,6 +84,25 @@ namespace Snippets.HttpEndpoint
             stats.Distance += (long)Math.Sqrt(Math.Pow(mouseMovedEvent.x1 - mouseMovedEvent.x2, 2)
                                   + Math.Pow(mouseMovedEvent.y1 - mouseMovedEvent.y2, 2));
             stats.RecordMessage();
+        }
+
+        private static void MouseClickHandler(ImmutableEnvelope envelope, IAtomicWriter<unit, PointsView> writer)
+        {
+            var mouseMovedEvent = (MouseClick)envelope.Items[0].Content;
+
+            writer.AddOrUpdate(unit.it, () => new PointsView(),
+                v =>
+                {
+                    var Point = v.Points.FirstOrDefault(p => p.X == mouseMovedEvent.x && p.Y == mouseMovedEvent.y);
+                    if (Point != null)
+                    {
+                        Point.Intensity += 10;
+                    }
+                    else
+                    {
+                        v.Points.Add(new HeatPoint(mouseMovedEvent.x, mouseMovedEvent.y, 50));
+                    }
+                });
         }
 
         private static IHttpRequestHandler ConfigureMyCommandSender(Container c)

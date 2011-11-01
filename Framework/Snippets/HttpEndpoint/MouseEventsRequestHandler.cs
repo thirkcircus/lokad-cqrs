@@ -31,9 +31,10 @@ namespace Snippets.HttpEndpoint
 
         public override void Handle(IHttpContext context)
         {
-            var envelopeBuilder = new EnvelopeBuilder("mouse-move - " + DateTime.Now.Ticks.ToString());
-
             var contract = context.GetRequestUrl().Remove(0, "/mouseevents/".Length);
+            
+            var envelopeBuilder = new EnvelopeBuilder(contract + " - " + DateTime.Now.Ticks.ToString());
+
             Type contractType;
             if (!_serializer.TryGetContractTypeByName(contract, out contractType))
             {
@@ -43,9 +44,9 @@ namespace Snippets.HttpEndpoint
             }
 
             var decodedData = HttpUtility.UrlDecode(context.Request.QueryString.ToString());
-            var mouseMove =  JsonSerializer.DeserializeFromString<MouseMoved>(decodedData);
+            var mouseEvent = JsonSerializer.DeserializeFromString(decodedData, contractType);
 
-            envelopeBuilder.AddItem(mouseMove);
+            envelopeBuilder.AddItem(mouseEvent);
             _writer.PutMessage(envelopeBuilder.Build());
 
             context.SetStatusTo(HttpStatusCode.OK);
@@ -58,7 +59,7 @@ namespace Snippets.HttpEndpoint
 
         public override string[] SupportedVerbs
         {
-            get { return new[] { "GET" }; }
+            get { return new[] { "GET", "POST" }; }
         }
     }
 }
