@@ -19,7 +19,7 @@ namespace Lokad.Cqrs.Feature.HandlerClasses
     {
         MessageActivationInfo[] Map { get; set; }
 
-        [TestFixtureSetUp]
+        [SetUp]
         public void FixtureSetUp()
         {
             Map = Builder.BuildActivationMap(mm => typeof(WhenSomethingGenericHappened) == mm.Consumer);

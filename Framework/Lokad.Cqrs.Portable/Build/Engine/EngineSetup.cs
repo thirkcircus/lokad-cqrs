@@ -8,6 +8,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Core.Reactive;
 
@@ -23,6 +25,30 @@ namespace Lokad.Cqrs.Build.Engine
         public void AddProcess(IEngineProcess process)
         {
             _processes.Add(process);
+        }
+
+        public void AddProcess(Func<CancellationToken, Task> factoryToStartTask)
+        {
+            _processes.Add(new SimpleProcess(factoryToStartTask));
+        }
+
+        sealed class SimpleProcess : IEngineProcess
+        {
+            readonly Func<CancellationToken, Task> _factoryToStartTask;
+
+            public SimpleProcess(Func<CancellationToken, Task> factoryToStartTask)
+            {
+                _factoryToStartTask = factoryToStartTask;
+            }
+
+            public void Dispose() {}
+
+            public void Initialize() {}
+
+            public Task Start(CancellationToken token)
+            {
+                return _factoryToStartTask(token);
+            }
         }
 
         public IEnumerable<IEngineProcess> GetProcesses()
