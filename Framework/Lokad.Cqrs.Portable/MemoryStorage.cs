@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Lokad.Cqrs.Feature.AtomicStorage;
+using Lokad.Cqrs.Feature.StreamingStorage;
 using Lokad.Cqrs.Feature.TapeStorage;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
@@ -70,6 +71,17 @@ namespace Lokad.Cqrs
             var factory = new MemoryAtomicStorageFactory(dictionary, strategy);
             factory.Initialize();
             return new NuclearStorage(factory);
+        }
+
+        /// <summary>
+        /// Creates memory-based streaming storage.
+        /// </summary>
+        /// <param name="storageFolder"></param>
+        /// <returns></returns>
+        public static IStreamingRoot CreateStreaming()
+        {
+            var container = new MemoryStreamingRoot();
+            return container;
         }
 
         /// <summary>

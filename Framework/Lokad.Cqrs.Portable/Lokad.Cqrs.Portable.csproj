@@ -111,6 +111,9 @@
     <Compile Include="Feature.FilePartition\FileQueueWriterFactory.cs" />
     <Compile Include="Feature.FilePartition\FilePartitionModule.cs" />
     <Compile Include="Feature.FilePartition\StatelessFileQueueReader.cs" />
+    <Compile Include="Feature.StreamingStorage\MemoryStreamingContainer.cs" />
+    <Compile Include="Feature.StreamingStorage\MemoryStreamingItem.cs" />
+    <Compile Include="Feature.StreamingStorage\MemoryStreamingRoot.cs" />
     <Compile Include="Feature.TapeStorage\TapeAppendCondition.cs" />
     <Compile Include="Feature.TapeStorage\TapeAppendConditionException.cs" />
     <Compile Include="Feature.TapeStorage\TapeStorageInitilization.cs" />
