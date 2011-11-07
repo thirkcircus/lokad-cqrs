@@ -11,6 +11,7 @@ namespace Lokad.Cqrs
         public void Azure_queues_regex_is_valid()
         {
             Assert.IsTrue(AzureEngineModule.QueueName.IsMatch("some-queue"));
+            Assert.IsTrue(AzureEngineModule.QueueName.IsMatch("to-watchtower"));
             Assert.IsFalse(AzureEngineModule.QueueName.IsMatch("-some-queue"));
         } 
     }
