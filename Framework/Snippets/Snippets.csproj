@@ -47,18 +47,25 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HttpEndpoint\Util\HeatMap.cs" />
+    <Compile Include="HttpEndpoint\HeatMapGenerateTask.cs" />
+    <Compile Include="HttpEndpoint\HeatMapRequestHandler.cs" />
+    <Compile Include="HttpEndpoint\HeatPoint.cs" />
     <Compile Include="HttpEndpoint\MouseEventsRequestHandler.cs" />
     <Compile Include="HttpEndpoint\MouseMoved.cs" />
     <Compile Include="HttpEndpoint\MouseStats.cs" />
     <Compile Include="HttpEndpoint\MouseStatsRequestHandler.cs" />
     <Compile Include="HttpEndpoint\MyAnonymousCommandSender.cs" />
     <Compile Include="HttpEndpoint\MyJsonSerializer.cs" />
+    <Compile Include="HttpEndpoint\View\HeatMapView.cs" />
+    <Compile Include="HttpEndpoint\View\PointsView.cs" />
     <Compile Include="MailQuarantine\SmtpHandlerCore.cs" />
     <Compile Include="PubSubRouter\PubSubRouter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
