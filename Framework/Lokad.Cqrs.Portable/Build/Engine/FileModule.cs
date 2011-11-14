@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using Lokad.Cqrs.Core;
+using Lokad.Cqrs.Core.Dispatch;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Feature.FilePartition;
 using Lokad.Cqrs.Feature.StreamingStorage;
@@ -22,10 +23,22 @@ namespace Lokad.Cqrs.Build.Engine
             config(module);
             _funqlets += module.Configure;
         }
-
+        [Obsolete("Use overload without handler and container")]
         public void AddFileProcess(FileStorageConfig folder, string queues, HandlerFactory handler)
         {
             AddFileProcess(folder, queues, m => m.DispatcherIsLambda(handler));
+        }
+
+        public void AddFileProcess(FileStorageConfig config, string firstQueue, Action<ImmutableEnvelope> handler, IEnvelopeQuarantine quarantine = null)
+        {
+            AddFileProcess(config, new string[] { firstQueue }, m =>
+            {
+                m.DispatcherIsLambda(_ => handler);
+                if (null != quarantine)
+                {
+                    m.Quarantine(_ => quarantine);
+                }
+            });
         }
 
         public void AddFileTimer(FileStorageConfig folder, string incomingQueue, string replyQueue)

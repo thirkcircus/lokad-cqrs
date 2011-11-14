@@ -8,6 +8,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Lokad.Cqrs.Core;
+using Lokad.Cqrs.Core.Dispatch;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Feature.AzurePartition;
 using Lokad.Cqrs.Feature.AzurePartition.Sender;
@@ -62,9 +63,22 @@ namespace Lokad.Cqrs.Build.Engine
             _funqlets += module.Configure;
         }
 
+        [Obsolete("Use overload without handler and container")]
         public void AddAzureProcess(IAzureStorageConfig config, string firstQueue, HandlerFactory handler)
         {
             AddAzureProcess(config, new[] { firstQueue}, m => m.DispatcherIsLambda(handler));
+        }
+
+        public void AddAzureProcess(IAzureStorageConfig config, string firstQueue, Action<ImmutableEnvelope> handler, IEnvelopeQuarantine quarantine = null)
+        {
+            AddAzureProcess(config, new string[] { firstQueue}, m =>
+                {
+                    m.DispatcherIsLambda(_ => handler);
+                    if (null != quarantine)
+                    {
+                        m.Quarantine(_ => quarantine);
+                    }
+                });
         }
 
         public void AddAzureProcess(IAzureStorageConfig config, string firstQueue, Action<AzurePartitionModule> configure)
