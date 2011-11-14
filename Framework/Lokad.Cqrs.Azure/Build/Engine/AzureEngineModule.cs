@@ -6,12 +6,12 @@
 #endregion
 
 using System;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Lokad.Cqrs.Core;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Feature.AzurePartition;
 using Lokad.Cqrs.Feature.AzurePartition.Sender;
+using Lokad.Cqrs.Feature.TimerService;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable UnusedMethodReturnValue.Global
@@ -28,7 +28,6 @@ namespace Lokad.Cqrs.Build.Engine
 
         Action<Container> _funqlets = registry => { };
 
-        
         public void AddAzureSender(IAzureStorageConfig config, string queueName, Action<SendMessageModule> configure)
         {
             var module = new SendMessageModule((context, endpoint) => new AzureQueueWriterFactory(config, context.Resolve<IEnvelopeStreamer>()), config.AccountName, queueName);
@@ -63,7 +62,6 @@ namespace Lokad.Cqrs.Build.Engine
             _funqlets += module.Configure;
         }
 
-
         public void AddAzureProcess(IAzureStorageConfig config, string firstQueue, HandlerFactory handler)
         {
             AddAzureProcess(config, new[] { firstQueue}, m => m.DispatcherIsLambda(handler));
@@ -79,6 +77,28 @@ namespace Lokad.Cqrs.Build.Engine
             AddAzureProcess(config, new[] {queueName}, m => m.DispatchToRoute(configure));
         }
 
+        public void AddAzureTimer(IAzureStorageConfig config, string incomingQueue, string replyQueue)
+        {
+            var module = new AzurePartitionModule(config, new[] { incomingQueue });
+
+            module.DispatcherIsLambda(container =>
+            {
+                var setup = container.Resolve<EngineSetup>();
+                var registry = container.Resolve<QueueWriterRegistry>();
+                var streamer = container.Resolve<IEnvelopeStreamer>();
+                var writer = registry.GetOrAdd(config.AccountName, s => new AzureQueueWriterFactory(config, streamer));
+                var queue = writer.GetWriteQueue(replyQueue);
+
+                var root = AzureStorage.CreateStreaming(config);
+                var c = root.GetContainer(incomingQueue + "-future").Create();
+
+                var service = new StreamingTimerService(queue, c, streamer);
+                setup.AddProcess(service);
+                return (envelope => service.PutMessage(envelope));
+            });
+
+            _funqlets += module.Configure;
+        }
 
         public void Configure(Container container)
         {

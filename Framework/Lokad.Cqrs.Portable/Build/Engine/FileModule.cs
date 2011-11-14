@@ -42,7 +42,7 @@ namespace Lokad.Cqrs.Build.Engine
                     var storage = Path.Combine(folder.FullPath, incomingQueue + "-future");
 
                     var c = new FileStreamingContainer(storage);
-                    var service = new FileTimerService(queue, c, streamer);
+                    var service = new StreamingTimerService(queue, c, streamer);
                     setup.AddProcess(service);
                     return (envelope => service.PutMessage(envelope));
                 });

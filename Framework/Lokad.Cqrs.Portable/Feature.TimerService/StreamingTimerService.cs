@@ -11,13 +11,13 @@ using Lokad.Cqrs.Feature.StreamingStorage;
 
 namespace Lokad.Cqrs.Feature.TimerService
 {
-    public sealed class FileTimerService : IEngineProcess
+    public sealed class StreamingTimerService : IEngineProcess
     {
         readonly IQueueWriter _target;
         readonly IStreamingContainer _storage;
         readonly string _suffix;
         readonly IEnvelopeStreamer _streamer;
-        public FileTimerService(IQueueWriter target, IStreamingContainer storage, IEnvelopeStreamer streamer)
+        public StreamingTimerService(IQueueWriter target, IStreamingContainer storage, IEnvelopeStreamer streamer)
         {
             _target = target;
             _storage = storage;
