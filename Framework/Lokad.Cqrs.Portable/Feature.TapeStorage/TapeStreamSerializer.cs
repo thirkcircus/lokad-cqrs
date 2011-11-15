@@ -17,7 +17,6 @@ namespace Lokad.Cqrs.Feature.TapeStorage
 {
     public class TapeStreamSerializer
     {
-        static readonly SHA1Managed Managed = new SHA1Managed();
 
         static readonly byte[] ReadableHeaderStart = Encoding.UTF8.GetBytes("/* header ");
         static readonly byte[] ReadableHeaderEnd = Encoding.UTF8.GetBytes(" */\r\n");
@@ -45,6 +44,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
         {
             using (var ms = new MemoryStream())
             using (var writer = new BinaryWriter(ms))
+            using (var managed = new SHA1Managed())
             {
                 writer.Write(ReadableHeaderStart);
                 WriteReadableInt64(writer, data.Length);
@@ -54,7 +54,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
                 writer.Write(ReadableFooterStart);
                 WriteReadableInt64(writer, data.Length);
                 WriteReadableInt64(writer, versionToWrite);
-                WriteReadableHash(writer, Managed.ComputeHash(data));
+                WriteReadableHash(writer, managed.ComputeHash(data));
                 writer.Write(ReadableFooterEnd);
 
                 ms.Seek(0, SeekOrigin.Begin);
@@ -76,12 +76,14 @@ namespace Lokad.Cqrs.Feature.TapeStorage
             ReadReadableInt64(file); //length verified
             var recVersion = ReadReadableInt64(file);
             var hash = ReadReadableHash(file);
+            using (var managed = new SHA1Managed())
+            {
 
-            var computed = Managed.ComputeHash(data);
+                var computed = managed.ComputeHash(data);
 
-            if (!computed.SequenceEqual(hash))
-                throw new InvalidOperationException("Hash corrupted");
-
+                if (!computed.SequenceEqual(hash))
+                    throw new InvalidOperationException("Hash corrupted");
+            }
             ReadAndVerifySignature(file, ReadableFooterEnd, "End");
 
             return new TapeRecord(recVersion, data);
