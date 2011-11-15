@@ -13,6 +13,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
         readonly byte[][] _batch = new[]
                 {
                     new byte[] {1, 2, 3, 4, 5},
+                    new byte[2 * 1024 * 1024],
                     new byte[] {255, 254, 253, 252, 251},
                     new byte[] {10, 20, 30, 40, 50},
                     new byte[] {15, 25, 35, 45, 55}

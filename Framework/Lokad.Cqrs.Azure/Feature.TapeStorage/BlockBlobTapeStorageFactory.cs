@@ -1,4 +1,4 @@
-﻿#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License
+#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License
 
 // Copyright (c) Lokad 2010-2011, http://www.lokad.com
 // This code is released as Open Source under the terms of the New BSD Licence
@@ -12,7 +12,7 @@ using Microsoft.WindowsAzure.StorageClient;
 
 namespace Lokad.Cqrs.Feature.TapeStorage
 {
-    public class BlobTapeStorageFactory : ITapeStorageFactory
+    public class BlockBlobTapeStorageFactory : ITapeStorageFactory
     {
         readonly CloudBlobClient _cloudBlobClient;
         readonly string _containerName;
@@ -20,13 +20,13 @@ namespace Lokad.Cqrs.Feature.TapeStorage
         readonly ConcurrentDictionary<string, ITapeStream> _writers =
             new ConcurrentDictionary<string, ITapeStream>();
 
-        public BlobTapeStorageFactory(IAzureStorageConfig config, string containerName)
+        public BlockBlobTapeStorageFactory(IAzureStorageConfig config, string containerName)
         {
             if (containerName.Any(Char.IsUpper))
                 throw new ArgumentException("All letters in a container name must be lowercase.");
 
             _cloudBlobClient = config.CreateBlobClient();
-            
+
             _containerName = containerName;
         }
 
@@ -42,7 +42,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
                 s =>
                     {
                         var container = _cloudBlobClient.GetContainerReference(_containerName);
-                        return new BlobTapeStream(container, name);
+                        return new BlockBlobTapeStream(container, name);
                     });
         }
 
