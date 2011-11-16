@@ -177,8 +177,11 @@ namespace Lokad.Cqrs.Feature.TapeStorage
 
                 var blockId = EncodeName(Naming.GetName(firstVersion, count));
 
+                string md5Hash;
                 outStream.Seek(0, SeekOrigin.Begin);
-                var md5Hash = Convert.ToBase64String(MD5.Create().ComputeHash(outStream));
+                using (var md5 = MD5.Create()) {
+                    md5Hash = Convert.ToBase64String(md5.ComputeHash(outStream));
+                }
 
                 outStream.Seek(0, SeekOrigin.Begin);
                 blob.PutBlock(blockId, outStream, md5Hash);
