@@ -23,6 +23,7 @@ namespace Snippets.HttpEndpoint
     public sealed class _Usage
     {
         [Test]
+        [Explicit("Run manually and browse url http://localhost:8082/index.htm to see results.")]
         public void Test()
         {
             // this test will start a simple web server on port 8082 (with a CQRS engine)
