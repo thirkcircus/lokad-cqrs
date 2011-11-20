@@ -20,8 +20,8 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             _queue.AddMessage(packed);
         }
 
-        //http://abdullin.com/journal/2010/6/4/azure-queue-messages-cannot-be-larger-than-8192-bytes.html
-        const int CloudQueueLimit = 6144;
+        // New azure limit is 64k after BASE 64 conversion. We Are adding 152 on top just to be safe
+        const int CloudQueueLimit = 49000;
 
 
         CloudQueueMessage PrepareCloudMessage(ImmutableEnvelope builder)
