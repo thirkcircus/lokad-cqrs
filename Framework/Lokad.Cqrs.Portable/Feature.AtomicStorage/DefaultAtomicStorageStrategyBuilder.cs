@@ -130,7 +130,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         }
 
         /// <summary>
-        /// Allows to specify completely cstom search pattern for singleton types. Default behavior is to look for
+        /// Allows to specify completely custom search pattern for singleton types. Default behavior is to look for
         /// inheritors from <see cref="Define.AtomicSingleton"/>
         /// </summary>
         /// <param name="predicate">The predicate.</param>
