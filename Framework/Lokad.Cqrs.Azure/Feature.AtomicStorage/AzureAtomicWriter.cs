@@ -36,7 +36,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         public TEntity AddOrUpdate(TKey key, Func<TEntity> addViewFactory, Func<TEntity, TEntity> updateViewFactory,
             AddOrUpdateHint hint)
         {
-            // TODO: implement proper locking and order
+            string etag = null;
             var blob = GetBlobReference(key);
             TEntity view;
             try
@@ -49,6 +49,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
                 }
 
                 view = updateViewFactory(view);
+                etag = blob.Attributes.Properties.ETag;
             }
             catch (StorageClientException ex)
             {
@@ -73,7 +74,10 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             {
                 _strategy.Serialize(view, memory);
                 // note that upload from stream does weird things
-                blob.UploadByteArray(memory.ToArray());
+                var bro = etag != null
+                    ? new BlobRequestOptions {AccessCondition = AccessCondition.IfMatch(etag)}
+                    : new BlobRequestOptions {AccessCondition = AccessCondition.IfNoneMatch("*")};
+                blob.UploadByteArray(memory.ToArray(), bro);
             }
             return view;
         }
