@@ -74,11 +74,6 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Inbox
                         case GetEnvelopeResultState.Success:
 
                             _emptyCycles = 0;
-                            // future message
-                            if (message.Envelope.Unpacked.DeliverOnUtc > DateTime.UtcNow)
-                            {
-                                throw new InvalidOperationException("Future message delivery has been disabled in the code");
-                            }
                             context = message.Envelope;
                             return true;
                         case GetEnvelopeResultState.Empty:

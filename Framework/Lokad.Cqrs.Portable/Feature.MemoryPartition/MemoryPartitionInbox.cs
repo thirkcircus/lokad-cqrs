@@ -51,11 +51,6 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
                 var result = BlockingCollection<ImmutableEnvelope>.TakeFromAny(_queues, out envelope);
                 if (result >= 0)
                 {
-                    if (envelope.DeliverOnUtc > DateTime.UtcNow)
-                    {
-                        // future message
-                        throw new InvalidOperationException("Message scheduling has been disabled in the code");
-                    }
                     context = new EnvelopeTransportContext(result, envelope, _names[result]);
                     return true;
                 }
