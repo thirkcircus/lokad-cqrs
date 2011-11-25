@@ -275,15 +275,15 @@ namespace Lokad.Cqrs.Feature.TapeStorage
                 var parts = name.Split(Separator);
 
                 if (parts.Length != 2)
-                    throw new InvalidOperationException("Name must consist of two parts.");
+                    throw new InvalidOperationException("Name of BlockBlobListItem must consist of two parts. Are you sure that this block blob was created by BlockBlobTapeStream?");
 
                 long firstVersion;
                 if (!long.TryParse(parts[0], out firstVersion))
-                    throw new InvalidOperationException("Can not parse 'version' part of name.");
+                    throw new InvalidOperationException("Can not parse 'version' part of name of BlockBlobListItem. Are you sure that this block blob was created by BlockBlobTapeStream?");
 
                 long count;
                 if (!long.TryParse(parts[1], out count))
-                    throw new InvalidOperationException("Can not parse 'count' part of name.");
+                    throw new InvalidOperationException("Can not parse 'count' part of name of BlockBlobListItem. Are you sure that this block blob was created by BlockBlobTapeStream?");
 
                 return new NameInfo
                     {
