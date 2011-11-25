@@ -13,10 +13,15 @@ namespace Lokad.Cqrs.Feature.TimerService
 {
     public sealed class StreamingTimerService : IEngineProcess
     {
+        static long _universalCounter;
+
         readonly IQueueWriter _target;
         readonly IStreamingContainer _storage;
         readonly string _suffix;
         readonly IEnvelopeStreamer _streamer;
+
+        readonly List<Record> _scheduler = new List<Record>();
+
         public StreamingTimerService(IQueueWriter target, IStreamingContainer storage, IEnvelopeStreamer streamer)
         {
             _target = target;
@@ -25,25 +30,6 @@ namespace Lokad.Cqrs.Feature.TimerService
             _suffix = Guid.NewGuid().ToString().Substring(0, 4);
         }
 
-        public void Dispose()
-        {
-        }
-
-        public sealed class Record
-
-        {
-            public readonly DateTime DeliverOn;
-            public readonly string Name;
-            public Record(string name, DateTime deliverOn)
-            {
-                Name = name;
-                DeliverOn = deliverOn;
-            }
-        }
-
-        static long _universalCounter;
-        readonly List<Record> _scheduler = new List<Record>();
-
         public void PutMessage(ImmutableEnvelope envelope)
         {
             if (envelope.DeliverOnUtc < DateTime.UtcNow)
@@ -51,16 +37,16 @@ namespace Lokad.Cqrs.Feature.TimerService
                 _target.PutMessage(envelope);
                 return;
             }
+
             // save to the store
             var id = Interlocked.Increment(ref _universalCounter);
-            var s = "{0:yyyy-MM-dd-HH-mm-ss}-{1:00000000}-{2}.future";
-            var fileName = string.Format(s, envelope.DeliverOnUtc, id, _suffix);
+
+            var fileName = string.Format("{0:yyyy-MM-dd-HH-mm-ss}-{1:00000000}-{2}.future",
+                envelope.DeliverOnUtc, id, _suffix);
 
             // persist
             var item = _storage.GetItem(fileName);
-
             var data = _streamer.SaveEnvelopeData(envelope);
-
             item.Write(x => x.Write(data, 0, data.Length));
 
             // add to in-memory scheduler
@@ -74,52 +60,54 @@ namespace Lokad.Cqrs.Feature.TimerService
         {
             _storage.Create();
             var messages = _storage.ListItems().Select(fi =>
+                {
+                    var item = _storage.GetItem(fi);
+                    try
                     {
-                        var item = _storage.GetItem(fi);
-                        try
+                        using (var mem = new MemoryStream())
                         {
-                            using (var mem = new MemoryStream())
-                            {
-                                item.ReadInto((x,y) => y.CopyTo(mem));
-                                var data = _streamer.ReadAsEnvelopeData(mem.ToArray());
-                                return new Record(fi, data.DeliverOnUtc);
-                            }
-
-                        }
-                        catch (Exception ex)
-                        {
-                            Trace.WriteLine(ex);
-                            return null;
+                            item.ReadInto((x, y) => y.CopyTo(mem));
+                            var data = _streamer.ReadAsEnvelopeData(mem.ToArray());
+                            return new Record(fi, data.DeliverOnUtc);
                         }
 
-                    }).Where(n => null != n).ToList();
+                    }
+                    catch (Exception ex)
+                    {
+                        Trace.WriteLine(ex);
+                        return null;
+                    }
+
+                }).Where(n => null != n).ToList();
+
             lock (_scheduler)
             {
                 _scheduler.AddRange(messages);
             }
-
-
         }
+
+        public void Dispose() {}
 
         public Task Start(CancellationToken token)
         {
             return Task.Factory.StartNew(() => RunScheduler(token), token);
-
         }
 
         void RunScheduler(CancellationToken token)
         {
-            while(!token.IsCancellationRequested)
+            while (!token.IsCancellationRequested)
             {
                 try
                 {
                     var date = DateTime.UtcNow;
-                    var count = 100;
+                    const int count = 100;
                     List<Record> list;
+
                     lock (_scheduler)
                     {
                         list = _scheduler.Where(r => r.DeliverOn <= date).Take(count).ToList();
                     }
+
                     if (list.Count > 0)
                     {
                         foreach (var record in list)
@@ -138,23 +126,34 @@ namespace Lokad.Cqrs.Feature.TimerService
                             newEnvelope.DeliverOnUtc(DateTime.MinValue);
                             newEnvelope.AddString("original-id", e.EnvelopeId);
                             _target.PutMessage(newEnvelope.Build());
-                            
+
                             item.Delete();
-                            lock(_scheduler)
+                            lock (_scheduler)
                             {
                                 _scheduler.Remove(record);
                             }
-                            
                         }
                     }
+
                     token.WaitHandle.WaitOne(5000);
                 }
                 catch (Exception ex)
                 {
                     Trace.WriteLine(ex);
                     token.WaitHandle.WaitOne(2000);
-
                 }
+            }
+        }
+
+        sealed class Record
+        {
+            public readonly DateTime DeliverOn;
+            public readonly string Name;
+
+            public Record(string name, DateTime deliverOn)
+            {
+                Name = name;
+                DeliverOn = deliverOn;
             }
         }
     }
