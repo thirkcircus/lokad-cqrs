@@ -125,6 +125,10 @@ namespace Lokad.Cqrs.Feature.TimerService
                             var newEnvelope = EnvelopeBuilder.CloneProperties(e.EnvelopeId + "-future", e);
                             newEnvelope.DeliverOnUtc(DateTime.MinValue);
                             newEnvelope.AddString("original-id", e.EnvelopeId);
+                            foreach (var message in e.Items)
+                            {
+                                newEnvelope.AddItem(message);
+                            }
                             _target.PutMessage(newEnvelope.Build());
 
                             item.Delete();
