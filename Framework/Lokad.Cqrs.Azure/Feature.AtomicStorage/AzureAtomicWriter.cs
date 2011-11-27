@@ -77,6 +77,11 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
                 var bro = etag != null
                     ? new BlobRequestOptions {AccessCondition = AccessCondition.IfMatch(etag)}
                     : new BlobRequestOptions {AccessCondition = AccessCondition.IfNoneMatch("*")};
+
+
+                // make sure that upload is not rejected due to cashed content MD5
+                // http://social.msdn.microsoft.com/Forums/hu-HU/windowsazuredata/thread/4764e38f-b200-4efe-ada2-7de442dc4452
+                blob.Properties.ContentMD5 = null;
                 blob.UploadByteArray(memory.ToArray(), bro);
             }
             return view;
