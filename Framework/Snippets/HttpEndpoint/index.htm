@@ -21,6 +21,8 @@
         
         span.tooltip { display: inline; position: absolute; margin-left: 90px; margin-top: 90px; background: #ffffff; border: 1px solid #cccccc; color: #6c6c6c; }
         #tile:hover span { display: none; }
+        
+        #heatmapdiv {display: block; position: absolute; right: 10px; bottom: 10px;}
     </style>
 </head>
 <body>
@@ -28,7 +30,7 @@
         <div class="header">
             <div class="page_container">
                 <div class="inner">
-                    <div class="right description">                        
+                    <div class="right description">
                             <span>This sample is a part of Lokad.CQRS guidance.  Drag the image around, or check out <a href="ReadMe.markdown">Readme</a> for more details.</span>
                     </div>
                     <div>
@@ -42,6 +44,13 @@
             <span class="tooltip">Draggable.</span>
         </div>
         <div id="result">
+        </div>
+
+        <div id="heatmapdiv">
+                <h4>Mouse clicks heat map</h4>
+                <a href="/heatmap.jpg">
+                    <img id="heatmap" src="/heatmap_thumb.jpg" alt="heatmap"></img>
+                </a>
         </div>
     </div>
     <script type="text/javascript">
@@ -63,11 +72,17 @@
                 if (mouseDown == false) return;
 
                 tile.css({ 'left': e.pageX - 50, 'top': e.pageY - 50 });
-                
+
                 var mouseEvents = { x1: oldMouseEvents.pageX, y1: oldMouseEvents.pageY, x2: e.pageX, y2: e.pageY };
                 oldMouseEvents = e;
                 $.get('/mouseevents/MouseMoved', encodeURI(JSON.stringify(mouseEvents)));
 
+            });
+
+            $(document).mousedown(function (e) {
+                var mouseEvents = { x: e.pageX, y: e.pageY };
+
+                $.get('/mouseevents/MouseClick', encodeURI(JSON.stringify(mouseEvents)));
             });
 
             function mouseStats() {
@@ -81,7 +96,12 @@
             }
 
             setInterval(mouseStats, 1000);
+            setInterval(refreshHeatmap, 5000);
 
+            function refreshHeatmap() {
+                $('#heatmap').attr('src', '/heatmap_thumb.jpg?' + new Date().getTime());
+            }
+            
             // disable annoying selection
             function disableSelection(target) {
                 target.onselectstart = function () { return false; };

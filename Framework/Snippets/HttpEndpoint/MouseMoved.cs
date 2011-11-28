@@ -25,4 +25,13 @@ namespace Snippets.HttpEndpoint
         }
 
     }
+
+    [DataContract]
+    public sealed class MouseClick
+    {
+        [DataMember]
+        public int x { get; set; }
+        [DataMember]
+        public int y { get; set; }
+    }
 }
