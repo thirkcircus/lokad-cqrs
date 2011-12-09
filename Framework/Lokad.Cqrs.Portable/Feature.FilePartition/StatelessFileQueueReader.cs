@@ -11,7 +11,6 @@ namespace Lokad.Cqrs.Feature.FilePartition
         readonly IEnvelopeStreamer _streamer;
         readonly ISystemObserver _observer;
 
-        //readonly CloudBlobContainer _cloudBlob;
         readonly Lazy<DirectoryInfo> _posionQueue;
         readonly DirectoryInfo _queue;
         readonly string _queueName;
@@ -50,8 +49,14 @@ namespace Lokad.Cqrs.Feature.FilePartition
 
             try
             {
-                var unpacked = DownloadPackage(message);
-                return GetEnvelopeResult.Success(unpacked);
+                using (var stream = message.OpenRead())
+                using (var mem = new MemoryStream())
+                {
+                    stream.CopyTo(mem);
+                    var envelope = _streamer.ReadAsEnvelopeData(mem.ToArray());
+                    var unpacked = new EnvelopeTransportContext(message, envelope, _queueName);
+                    return GetEnvelopeResult.Success(unpacked);
+                }
             }
             catch (IOException ex)
             {
@@ -77,21 +82,9 @@ namespace Lokad.Cqrs.Feature.FilePartition
         {
             // http://stackoverflow.com/questions/425956/how-do-i-determine-if-an-ioexception-is-thrown-because-of-a-sharing-violation
             // don't ask...
-            int hResult = System.Runtime.InteropServices.Marshal.GetHRForException(ex);
+            var hResult = System.Runtime.InteropServices.Marshal.GetHRForException(ex);
             const int sharingViolation = 32;
-            if ((hResult & 0xFFFF) == sharingViolation) return true;
-            return false;
-        }
-
-        EnvelopeTransportContext DownloadPackage(FileInfo message)
-        {
-            using (var stream = message.OpenRead())
-            using (var mem = new MemoryStream())
-            {
-                stream.CopyTo(mem);
-                var envelope = _streamer.ReadAsEnvelopeData(mem.ToArray());
-                return new EnvelopeTransportContext(message, envelope, _queueName);
-            }
+            return (hResult & 0xFFFF) == sharingViolation;
         }
 
         public void Initialize()
