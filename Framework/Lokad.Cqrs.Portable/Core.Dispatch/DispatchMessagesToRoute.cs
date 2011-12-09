@@ -18,16 +18,18 @@ namespace Lokad.Cqrs.Core.Dispatch
     {
         readonly QueueWriterRegistry _queueRegistry;
         readonly Func<ImmutableEnvelope, string> _routerRule;
+        readonly IEnvelopeStreamer _streamer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DispatchMessagesToRoute"/> class.
         /// </summary>
         /// <param name="queueRegistry">The queue registry.</param>
         /// <param name="routingRules">The routing rules.</param>
-        public DispatchMessagesToRoute(QueueWriterRegistry queueRegistry, Func<ImmutableEnvelope,string> routingRules)
+        public DispatchMessagesToRoute(QueueWriterRegistry queueRegistry, Func<ImmutableEnvelope,string> routingRules, IEnvelopeStreamer streamer)
         {
             _queueRegistry = queueRegistry;
             _routerRule = routingRules;
+            _streamer = streamer;
         }
 
 
@@ -67,7 +69,7 @@ namespace Lokad.Cqrs.Core.Dispatch
                         route);
                 throw new InvalidOperationException(s);
             }
-            factory.GetWriteQueue(queueName).PutMessage(message);
+            factory.GetWriteQueue(queueName).PutMessage(_streamer.SaveEnvelopeData(message));
             return;
         }
 

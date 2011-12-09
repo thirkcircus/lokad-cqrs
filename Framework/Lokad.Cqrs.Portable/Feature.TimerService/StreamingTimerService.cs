@@ -34,7 +34,7 @@ namespace Lokad.Cqrs.Feature.TimerService
         {
             if (envelope.DeliverOnUtc < DateTime.UtcNow)
             {
-                _target.PutMessage(envelope);
+                _target.PutMessage(_streamer.SaveEnvelopeData(envelope));
                 return;
             }
 
@@ -129,7 +129,7 @@ namespace Lokad.Cqrs.Feature.TimerService
                             {
                                 newEnvelope.AddItem(message);
                             }
-                            _target.PutMessage(newEnvelope.Build());
+                            _target.PutMessage(_streamer.SaveEnvelopeData(newEnvelope.Build()));
 
                             item.Delete();
                             lock (_scheduler)

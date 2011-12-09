@@ -50,7 +50,7 @@ namespace Lokad.Cqrs.Build.Engine
                     var setup = container.Resolve<EngineSetup>();
                     var registry = container.Resolve<QueueWriterRegistry>();
                     var streamer = container.Resolve<IEnvelopeStreamer>();
-                    var writer = registry.GetOrAdd(folder.AccountName, s => new FileQueueWriterFactory(folder, streamer));
+                    var writer = registry.GetOrAdd(folder.AccountName, s => new FileQueueWriterFactory(folder));
                     var queue = writer.GetWriteQueue(replyQueue);
                     var storage = Path.Combine(folder.FullPath, incomingQueue + "-future");
 
@@ -84,7 +84,7 @@ namespace Lokad.Cqrs.Build.Engine
 
         public void AddFileSender(FileStorageConfig directory, string queueName, Action<SendMessageModule> config)
         {
-            var module = new SendMessageModule((context, s) => new FileQueueWriterFactory(directory, context.Resolve<IEnvelopeStreamer>()), directory.AccountName, queueName);
+            var module = new SendMessageModule((context, s) => new FileQueueWriterFactory(directory), directory.AccountName, queueName);
             config(module);
             _funqlets += module.Configure;
         }

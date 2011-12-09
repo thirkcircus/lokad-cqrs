@@ -52,7 +52,7 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
 
         public void DispatchToRoute(Func<ImmutableEnvelope, string> route)
         {
-            DispatcherIs(ctx => new DispatchMessagesToRoute(ctx.Resolve<QueueWriterRegistry>(), route));
+            DispatcherIs(ctx => new DispatchMessagesToRoute(ctx.Resolve<QueueWriterRegistry>(), route, ctx.Resolve<IEnvelopeStreamer>()));
         }
 
         IEngineProcess BuildConsumingProcess(Container context)

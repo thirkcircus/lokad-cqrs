@@ -6,13 +6,11 @@ namespace Lokad.Cqrs.Feature.FilePartition
     public sealed class FileQueueWriterFactory : IQueueWriterFactory
     {
         readonly FileStorageConfig _account;
-        readonly IEnvelopeStreamer _streamer;
         readonly string _endpoint;
 
-        public FileQueueWriterFactory(FileStorageConfig account, IEnvelopeStreamer streamer)
+        public FileQueueWriterFactory(FileStorageConfig account)
         {
             _account = account;
-            _streamer = streamer;
             _endpoint = _account.AccountName;
         }
 
@@ -29,7 +27,7 @@ namespace Lokad.Cqrs.Feature.FilePartition
                 Directory.CreateDirectory(full);
             }
             return
-                new FileQueueWriter(new DirectoryInfo(full), queueName, _streamer);
+                new FileQueueWriter(new DirectoryInfo(full), queueName);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace Lokad.Cqrs.Build.Engine
 
         public void AddFileSender(FileStorageConfig config, string queueName, Action<SendMessageModule> configure)
         {
-            var module = new SendMessageModule((context, endpoint) => new FileQueueWriterFactory(config, context.Resolve<IEnvelopeStreamer>()), config.AccountName, queueName);
+            var module = new SendMessageModule((context, endpoint) => new FileQueueWriterFactory(config), config.AccountName, queueName);
             configure(module);
             _modules += module.Configure;
         }
