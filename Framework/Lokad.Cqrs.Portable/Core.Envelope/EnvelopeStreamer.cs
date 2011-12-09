@@ -7,7 +7,6 @@
 
 using System;
 using System.IO;
-using System.Text;
 
 //using ProtoBuf;
 
@@ -15,9 +14,6 @@ namespace Lokad.Cqrs.Core.Envelope
 {
     public sealed class EnvelopeStreamer : IEnvelopeStreamer
     {
-        const string ReferenceSignature = "[cqrs-ref-r1]";
-        static readonly byte[] Reference = Encoding.Unicode.GetBytes(ReferenceSignature);
-
         readonly IEnvelopeSerializer _envelopeSerializer;
         readonly IDataSerializer _dataSerializer;
 
@@ -26,20 +22,6 @@ namespace Lokad.Cqrs.Core.Envelope
             _envelopeSerializer = envelopeSerializer;
             _dataSerializer = dataSerializer;
         }
-
-        public byte[] SaveEnvelopeReference(EnvelopeReference reference)
-        {
-            // important to use \r\n
-            var builder = new StringBuilder();
-            builder
-                .Append("[cqrs-ref-r1]\r\n")
-                .Append(reference.EnvelopeId).Append("\r\n")
-                .Append(reference.StorageContainer).Append("\r\n")
-                .Append(reference.StorageReference);
-
-            return Encoding.Unicode.GetBytes(builder.ToString());
-        }
-
 
         public byte[] SaveEnvelopeData(ImmutableEnvelope envelope)
         {
@@ -99,32 +81,7 @@ namespace Lokad.Cqrs.Core.Envelope
             }
         }
 
-        public bool TryReadAsEnvelopeReference(byte[] buffer, out EnvelopeReference reference)
-        {
-            if (BytesStart(buffer, Reference))
-            {
-                var text = Encoding.Unicode.GetString(buffer);
-                var args = text.Split(new[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
-                reference = new EnvelopeReference(args[1], args[2], args[3]);
-                return true;
-            }
-            reference = null;
-            return false;
-        }
-
-        static bool BytesStart(byte[] buffer, byte[] signature)
-        {
-            if (buffer.Length < signature.Length)
-                return false;
-
-            for (int i = 0; i < signature.Length; i++)
-            {
-                if (buffer[i] != signature[i])
-                    return false;
-            }
-
-            return true;
-        }
+  
 
 
         public ImmutableEnvelope ReadAsEnvelopeData(byte[] buffer)

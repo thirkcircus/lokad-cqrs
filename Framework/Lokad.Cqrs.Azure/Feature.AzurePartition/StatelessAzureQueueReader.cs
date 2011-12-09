@@ -102,7 +102,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             var buffer = message.AsBytes;
 
             EnvelopeReference reference;
-            if (_streamer.TryReadAsEnvelopeReference(buffer, out reference))
+            if (AzureMessageOverflows.TryReadAsEnvelopeReference(buffer, out reference))
             {
                 if (reference.StorageContainer != _cloudBlob.Uri.ToString())
                     throw new InvalidOperationException("Wrong container used!");

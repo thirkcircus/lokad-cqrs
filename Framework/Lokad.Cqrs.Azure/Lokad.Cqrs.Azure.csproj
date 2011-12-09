@@ -58,6 +58,7 @@
     <Compile Include="ExtendCqrsClientBuilder.cs" />
     <Compile Include="AzureStorage.cs" />
     <Compile Include="Feature.AtomicStorage\AtomicStorageSerializerWithProtoBuf.cs" />
+    <Compile Include="Feature.AzurePartition\AzureMessageOverflows.cs" />
     <Compile Include="Feature.TapeStorage\BlobRecordUtil.cs" />
     <Compile Include="Feature.TapeStorage\BlockBlobTapeStorageFactory.cs" />
     <Compile Include="Feature.TapeStorage\BlockBlobTapeStream.cs" />

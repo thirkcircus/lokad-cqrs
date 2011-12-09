@@ -20,14 +20,10 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             _queue.AddMessage(packed);
         }
 
-        // New azure limit is 64k after BASE 64 conversion. We Are adding 152 on top just to be safe
-        const int CloudQueueLimit = 49000;
-
-
         CloudQueueMessage PrepareCloudMessage(ImmutableEnvelope builder)
         {
             var buffer = _streamer.SaveEnvelopeData(builder);
-            if (buffer.Length < CloudQueueLimit)
+            if (buffer.Length < AzureMessageOverflows.CloudQueueLimit)
             {
                 // write message to queue
                 return new CloudQueueMessage(buffer);
@@ -36,7 +32,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             var referenceId = DateTimeOffset.UtcNow.ToString(DateFormatInBlobName) + "-" + builder.EnvelopeId;
             _cloudBlob.GetBlobReference(referenceId).UploadByteArray(buffer);
             var reference = new EnvelopeReference(builder.EnvelopeId, _cloudBlob.Uri.ToString(), referenceId);
-            var blob = _streamer.SaveEnvelopeReference(reference);
+            var blob = AzureMessageOverflows.SaveEnvelopeReference(reference);
             return new CloudQueueMessage(blob);
         }
 
