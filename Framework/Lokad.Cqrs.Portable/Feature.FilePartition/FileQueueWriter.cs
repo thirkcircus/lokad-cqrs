@@ -15,28 +15,25 @@ namespace Lokad.Cqrs.Feature.FilePartition
     public sealed class FileQueueWriter : IQueueWriter
     {
         readonly DirectoryInfo _folder;
-        readonly IEnvelopeStreamer _streamer;
 
         public string Name { get; private set; }
         public readonly string Suffix ;
 
-        public FileQueueWriter(DirectoryInfo folder, string name, IEnvelopeStreamer streamer)
+        public FileQueueWriter(DirectoryInfo folder, string name)
         {
             _folder = folder;
-            _streamer = streamer;
             Name = name;
             Suffix = Guid.NewGuid().ToString().Substring(0, 4);
         }
 
             static long UniversalCounter;
 
-            public void PutMessage(ImmutableEnvelope envelope)
+            public void PutMessage(byte[] envelope)
             {
                 var id = Interlocked.Increment(ref UniversalCounter);
-                var fileName = string.Format("{0:yyyy-MM-dd-HH-mm-ss}-{1:00000000}-{2}", envelope.CreatedOnUtc, id, Suffix);
+                var fileName = string.Format("{0:yyyy-MM-dd-HH-mm-ss}-{1:00000000}-{2}", DateTime.UtcNow, id, Suffix);
                 var full = Path.Combine(_folder.FullName, fileName);
-                var data = _streamer.SaveEnvelopeData(envelope);
-                File.WriteAllBytes(full, data);
+                File.WriteAllBytes(full, envelope);
             }
     }
 }

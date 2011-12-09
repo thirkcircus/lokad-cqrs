@@ -17,7 +17,7 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
     /// </summary>
     public sealed class MemoryPartitionInbox : IPartitionInbox
     {
-        readonly BlockingCollection<ImmutableEnvelope>[] _queues;
+        readonly BlockingCollection<byte[]>[] _queues;
         readonly string[] _names;
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
         /// </summary>
         /// <param name="queues">The queues.</param>
         /// <param name="names">Names for these queues.</param>
-        public MemoryPartitionInbox(BlockingCollection<ImmutableEnvelope>[] queues, string[] names)
+        public MemoryPartitionInbox(BlockingCollection<byte[]>[] queues, string[] names)
         {
             _queues = queues;
             _names = names;
@@ -47,8 +47,8 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
                 // if incoming message is delayed and in future -> push it to the timer queue.
                 // timer will be responsible for publishing back.
 
-                ImmutableEnvelope envelope;
-                var result = BlockingCollection<ImmutableEnvelope>.TakeFromAny(_queues, out envelope);
+                byte[] envelope;
+                var result = BlockingCollection<byte[]>.TakeFromAny(_queues, out envelope);
                 if (result >= 0)
                 {
                     context = new EnvelopeTransportContext(result, envelope, _names[result]);

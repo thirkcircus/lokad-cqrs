@@ -111,7 +111,7 @@ namespace Lokad.Cqrs.Feature.FilePartition
             var inbox = new FilePartitionInbox(queues, _decayPolicy);
             var quarantine = _quarantineFactory(context);
             var manager = context.Resolve<MessageDuplicationManager>();
-            var transport = new DispatcherProcess(log, dispatcher, inbox, quarantine, manager);
+            var transport = new DispatcherProcess(log, dispatcher, inbox, quarantine, manager, streamer);
 
 
             return transport;

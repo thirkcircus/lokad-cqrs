@@ -65,7 +65,8 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
 
             var quarantine = _quarantineFactory(context);
             var manager = context.Resolve<MessageDuplicationManager>();
-            var transport = new DispatcherProcess(log, dispatcher, notifier, quarantine, manager);
+            var streamer = context.Resolve<IEnvelopeStreamer>();
+            var transport = new DispatcherProcess(log, dispatcher, notifier, quarantine, manager, streamer);
            
             return transport;
         }

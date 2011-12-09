@@ -16,13 +16,11 @@ namespace Lokad.Cqrs.Core.Inbox
         public readonly object TransportMessage;
         public readonly byte[] Unpacked;
         public readonly string QueueName;
-        public readonly string EnvelopeId;
 
-        public EnvelopeTransportContext(object transportMessage, byte[] unpacked, string queueName, string envelopeId)
+        public EnvelopeTransportContext(object transportMessage, byte[] unpacked, string queueName)
         {
             TransportMessage = transportMessage;
             QueueName = queueName;
-            EnvelopeId = envelopeId;
             Unpacked = unpacked;
         }
     }

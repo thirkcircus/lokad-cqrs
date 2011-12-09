@@ -26,12 +26,13 @@ namespace Lokad.Cqrs.Core.Dispatch
         /// <param name="ex">The exception.</param>
         /// <returns><em>True</em> if envelope should be quarantined right away (i.e. exception happened 4 times)
         /// and is not excepted to be processed by the queue any more; <em>False</em> otherwise</returns>
-        bool TryToQuarantine(EnvelopeTransportContext context, Exception ex);
+        bool TryToQuarantine(EnvelopeTransportContext context, ImmutableEnvelope optionalEnvelope, Exception ex);
+
         /// <summary>
         /// Tries to release envelope record from the partial or full quarantine (I.e.: when message
         /// has been successfully processed and quarantine can forget about it forever).
         /// </summary>
         /// <param name="context">The envelope transport context.</param>
-        void TryRelease(EnvelopeTransportContext context);
+        void TryRelease(ImmutableEnvelope context);
     }
 }

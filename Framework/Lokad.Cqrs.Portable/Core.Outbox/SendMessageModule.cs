@@ -77,7 +77,8 @@ namespace Lokad.Cqrs.Core.Outbox
             
             var factory = registry.GetOrAdd(_endpoint, s => _construct(c, s));
             var queues = _queueNames.Select(factory.GetWriteQueue).ToArray();
-            return new DefaultMessageSender(queues, observer, _keyGenerator);
+            var streamer = c.Resolve<IEnvelopeStreamer>();
+            return new DefaultMessageSender(queues, observer, _keyGenerator, streamer);
 
         }
 

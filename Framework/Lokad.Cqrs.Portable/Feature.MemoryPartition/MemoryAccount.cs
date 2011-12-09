@@ -6,13 +6,13 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
 {
     public sealed class MemoryAccount
     {
-        readonly ConcurrentDictionary<string, BlockingCollection<ImmutableEnvelope>> _delivery =
-            new ConcurrentDictionary<string, BlockingCollection<ImmutableEnvelope>>();
+        readonly ConcurrentDictionary<string, BlockingCollection<byte[]>> _delivery =
+            new ConcurrentDictionary<string, BlockingCollection<byte[]>>();
 
         public MemoryPartitionInbox GetMemoryInbox(string[] queueNames)
         {
             var queues = queueNames
-                .Select(n => _delivery.GetOrAdd(n, s => new BlockingCollection<ImmutableEnvelope>()))
+                .Select(n => _delivery.GetOrAdd(n, s => new BlockingCollection<byte[]>()))
                 .ToArray();
 
             return new MemoryPartitionInbox(queues, queueNames);
@@ -21,7 +21,7 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
         public IQueueWriter GetWriteQueue(string queueName)
         {
             return
-                new MemoryQueueWriter(_delivery.GetOrAdd(queueName, s => new BlockingCollection<ImmutableEnvelope>()), queueName);
+                new MemoryQueueWriter(_delivery.GetOrAdd(queueName, s => new BlockingCollection<byte[]>()), queueName);
         }
 
 

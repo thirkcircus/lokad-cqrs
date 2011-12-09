@@ -19,7 +19,7 @@ namespace Lokad.Cqrs.Core.Dispatch.Events
 
         public override string ToString()
         {
-            return string.Format("Failed to recover dispatch '{0}' from '{1}': {2}", Envelope.EnvelopeId, QueueName, DispatchException.Message);
+            return string.Format("Failed to recover dispatch '{0}' from '{1}': {2}", Envelope.TransportMessage, QueueName, DispatchException.Message);
         }
     }
 }

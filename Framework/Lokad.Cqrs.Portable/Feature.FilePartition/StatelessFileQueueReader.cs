@@ -49,14 +49,10 @@ namespace Lokad.Cqrs.Feature.FilePartition
 
             try
             {
-                using (var stream = message.OpenRead())
-                using (var mem = new MemoryStream())
-                {
-                    stream.CopyTo(mem);
-                    var envelope = _streamer.ReadAsEnvelopeData(mem.ToArray());
-                    var unpacked = new EnvelopeTransportContext(message, envelope, _queueName);
-                    return GetEnvelopeResult.Success(unpacked);
-                }
+                var buffer = File.ReadAllBytes(message.FullName);
+
+                var unpacked = new EnvelopeTransportContext(message, buffer, _queueName);
+                return GetEnvelopeResult.Success(unpacked);
             }
             catch (IOException ex)
             {

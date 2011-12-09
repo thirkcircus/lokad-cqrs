@@ -18,12 +18,14 @@ namespace Lokad.Cqrs.Core.Outbox
         readonly IQueueWriter[] _queues;
         readonly ISystemObserver _observer;
         readonly Func<string> _idGenerator;
+        readonly IEnvelopeStreamer _streamer;
 
-        public DefaultMessageSender(IQueueWriter[] queues, ISystemObserver observer, Func<string> idGenerator)
+        public DefaultMessageSender(IQueueWriter[] queues, ISystemObserver observer, Func<string> idGenerator, IEnvelopeStreamer streamer)
         {
             _queues = queues;
             _observer = observer;
             _idGenerator = idGenerator;
+            _streamer = streamer;
 
             if (queues.Length == 0)
                 throw new InvalidOperationException("There should be at least one queue");
@@ -76,10 +78,11 @@ namespace Lokad.Cqrs.Core.Outbox
             var envelope = builder.Build();
 
             var queue = GetOutboundQueue();
+            var data = _streamer.SaveEnvelopeData(envelope);
 
             if (Transaction.Current == null)
             {
-                queue.PutMessage(envelope);
+                queue.PutMessage(data);
 
                 _observer.Notify(new EnvelopeSent(queue.Name, envelope.EnvelopeId, false,
                     envelope.Items.Select(x => x.MappedType.Name).ToArray(), envelope.GetAllAttributes()));
@@ -88,7 +91,7 @@ namespace Lokad.Cqrs.Core.Outbox
             {
                 var action = new CommitActionEnlistment(() =>
                     {
-                        queue.PutMessage(envelope);
+                        queue.PutMessage(data);
                         _observer.Notify(new EnvelopeSent(queue.Name, envelope.EnvelopeId, true,
                             envelope.Items.Select(x => x.MappedType.Name).ToArray(), envelope.GetAllAttributes()));
                     });

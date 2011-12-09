@@ -12,17 +12,17 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
 {
     public sealed class MemoryQueueWriter : IQueueWriter
     {
-        readonly BlockingCollection<ImmutableEnvelope> _queue;
+        readonly BlockingCollection<byte[]> _queue;
 
         public string Name { get; private set; }
 
-        public MemoryQueueWriter(BlockingCollection<ImmutableEnvelope> queue, string name)
+        public MemoryQueueWriter(BlockingCollection<byte[]> queue, string name)
         {
             _queue = queue;
             Name = name;
         }
 
-        public void PutMessage(ImmutableEnvelope envelope)
+        public void PutMessage(byte[] envelope)
         {
             _queue.Add(envelope);
         }

@@ -110,23 +110,25 @@ namespace Lokad.Cqrs.Core.Dispatch
             }
         }
 
-        void ProcessMessage(EnvelopeTransportContext context) 
+        void ProcessMessage(EnvelopeTransportContext context)
         {
-            var processed = false;
+            var dispatched = false;
+            ImmutableEnvelope envelope = null;
             try
             {
-                if (_memory.DoWeRemember(context.EnvelopeId))
+                envelope = _streamer.ReadAsEnvelopeData(context.Unpacked);
+
+                if (_memory.DoWeRemember(envelope.EnvelopeId))
                 {
-                    _observer.Notify(new EnvelopeDuplicateDiscarded(context.QueueName, context.EnvelopeId));
+                    _observer.Notify(new EnvelopeDuplicateDiscarded(context.QueueName, envelope.EnvelopeId));
                 }
                 else
                 {
-                    var envelope = _streamer.ReadAsEnvelopeData(context.Unpacked);
                     _dispatcher(envelope);
-                    _memory.Memorize(context.EnvelopeId);
+                    _memory.Memorize(envelope.EnvelopeId);
                 }
 
-                processed = true;
+                dispatched = true;
             }
             catch (ThreadAbortException)
             {
@@ -140,7 +142,9 @@ namespace Lokad.Cqrs.Core.Dispatch
 
                 _observer.Notify(new EnvelopeDispatchFailed(context, context.QueueName, dispatchEx));
                 // quarantine is atomic with the processing
-                if (_quarantine.TryToQuarantine(context, dispatchEx))
+
+
+                if (_quarantine.TryToQuarantine(context, envelope, dispatchEx))
                 {
                     _observer.Notify(new EnvelopeQuarantined(dispatchEx, context, context.QueueName));
                     // acking message is the last step!
@@ -151,17 +155,18 @@ namespace Lokad.Cqrs.Core.Dispatch
                     _inbox.TryNotifyNack(context);
                 }
             }
+            if (!dispatched)
+                return;
             try
             {
-                if (processed)
-                {
-                    // 1st step - dequarantine, if present
-                    _quarantine.TryRelease(context);
-                    // 2nd step - ack.
-                    _inbox.AckMessage(context);
-                    // 3rd - notify.
-                    _observer.Notify(new EnvelopeAcked(context.QueueName, context.EnvelopeId, context));
-                }
+
+                // 1st step - dequarantine, if present
+                _quarantine.TryRelease(envelope);
+                // 2nd step - ack.
+                _inbox.AckMessage(context);
+                // 3rd - notify.
+                _observer.Notify(new EnvelopeAcked(context.QueueName, envelope.EnvelopeId, context));
+
             }
             catch (ThreadAbortException)
             {
@@ -170,7 +175,7 @@ namespace Lokad.Cqrs.Core.Dispatch
             catch (Exception ex)
             {
                 // not a big deal. Message will be processed again.
-                _observer.Notify(new EnvelopeAckFailed(ex, context.EnvelopeId, context.QueueName));
+                _observer.Notify(new EnvelopeAckFailed(ex, envelope.EnvelopeId, context.QueueName));
             }
         }
     }
