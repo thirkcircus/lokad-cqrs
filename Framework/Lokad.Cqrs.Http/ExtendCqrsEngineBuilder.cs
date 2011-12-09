@@ -23,7 +23,7 @@ namespace Lokad.Cqrs
             builder.Advanced.ConfigureContainer(c =>
                 {
                     var instances = handlers.Select(x => x(c));
-                    builder.Advanced.Setup.AddProcess(new Listener(environment, builder.Setup.Observer, instances));
+                    builder.Setup.AddProcess(new Listener(environment, builder.Setup.Observer, instances));
                 });
         }
     }

@@ -74,7 +74,7 @@ namespace Snippets.HttpEndpoint
                     }
                 })));
             
-            builder.Advanced.ConfigureContainer(c => builder.Advanced.Setup.AddProcess(
+            builder.Advanced.ConfigureContainer(c => builder.Setup.AddProcess(
                 new HeatMapGenerateTask(
                     c.Resolve<IAtomicReader<unit, PointsView>>(),
                     c.Resolve<IAtomicWriter<unit, HeatMapView>>()

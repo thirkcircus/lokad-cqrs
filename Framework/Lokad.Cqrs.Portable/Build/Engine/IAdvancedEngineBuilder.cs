@@ -26,7 +26,6 @@ namespace Lokad.Cqrs.Build.Engine
         /// Gets the list of system observers to be used by the engine.
         /// </summary>
         IList<IObserver<ISystemEvent>> Observers { get; }
-        EngineSetup Setup { get; }
         /// <summary>
         /// Allows to specify custom serializer for message envelopes (headers and transport information)
         /// </summary>
