@@ -1,8 +1,10 @@
-﻿using System.Threading;
+﻿using System.Runtime.Serialization;
+using System.Threading;
 using Lokad.Cqrs.Build;
 using Lokad.Cqrs.Build.Engine;
 using Lokad.Cqrs.Core.Dispatch.Events;
 using Lokad.Cqrs.Core.Reactive;
+using Lokad.Cqrs.Feature.HandlerClasses;
 using NUnit.Framework;
 
 namespace Lokad.Cqrs.Synthetic
@@ -12,8 +14,8 @@ namespace Lokad.Cqrs.Synthetic
     {
         // ReSharper disable InconsistentNaming
 
-
-        public sealed class Message
+        [DataContract]
+        public sealed class Message : IMessage
         {
             
         }
