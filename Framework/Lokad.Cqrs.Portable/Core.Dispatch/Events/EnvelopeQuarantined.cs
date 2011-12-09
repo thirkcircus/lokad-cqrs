@@ -1,4 +1,5 @@
 ﻿using System;
+using Lokad.Cqrs.Core.Inbox;
 
 namespace Lokad.Cqrs.Core.Dispatch.Events
 {
@@ -6,10 +7,10 @@ namespace Lokad.Cqrs.Core.Dispatch.Events
     public sealed class EnvelopeQuarantined : ISystemEvent
     {
         public Exception LastException { get; private set; }
-        public ImmutableEnvelope Envelope { get; private set; }
+        public EnvelopeTransportContext Envelope { get; private set; }
         public string QueueName { get; private set; }
 
-        public EnvelopeQuarantined(Exception lastException, ImmutableEnvelope envelope, string queueName)
+        public EnvelopeQuarantined(Exception lastException, EnvelopeTransportContext envelope, string queueName)
         {
             LastException = lastException;
             Envelope = envelope;

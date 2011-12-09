@@ -14,13 +14,15 @@ namespace Lokad.Cqrs.Core.Inbox
     public sealed class EnvelopeTransportContext
     {
         public readonly object TransportMessage;
-        public readonly ImmutableEnvelope Unpacked;
+        public readonly byte[] Unpacked;
         public readonly string QueueName;
+        public readonly string EnvelopeId;
 
-        public EnvelopeTransportContext(object transportMessage, ImmutableEnvelope unpacked, string queueName)
+        public EnvelopeTransportContext(object transportMessage, byte[] unpacked, string queueName, string envelopeId)
         {
             TransportMessage = transportMessage;
             QueueName = queueName;
+            EnvelopeId = envelopeId;
             Unpacked = unpacked;
         }
     }

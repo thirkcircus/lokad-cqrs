@@ -8,7 +8,6 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Transactions;
 using Lokad.Cqrs.Core.Dispatch.Events;
 using Lokad.Cqrs.Core.Inbox;
 
@@ -24,16 +23,19 @@ namespace Lokad.Cqrs.Core.Dispatch
         readonly ISystemObserver _observer;
         readonly IPartitionInbox _inbox;
         readonly IEnvelopeQuarantine _quarantine;
+        readonly IEnvelopeStreamer _streamer;
 
         public DispatcherProcess(
             ISystemObserver observer,
             Action<ImmutableEnvelope> dispatcher, 
             IPartitionInbox inbox,
             IEnvelopeQuarantine quarantine,
-            MessageDuplicationManager manager)
+            MessageDuplicationManager manager, 
+            IEnvelopeStreamer streamer)
         {
             _dispatcher = dispatcher;
             _quarantine = quarantine;
+            _streamer = streamer;
             _observer = observer;
             _inbox = inbox;
             _memory = manager.GetOrAdd(this);
@@ -101,7 +103,7 @@ namespace Lokad.Cqrs.Core.Dispatch
                     }
                     catch(Exception ex)
                     {
-                        var e = new DispatchRecoveryFailed(ex, context.Unpacked, context.QueueName);
+                        var e = new DispatchRecoveryFailed(ex, context, context.QueueName);
                         _observer.Notify(e);
                     }
                 }
@@ -113,14 +115,15 @@ namespace Lokad.Cqrs.Core.Dispatch
             var processed = false;
             try
             {
-                if (_memory.DoWeRemember(context.Unpacked.EnvelopeId))
+                if (_memory.DoWeRemember(context.EnvelopeId))
                 {
-                    _observer.Notify(new EnvelopeDuplicateDiscarded(context.QueueName, context.Unpacked.EnvelopeId));
+                    _observer.Notify(new EnvelopeDuplicateDiscarded(context.QueueName, context.EnvelopeId));
                 }
                 else
                 {
-                    _dispatcher(context.Unpacked);
-                    _memory.Memorize(context.Unpacked.EnvelopeId);
+                    var envelope = _streamer.ReadAsEnvelopeData(context.Unpacked);
+                    _dispatcher(envelope);
+                    _memory.Memorize(context.EnvelopeId);
                 }
 
                 processed = true;
@@ -135,11 +138,11 @@ namespace Lokad.Cqrs.Core.Dispatch
                 // if the code below fails, it will just cause everything to be reprocessed later,
                 // which is OK (duplication manager will handle this)
 
-                _observer.Notify(new EnvelopeDispatchFailed(context.Unpacked, context.QueueName, dispatchEx));
+                _observer.Notify(new EnvelopeDispatchFailed(context, context.QueueName, dispatchEx));
                 // quarantine is atomic with the processing
                 if (_quarantine.TryToQuarantine(context, dispatchEx))
                 {
-                    _observer.Notify(new EnvelopeQuarantined(dispatchEx, context.Unpacked, context.QueueName));
+                    _observer.Notify(new EnvelopeQuarantined(dispatchEx, context, context.QueueName));
                     // acking message is the last step!
                     _inbox.AckMessage(context);
                 }
@@ -157,7 +160,7 @@ namespace Lokad.Cqrs.Core.Dispatch
                     // 2nd step - ack.
                     _inbox.AckMessage(context);
                     // 3rd - notify.
-                    _observer.Notify(new EnvelopeAcked(context.QueueName, context.Unpacked.EnvelopeId, context.Unpacked.GetAllAttributes()));
+                    _observer.Notify(new EnvelopeAcked(context.QueueName, context.EnvelopeId, context));
                 }
             }
             catch (ThreadAbortException)
@@ -167,7 +170,7 @@ namespace Lokad.Cqrs.Core.Dispatch
             catch (Exception ex)
             {
                 // not a big deal. Message will be processed again.
-                _observer.Notify(new EnvelopeAckFailed(ex, context.Unpacked.EnvelopeId, context.QueueName));
+                _observer.Notify(new EnvelopeAckFailed(ex, context.EnvelopeId, context.QueueName));
             }
         }
     }
