@@ -109,8 +109,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
                 var blob = _cloudBlob.GetBlobReference(reference.StorageReference);
                 buffer = blob.DownloadByteArray();
             }
-            var m = _streamer.ReadAsEnvelopeData(buffer);
-            return new EnvelopeTransportContext(message, m, _queueName);
+            return new EnvelopeTransportContext(message, buffer, _queueName);
         }
 
 

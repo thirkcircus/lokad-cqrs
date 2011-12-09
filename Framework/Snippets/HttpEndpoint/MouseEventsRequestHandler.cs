@@ -1,4 +1,4 @@
-#region (c) 2010-2011 Lokad CQRS - New BSD License
+#region (c) 2010-2011 Lokad CQRS - New BSD License 
 
 // Copyright (c) Lokad SAS 2010-2011 (http://www.lokad.com)
 // This code is released as Open Source under the terms of the New BSD Licence
@@ -20,19 +20,21 @@ namespace Snippets.HttpEndpoint
 {
     public sealed class MouseEventsRequestHandler : AbstractHttpRequestHandler
     {
-        private readonly IQueueWriter _writer;
-        private readonly IDataSerializer _serializer;
+        readonly IQueueWriter _writer;
+        readonly IDataSerializer _serializer;
+        readonly IEnvelopeStreamer _streamer;
 
-        public MouseEventsRequestHandler(IQueueWriter writer, IDataSerializer serializer)
+        public MouseEventsRequestHandler(IQueueWriter writer, IDataSerializer serializer, IEnvelopeStreamer streamer)
         {
             _writer = writer;
             _serializer = serializer;
+            _streamer = streamer;
         }
 
         public override void Handle(IHttpContext context)
         {
             var contract = context.GetRequestUrl().Remove(0, "/mouseevents/".Length);
-            
+
             var envelopeBuilder = new EnvelopeBuilder(contract + " - " + DateTime.Now.Ticks.ToString());
 
             Type contractType;
@@ -47,7 +49,7 @@ namespace Snippets.HttpEndpoint
             var mouseEvent = JsonSerializer.DeserializeFromString(decodedData, contractType);
 
             envelopeBuilder.AddItem(mouseEvent);
-            _writer.PutMessage(envelopeBuilder.Build());
+            _writer.PutMessage(_streamer.SaveEnvelopeData(envelopeBuilder.Build()));
 
             context.SetStatusTo(HttpStatusCode.OK);
         }
@@ -59,7 +61,7 @@ namespace Snippets.HttpEndpoint
 
         public override string[] SupportedVerbs
         {
-            get { return new[] { "GET", "POST" }; }
+            get { return new[] {"GET", "POST"}; }
         }
     }
 }

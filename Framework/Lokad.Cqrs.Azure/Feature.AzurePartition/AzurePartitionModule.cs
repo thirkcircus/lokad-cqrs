@@ -97,7 +97,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
 
         public void DispatchToRoute(Func<ImmutableEnvelope, string> route)
         {
-            DispatcherIs((ctx) => new DispatchMessagesToRoute(ctx.Resolve<QueueWriterRegistry>(), route));
+            DispatcherIs((ctx) => new DispatchMessagesToRoute(ctx.Resolve<QueueWriterRegistry>(), route, ctx.Resolve<IEnvelopeStreamer>()));
         }
 
         IEngineProcess BuildConsumingProcess(Container context)
@@ -112,7 +112,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             var notifier = factory.GetNotifier(_queueNames.ToArray());
             var quarantine = _quarantineFactory(context);
             var manager = context.Resolve<MessageDuplicationManager>();
-            var transport = new DispatcherProcess(log, dispatcher, notifier, quarantine, manager);
+            var transport = new DispatcherProcess(log, dispatcher, notifier, quarantine, manager, streamer);
             return transport;
         }
 

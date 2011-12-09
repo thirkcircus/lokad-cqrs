@@ -84,7 +84,7 @@ namespace Snippets.SimpleEventSourcing
             {
                 var builder = new EnvelopeBuilder(envelopeId + "-" + i);
                 builder.Items.Add(then[i]);
-                queue.PutMessage(builder.Build());
+                queue.PutMessage(serializer.SaveEnvelopeData(builder.Build()));
             }
         }
     }

@@ -135,10 +135,10 @@ namespace Lokad.Cqrs
                     }
 
 
-                    if (ea.Attributes.Any(ia => ia.Key == "last"))
-                    {
-                        token.Cancel();
-                    }
+                    //if (ea.Attributes.Any(ia => ia.Key == "last"))
+                    //{
+                    //    token.Cancel();
+                    //}
                 }))
 
                 using (var engine = builder.Build())

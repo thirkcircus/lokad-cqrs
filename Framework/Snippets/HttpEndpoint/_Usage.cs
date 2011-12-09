@@ -118,7 +118,7 @@ namespace Snippets.HttpEndpoint
         private static IHttpRequestHandler ConfigureMyCommandSender(Container c)
         {
             var writer = c.Resolve<QueueWriterRegistry>().GetOrThrow("memory").GetWriteQueue("inbox");
-            return new MouseEventsRequestHandler(writer, c.Resolve<IDataSerializer>());
+            return new MouseEventsRequestHandler(writer, c.Resolve<IDataSerializer>(), c.Resolve<IEnvelopeStreamer>());
         }
     }
 }

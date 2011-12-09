@@ -24,7 +24,6 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             var builder = new StringBuilder();
             builder
                 .Append("[cqrs-ref-r1]\r\n")
-                .Append(reference.EnvelopeId).Append("\r\n")
                 .Append(reference.StorageContainer).Append("\r\n")
                 .Append(reference.StorageReference);
 
@@ -37,7 +36,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             {
                 var text = Encoding.Unicode.GetString(buffer);
                 var args = text.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-                reference = new EnvelopeReference(args[1], args[2], args[3]);
+                reference = new EnvelopeReference(args[1], args[2]);
                 return true;
             }
             reference = null;

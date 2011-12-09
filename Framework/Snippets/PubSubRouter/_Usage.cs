@@ -103,7 +103,7 @@ namespace Snippets.PubSubRouter
             {
                 throw new InvalidOperationException("Failed to get queue: memory");
             }
-            return new PubSubRouter(storage, factory);
+            return new PubSubRouter(storage, factory, arg.Resolve<IEnvelopeStreamer>());
         }
     }
 }

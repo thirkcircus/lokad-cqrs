@@ -23,7 +23,7 @@ namespace Snippets.PubSubRouter
     class PubSubRouter : ISingleThreadMessageDispatcher
     {
         readonly NuclearStorage _storage;
-
+        readonly IEnvelopeStreamer _streamer;
 
         public void DispatchMessage(ImmutableEnvelope message)
         {
@@ -50,7 +50,7 @@ namespace Snippets.PubSubRouter
             // replace with your logic to detect commands.
             if (message.Items.All(m => m.Content is Define.Command))
             {
-                _queueFactory.GetWriteQueue("commands").PutMessage(message);
+                _queueFactory.GetWriteQueue("commands").PutMessage(_streamer.SaveEnvelopeData(message));
                 return;
             }
             if (message.Items.All(m => m.Content is Define.Event))
@@ -116,10 +116,11 @@ To unsubscribe:
         readonly IList<Tuple<Regex, ICollection<string>>> _routing = new List<Tuple<Regex, ICollection<string>>>();
         readonly IQueueWriterFactory _queueFactory;
 
-        public PubSubRouter(NuclearStorage storage, IQueueWriterFactory queueFactory)
+        public PubSubRouter(NuclearStorage storage, IQueueWriterFactory queueFactory, IEnvelopeStreamer streamer)
         {
             _storage = storage;
             _queueFactory = queueFactory;
+            _streamer = streamer;
         }
 
 
@@ -145,7 +146,7 @@ event sourcing messages, break them into the separate envelopes.");
             // and duplicates will be handled by the infrastructure
             foreach (var queue in queues)
             {
-                queue.PutMessage(e);
+                queue.PutMessage(_streamer.SaveEnvelopeData(e));
             }
         }
 
