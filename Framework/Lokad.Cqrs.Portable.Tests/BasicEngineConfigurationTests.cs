@@ -61,9 +61,9 @@ namespace Lokad.Cqrs
             config(builder);
             int i = 0;
             using (var t = new CancellationTokenSource())
-            using (builder.When<EnvelopeAcked>(ea =>
+            using (builder.When<MessageAcked>(ea =>
                 {
-                    if (ea.QueueName != "do")
+                    if (ea.Context.QueueName != "do")
                         return;
                     if (i++ >= 5)
                         t.Cancel();

@@ -8,13 +8,12 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using Lokad.Cqrs.Build.Engine;
 using Lokad.Cqrs.Core;
 using Lokad.Cqrs.Core.Dispatch;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Evil;
-using Lokad.Cqrs.Feature.TimerService;
+using Lokad.Cqrs.Feature.MemoryPartition;
 
 namespace Lokad.Cqrs.Feature.FilePartition
 {
@@ -25,8 +24,8 @@ namespace Lokad.Cqrs.Feature.FilePartition
         Func<uint, TimeSpan> _decayPolicy;
         
         
-        HandlerFactory _dispatcher;
-        Func<Container, IEnvelopeQuarantine> _quarantineFactory;
+        Func<Container,  Action<byte[]>> _dispatcher;
+         IEnvelopeQuarantine _quarantine;
 
         /// <summary>
         /// Sets the custom decay policy used to throttle File checks, when there are no messages for some time.
@@ -57,8 +56,18 @@ namespace Lokad.Cqrs.Feature.FilePartition
             //DispatchAsEvents();
             DispatcherIsLambda(c => (envelope => {  throw new InvalidOperationException("There was no dispatcher configured");}) );
 
-            Quarantine(c => new MemoryQuarantine());
+            Quarantine(new MemoryQuarantine());
             DecayPolicy(TimeSpan.FromMilliseconds(100));
+        }
+
+        public void DispatcherIs(Func<Container, ISingleThreadMessageDispatcher> factory)
+        {
+            DispatcherIsLambda(container =>
+            {
+                var dis = factory(container);
+                dis.Init();
+                return (envelope => dis.DispatchMessage(envelope));
+            });
         }
 
         /// <summary>
@@ -67,22 +76,19 @@ namespace Lokad.Cqrs.Feature.FilePartition
         /// <param name="factory">The factory.</param>
         public void DispatcherIsLambda(HandlerFactory factory)
         {
-            _dispatcher = factory;
-        }
-        
-        public void DispatcherIs(Func<Container, ISingleThreadMessageDispatcher> factory)
-        {
             _dispatcher = container =>
-                {
-                    var d = factory(container);
-                    d.Init();
-                    return (envelope => d.DispatchMessage(envelope));
-                };
+            {
+                var d = factory(container);
+                var manager = container.Resolve<MessageDuplicationManager>();
+                var streamer = container.Resolve<IEnvelopeStreamer>();
+                var wrapper = new DispatchWrapper(d, _quarantine, manager, streamer);
+                return (buffer => wrapper.Dispatch(buffer));
+            };
         }
 
-        public void Quarantine(Func<Container, IEnvelopeQuarantine> factory)
+        public void Quarantine(IEnvelopeQuarantine factory)
         {
-            _quarantineFactory = factory;
+            _quarantine = factory;
         }
 
         public void DispatchToRoute(Func<ImmutableEnvelope, string> route)
@@ -93,25 +99,16 @@ namespace Lokad.Cqrs.Feature.FilePartition
         IEngineProcess BuildConsumingProcess(Container context)
         {
             var log = context.Resolve<ISystemObserver>();
-            var streamer = context.Resolve<IEnvelopeStreamer>();
 
             var dispatcher = _dispatcher(context);
 
             var queues = _fileQueues
                 .Select(n => Path.Combine(_fullPath.Folder.FullName, n))
                 .Select(n => new DirectoryInfo(n))
-                .Select(f => new StatelessFileQueueReader(streamer, log, new Lazy<DirectoryInfo>(() =>
-                    {
-                        var poison = Path.Combine(f.FullName, "poison");
-                        var di = new DirectoryInfo(poison);
-                        di.Create();
-                        return di;
-                    }, LazyThreadSafetyMode.ExecutionAndPublication), f, f.Name))
+                .Select(f => new StatelessFileQueueReader(log, f, f.Name))
                 .ToArray();
             var inbox = new FilePartitionInbox(queues, _decayPolicy);
-            var quarantine = _quarantineFactory(context);
-            var manager = context.Resolve<MessageDuplicationManager>();
-            var transport = new DispatcherProcess(log, dispatcher, inbox, quarantine, manager, streamer);
+            var transport = new DispatcherProcess(log, dispatcher, inbox);
 
 
             return transport;

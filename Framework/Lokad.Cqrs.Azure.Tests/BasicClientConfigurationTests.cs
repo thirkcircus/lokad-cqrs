@@ -29,7 +29,7 @@ namespace Lokad.Cqrs
             var b = new CqrsEngineBuilder();
             b.Azure(c => c.AddAzureProcess(dev, "test-publish",HandlerComposer.Empty));
             using (var source = new CancellationTokenSource())
-            using (b.When<EnvelopeAcked>(e => source.Cancel()))
+            using (b.When<MessageAcked>(e => source.Cancel()))
             using (var engine = b.Build())
             {
                 var task = engine.Start(source.Token);

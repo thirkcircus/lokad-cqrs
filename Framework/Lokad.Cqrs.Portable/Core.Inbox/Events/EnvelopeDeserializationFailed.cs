@@ -16,19 +16,18 @@ namespace Lokad.Cqrs.Core.Inbox.Events
     public sealed class EnvelopeDeserializationFailed : ISystemEvent
     {
         public Exception Exception { get; private set; }
-        public string QueueName { get; private set; }
-        public string MessageId { get; private set; }
+        public string Origin { get; private set; }
 
-        public EnvelopeDeserializationFailed(Exception exception, string queueName, string messageId)
+        public EnvelopeDeserializationFailed(Exception exception, string origin)
         {
             Exception = exception;
-            QueueName = queueName;
-            MessageId = messageId;
+            Origin = origin;
         }
+
 
         public override string ToString()
         {
-            return string.Format("Failed to deserialize '{0}' from '{1}': {2}", MessageId, QueueName, Exception.Message);
+            return string.Format("Failed to deserialize in '{0}': '{1}'", Origin, Exception.Message);
         }
     }
 }

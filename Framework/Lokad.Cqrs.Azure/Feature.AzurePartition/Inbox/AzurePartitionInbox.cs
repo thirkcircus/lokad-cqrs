@@ -45,22 +45,22 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Inbox
             }
         }
 
-        public void AckMessage(EnvelopeTransportContext envelope)
+        public void AckMessage(MessageTransportContext message)
         {
             foreach (var queue in _readers)
             {
-                if (queue.Name == envelope.QueueName)
+                if (queue.Name == message.QueueName)
                 {
-                    queue.AckMessage(envelope);
+                    queue.AckMessage(message);
                 }
             }
         }
 
-        public void TryNotifyNack(EnvelopeTransportContext context)
+        public void TryNotifyNack(MessageTransportContext context)
         {
         }
 
-        public bool TakeMessage(CancellationToken token, out EnvelopeTransportContext context)
+        public bool TakeMessage(CancellationToken token, out MessageTransportContext context)
         {
             while (!token.IsCancellationRequested)
             {
@@ -74,7 +74,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Inbox
                         case GetEnvelopeResultState.Success:
 
                             _emptyCycles = 0;
-                            context = message.Envelope;
+                            context = message.Message;
                             return true;
                         case GetEnvelopeResultState.Empty:
                             _emptyCycles += 1;

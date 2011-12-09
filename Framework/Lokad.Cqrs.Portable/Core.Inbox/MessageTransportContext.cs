@@ -11,13 +11,13 @@ namespace Lokad.Cqrs.Core.Inbox
     /// Describes retrieved message along with the queue name and some transport info.
     /// </summary>
     /// <remarks>It is used to send ACK/NACK back to the originating queue.</remarks>
-    public sealed class EnvelopeTransportContext
+    public sealed class MessageTransportContext
     {
         public readonly object TransportMessage;
         public readonly byte[] Unpacked;
         public readonly string QueueName;
 
-        public EnvelopeTransportContext(object transportMessage, byte[] unpacked, string queueName)
+        public MessageTransportContext(object transportMessage, byte[] unpacked, string queueName)
         {
             TransportMessage = transportMessage;
             QueueName = queueName;

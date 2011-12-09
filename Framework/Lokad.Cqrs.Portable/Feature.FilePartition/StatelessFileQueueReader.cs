@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using Lokad.Cqrs.Core.Dispatch.Events;
 using Lokad.Cqrs.Core.Inbox;
 using Lokad.Cqrs.Core.Inbox.Events;
 
@@ -8,10 +9,8 @@ namespace Lokad.Cqrs.Feature.FilePartition
 {
     public sealed class StatelessFileQueueReader
     {
-        readonly IEnvelopeStreamer _streamer;
         readonly ISystemObserver _observer;
 
-        readonly Lazy<DirectoryInfo> _posionQueue;
         readonly DirectoryInfo _queue;
         readonly string _queueName;
 
@@ -20,11 +19,9 @@ namespace Lokad.Cqrs.Feature.FilePartition
             get { return _queueName; }
         }
 
-        public StatelessFileQueueReader(IEnvelopeStreamer streamer, ISystemObserver observer, Lazy<DirectoryInfo> posionQueue, DirectoryInfo queue, string queueName)
+        public StatelessFileQueueReader(ISystemObserver observer, DirectoryInfo queue, string queueName)
         {
-            _streamer = streamer;
             _observer = observer;
-            _posionQueue = posionQueue;
             _queue = queue;
             _queueName = queueName;
         }
@@ -51,7 +48,7 @@ namespace Lokad.Cqrs.Feature.FilePartition
             {
                 var buffer = File.ReadAllBytes(message.FullName);
 
-                var unpacked = new EnvelopeTransportContext(message, buffer, _queueName);
+                var unpacked = new MessageTransportContext(message, buffer, _queueName);
                 return GetEnvelopeResult.Success(unpacked);
             }
             catch (IOException ex)
@@ -66,10 +63,8 @@ namespace Lokad.Cqrs.Feature.FilePartition
             }
             catch (Exception ex)
             {
-                _observer.Notify(new EnvelopeDeserializationFailed(ex, _queue.Name, message.Name));
+                _observer.Notify(new MessageInboxFailed(ex, _queue.Name,message.FullName));
                 // new poison details
-                var poisonFile = Path.Combine(_posionQueue.Value.FullName, message.Name);
-                message.MoveTo(poisonFile);
                 return GetEnvelopeResult.Retry;
             }
         }
@@ -91,11 +86,11 @@ namespace Lokad.Cqrs.Feature.FilePartition
         /// <summary>
         /// ACKs the message by deleting it from the queue.
         /// </summary>
-        /// <param name="envelope">The message context to ACK.</param>
-        public void AckMessage(EnvelopeTransportContext envelope)
+        /// <param name="message">The message context to ACK.</param>
+        public void AckMessage(MessageTransportContext message)
         {
-            if (envelope == null) throw new ArgumentNullException("message");
-            ((FileInfo)envelope.TransportMessage).Delete();
+            if (message == null) throw new ArgumentNullException("message");
+            ((FileInfo)message.TransportMessage).Delete();
         }
     }
 }

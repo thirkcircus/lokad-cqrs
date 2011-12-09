@@ -7,7 +7,7 @@ namespace Lokad.Cqrs.Core.Dispatch
     public sealed class MemoryQuarantine : IEnvelopeQuarantine
     {
         readonly ConcurrentDictionary<string,int> _failures = new ConcurrentDictionary<string, int>();
-        public bool TryToQuarantine(EnvelopeTransportContext context, ImmutableEnvelope envelope, Exception ex)
+        public bool TryToQuarantine(ImmutableEnvelope envelope, Exception ex)
         {
             // serialization problem
             if (envelope == null)
@@ -21,6 +21,11 @@ namespace Lokad.Cqrs.Core.Dispatch
             int forget;
             _failures.TryRemove(envelope.EnvelopeId, out forget);
             return true;
+        }
+
+        public void Quarantine(byte[] message, Exception ex)
+        {
+            
         }
 
         public void TryRelease(ImmutableEnvelope context)

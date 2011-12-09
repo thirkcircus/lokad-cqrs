@@ -14,28 +14,28 @@ namespace Lokad.Cqrs.Core.Inbox
         public static readonly GetEnvelopeResult Empty = new GetEnvelopeResult(null, GetEnvelopeResultState.Empty);
         public static readonly GetEnvelopeResult Retry = new GetEnvelopeResult(null, GetEnvelopeResultState.Retry);
         public readonly GetEnvelopeResultState State;
-        readonly EnvelopeTransportContext _envelope;
+        readonly MessageTransportContext _message;
 
-        GetEnvelopeResult(EnvelopeTransportContext envelope, GetEnvelopeResultState state)
+        GetEnvelopeResult(MessageTransportContext message, GetEnvelopeResultState state)
         {
-            _envelope = envelope;
+            _message = message;
             State = state;
         }
 
 
-        public EnvelopeTransportContext Envelope
+        public MessageTransportContext Message
         {
             get
             {
                 if (State != GetEnvelopeResultState.Success)
                     throw new InvalidOperationException("State should be in success");
-                return _envelope;
+                return _message;
             }
         }
 
-        public static GetEnvelopeResult Success(EnvelopeTransportContext envelope)
+        public static GetEnvelopeResult Success(MessageTransportContext message)
         {
-            return new GetEnvelopeResult(envelope, GetEnvelopeResultState.Success);
+            return new GetEnvelopeResult(message, GetEnvelopeResultState.Success);
         }
 
         public static GetEnvelopeResult Error()

@@ -63,7 +63,7 @@ namespace Lokad.Cqrs.Synthetic
             Wire_partition_to_handler(builder);
 
             using (var source = new CancellationTokenSource())
-            using (builder.When<EnvelopeAcked>(e => source.Cancel()))
+            using (builder.When<MessageAcked>(e => source.Cancel()))
             using (var engine = builder.Build())
             {
                 var sender = engine.Resolve<IMessageSender>();

@@ -41,18 +41,18 @@ namespace Lokad.Cqrs.Feature.FilePartition
             }
         }
 
-        public void AckMessage(EnvelopeTransportContext envelope)
+        public void AckMessage(MessageTransportContext message)
         {
             foreach (var queue in _readers)
             {
-                if (queue.Name == envelope.QueueName)
+                if (queue.Name == message.QueueName)
                 {
-                    queue.AckMessage(envelope);
+                    queue.AckMessage(message);
                 }
             }
         }
 
-        public bool TakeMessage(CancellationToken token, out EnvelopeTransportContext context)
+        public bool TakeMessage(CancellationToken token, out MessageTransportContext context)
         {
             while (!token.IsCancellationRequested)
             {
@@ -66,7 +66,7 @@ namespace Lokad.Cqrs.Feature.FilePartition
                         case GetEnvelopeResultState.Success:
 
                             _emptyCycles = 0;
-                            context = message.Envelope;
+                            context = message.Message;
                             return true;
                         case GetEnvelopeResultState.Empty:
                             _emptyCycles += 1;
@@ -88,6 +88,6 @@ namespace Lokad.Cqrs.Feature.FilePartition
             return false;
         }
 
-        public void TryNotifyNack(EnvelopeTransportContext context) {}
+        public void TryNotifyNack(MessageTransportContext context) {}
     }
 }

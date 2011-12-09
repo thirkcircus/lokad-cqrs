@@ -15,6 +15,7 @@ using Lokad.Cqrs.Core.Dispatch;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Evil;
 using Lokad.Cqrs.Feature.AzurePartition.Inbox;
+using Lokad.Cqrs.Feature.MemoryPartition;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
@@ -25,13 +26,13 @@ namespace Lokad.Cqrs.Feature.AzurePartition
     {
         readonly HashSet<string> _queueNames = new HashSet<string>();
         TimeSpan _queueVisibilityTimeout;
-        Func<Container, IEnvelopeQuarantine> _quarantineFactory;
+        IEnvelopeQuarantine _quarantine;
 
         Func<uint, TimeSpan> _decayPolicy;
 
         readonly IAzureStorageConfig _config;
 
-        HandlerFactory _dispatcher;
+        Func<Container, Action<byte[]>> _dispatcher;
 
 
         public AzurePartitionModule(IAzureStorageConfig config, string[] queueNames)
@@ -41,19 +42,19 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             _config = config;
             _queueNames = new HashSet<string>(queueNames);
 
-            Quarantine(c => new MemoryQuarantine());
+            Quarantine(new MemoryQuarantine());
             DecayPolicy(TimeSpan.FromSeconds(2));
         }
 
 
         public void DispatcherIs(Func<Container, ISingleThreadMessageDispatcher> factory)
         {
-            _dispatcher = container =>
+            DispatcherIsLambda(container =>
             {
-                var d = factory(container);
-                d.Init();
-                return (envelope => d.DispatchMessage(envelope));
-            };
+                var dis = factory(container);
+                dis.Init();
+                return (envelope => dis.DispatchMessage(envelope));
+            });
         }
 
         /// <summary>
@@ -61,9 +62,9 @@ namespace Lokad.Cqrs.Feature.AzurePartition
         /// additional instances from the container
         /// </summary>
         /// <param name="factory">The factory method to specify custom <see cref="IEnvelopeQuarantine"/>.</param>
-        public void Quarantine(Func<Container, IEnvelopeQuarantine> factory)
+        public void Quarantine(IEnvelopeQuarantine factory)
         {
-            _quarantineFactory = factory;
+            _quarantine = factory;
         }
 
         /// <summary>
@@ -91,9 +92,15 @@ namespace Lokad.Cqrs.Feature.AzurePartition
         /// <param name="factory">The factory.</param>
         public void DispatcherIsLambda(HandlerFactory factory)
         {
-            _dispatcher = factory;
+            _dispatcher = container =>
+            {
+                var d = factory(container);
+                var manager = container.Resolve<MessageDuplicationManager>();
+                var streamer = container.Resolve<IEnvelopeStreamer>();
+                var wrapper = new DispatchWrapper(d, _quarantine, manager, streamer);
+                return (buffer => wrapper.Dispatch(buffer));
+            };
         }
-
 
         public void DispatchToRoute(Func<ImmutableEnvelope, string> route)
         {
@@ -110,9 +117,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             var factory = new AzurePartitionFactory(streamer, log, _config, _queueVisibilityTimeout, _decayPolicy);
 
             var notifier = factory.GetNotifier(_queueNames.ToArray());
-            var quarantine = _quarantineFactory(context);
-            var manager = context.Resolve<MessageDuplicationManager>();
-            var transport = new DispatcherProcess(log, dispatcher, notifier, quarantine, manager, streamer);
+            var transport = new DispatcherProcess(log, dispatcher, notifier);
             return transport;
         }
 

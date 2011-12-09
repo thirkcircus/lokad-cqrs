@@ -124,7 +124,7 @@ namespace Lokad.Cqrs
             var watch = new Stopwatch();
             using (var token = new CancellationTokenSource())
             {
-                using (builder.When<EnvelopeAcked>(ea =>
+                using (builder.When<MessageAcked>(ea =>
                 {
                     count += 1;
 

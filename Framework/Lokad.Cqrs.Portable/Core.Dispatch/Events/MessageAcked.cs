@@ -5,33 +5,31 @@ using Lokad.Cqrs.Core.Inbox;
 namespace Lokad.Cqrs.Core.Dispatch.Events
 {
     [Serializable]
-    public sealed class EnvelopeAcked : ISystemEvent
+    public sealed class MessageAcked : ISystemEvent
     {
-        public string QueueName { get; private set; }
-        public string EnvelopeId { get; private set; }
-        public EnvelopeTransportContext Context { get; private set; }
+        public MessageTransportContext Context { get; private set; }
 
-        public EnvelopeAcked(string queueName, string envelopeId, EnvelopeTransportContext attributes)
+        public MessageAcked(MessageTransportContext attributes)
         {
-            QueueName = queueName;
-            EnvelopeId = envelopeId;
             Context = attributes;
         }
 
         public override string ToString()
         {
-            return string.Format("[{0}] acked at '{1}'", EnvelopeId, QueueName);
+            return string.Format("[{0}] acked at '{1}'", Context.TransportMessage, Context.QueueName);
         }
     }
     [Serializable]
-    public sealed class EnvelopeInboxFailed : ISystemEvent
+    public sealed class MessageInboxFailed : ISystemEvent
     {
         public Exception Exception { get; private set; }
         public string InboxName { get; private set; }
-        public EnvelopeInboxFailed(Exception exception, string inboxName)
+        public string MessageId { get; private set; }
+        public MessageInboxFailed(Exception exception, string inboxName, string messageId)
         {
             Exception = exception;
             InboxName = inboxName;
+            MessageId = messageId;
         }
 
         public override string ToString()

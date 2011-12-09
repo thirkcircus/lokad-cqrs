@@ -155,7 +155,7 @@
     <Compile Include="Feature.AtomicStorage\MemoryAtomicStorageFactory.cs" />
     <Compile Include="Core.Dispatch\Events\EnvelopeQuarantined.cs" />
     <Compile Include="Core.Dispatch\MemoryQuarantine.cs" />
-    <Compile Include="Core.Dispatch\Events\EnvelopeAcked.cs" />
+    <Compile Include="Core.Dispatch\Events\MessageAcked.cs" />
     <Compile Include="Core.Outbox\EnvelopeSent.cs" />
     <Compile Include="Build\Engine\CqrsEngineBuilder.cs" />
     <Compile Include="Build\Engine\CqrsEngineHost.cs" />
@@ -165,8 +165,8 @@
     <Compile Include="Build\Engine\Events\EngineStopped.cs" />
     <Compile Include="Core.Dispatch\DispatcherProcess.cs" />
     <Compile Include="Core.Dispatch\DispatchMessagesToRoute.cs" />
-    <Compile Include="Core.Dispatch\Events\EnvelopeAckFailed.cs" />
-    <Compile Include="Core.Dispatch\Events\EnvelopeDispatchFailed.cs" />
+    <Compile Include="Core.Dispatch\Events\MessageAckFailed.cs" />
+    <Compile Include="Core.Dispatch\Events\MessageDispatchFailed.cs" />
     <Compile Include="Core.Dispatch\ISingleThreadMessageDispatcher.cs" />
     <Compile Include="Core.Dispatch\MessageDuplicationManager.cs" />
     <Compile Include="Core.Dispatch\MessageDuplicationMemory.cs" />
@@ -174,7 +174,7 @@
     <Compile Include="Core.Envelope\MessageBuilder.cs" />
     <Compile Include="Evil\InvocationUtil.cs" />
     <Compile Include="Core.Inbox\IPartitionInbox.cs" />
-    <Compile Include="Core.Inbox\EnvelopeTransportContext.cs" />
+    <Compile Include="Core.Inbox\MessageTransportContext.cs" />
     <Compile Include="Core.Envelope\EnvelopeSerializerWithDataContracts.cs" />
     <Compile Include="Core.Envelope\EnvelopeConvert.cs" />
     <Compile Include="Core.Envelope\EnvelopeAttributeContract.cs" />

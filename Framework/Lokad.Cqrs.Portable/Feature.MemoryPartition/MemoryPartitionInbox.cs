@@ -35,12 +35,12 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
         {
         }
 
-        public void AckMessage(EnvelopeTransportContext envelope)
+        public void AckMessage(MessageTransportContext message)
         {
             
         }
 
-        public bool TakeMessage(CancellationToken token, out EnvelopeTransportContext context)
+        public bool TakeMessage(CancellationToken token, out MessageTransportContext context)
         {
             while (!token.IsCancellationRequested)
             {
@@ -51,7 +51,7 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
                 var result = BlockingCollection<byte[]>.TakeFromAny(_queues, out envelope);
                 if (result >= 0)
                 {
-                    context = new EnvelopeTransportContext(result, envelope, _names[result]);
+                    context = new MessageTransportContext(result, envelope, _names[result]);
                     return true;
                 }
             }
@@ -59,7 +59,7 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
             return false;
         }
 
-        public void TryNotifyNack(EnvelopeTransportContext context)
+        public void TryNotifyNack(MessageTransportContext context)
         {
             var id = (int) context.TransportMessage;
 

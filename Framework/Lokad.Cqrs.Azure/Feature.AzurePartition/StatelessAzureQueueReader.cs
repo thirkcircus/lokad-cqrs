@@ -7,6 +7,7 @@
 
 using System;
 using System.Threading;
+using Lokad.Cqrs.Core.Dispatch.Events;
 using Lokad.Cqrs.Core.Inbox;
 using Lokad.Cqrs.Core.Inbox.Events;
 using Microsoft.WindowsAzure.StorageClient;
@@ -15,7 +16,6 @@ namespace Lokad.Cqrs.Feature.AzurePartition
 {
     public sealed class StatelessAzureQueueReader
     {
-        readonly IEnvelopeStreamer _streamer;
         readonly TimeSpan _visibilityTimeout;
         readonly ISystemObserver _observer;
 
@@ -43,7 +43,6 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             _posionQueue = poisonQueue;
             _observer = provider;
             _queueName = name;
-            _streamer = streamer;
             _visibilityTimeout = visibilityTimeout;
         }
 
@@ -89,7 +88,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             }
             catch (Exception ex)
             {
-                _observer.Notify(new EnvelopeDeserializationFailed(ex, _queue.Name, message.Id));
+                _observer.Notify(new MessageInboxFailed(ex, _queue.Name, message.Id));
                 // new poison details
                 _posionQueue.Value.AddMessage(message);
                 _queue.DeleteMessage(message);
@@ -97,7 +96,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             }
         }
 
-        EnvelopeTransportContext DownloadPackage(CloudQueueMessage message)
+        MessageTransportContext DownloadPackage(CloudQueueMessage message)
         {
             var buffer = message.AsBytes;
 
@@ -109,18 +108,18 @@ namespace Lokad.Cqrs.Feature.AzurePartition
                 var blob = _cloudBlob.GetBlobReference(reference.StorageReference);
                 buffer = blob.DownloadByteArray();
             }
-            return new EnvelopeTransportContext(message, buffer, _queueName);
+            return new MessageTransportContext(message, buffer, _queueName);
         }
 
 
         /// <summary>
         /// ACKs the message by deleting it from the queue.
         /// </summary>
-        /// <param name="envelope">The message context to ACK.</param>
-        public void AckMessage(EnvelopeTransportContext envelope)
+        /// <param name="message">The message context to ACK.</param>
+        public void AckMessage(MessageTransportContext message)
         {
-            if (envelope == null) throw new ArgumentNullException("message");
-            _queue.DeleteMessage((CloudQueueMessage) envelope.TransportMessage);
+            if (message == null) throw new ArgumentNullException("message");
+            _queue.DeleteMessage((CloudQueueMessage) message.TransportMessage);
         }
     }
 }

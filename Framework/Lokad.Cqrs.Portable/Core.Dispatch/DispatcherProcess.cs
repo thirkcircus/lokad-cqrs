@@ -19,26 +19,18 @@ namespace Lokad.Cqrs.Core.Dispatch
     /// </summary>
     public sealed class DispatcherProcess : IEngineProcess
     {
-        readonly Action<ImmutableEnvelope> _dispatcher;
+        readonly Action<byte[]> _dispatcher;
         readonly ISystemObserver _observer;
         readonly IPartitionInbox _inbox;
-        readonly IEnvelopeQuarantine _quarantine;
-        readonly IEnvelopeStreamer _streamer;
 
         public DispatcherProcess(
             ISystemObserver observer,
-            Action<ImmutableEnvelope> dispatcher, 
-            IPartitionInbox inbox,
-            IEnvelopeQuarantine quarantine,
-            MessageDuplicationManager manager, 
-            IEnvelopeStreamer streamer)
+            Action<byte[]> dispatcher, 
+            IPartitionInbox inbox)
         {
             _dispatcher = dispatcher;
-            _quarantine = quarantine;
-            _streamer = streamer;
             _observer = observer;
             _inbox = inbox;
-            _memory = manager.GetOrAdd(this);
         }
 
         public void Dispose()
@@ -52,7 +44,6 @@ namespace Lokad.Cqrs.Core.Dispatch
         }
 
         readonly CancellationTokenSource _disposal = new CancellationTokenSource();
-        readonly MessageDuplicationMemory _memory;
 
         public Task Start(CancellationToken token)
         {
@@ -76,7 +67,7 @@ namespace Lokad.Cqrs.Core.Dispatch
             {
                 while (true)
                 {
-                    EnvelopeTransportContext context;
+                    MessageTransportContext context;
                     try
                     {
                         if (!_inbox.TakeMessage(source.Token, out context))
@@ -89,7 +80,7 @@ namespace Lokad.Cqrs.Core.Dispatch
                     catch (Exception ex)
                     {
                         // unexpected but possible: retry
-                        _observer.Notify(new EnvelopeInboxFailed(ex, _inbox.ToString()));
+                        _observer.Notify(new MessageInboxFailed(ex, _inbox.ToString(),"@dispatch"));
                         continue;
                     }
                     
@@ -110,23 +101,12 @@ namespace Lokad.Cqrs.Core.Dispatch
             }
         }
 
-        void ProcessMessage(EnvelopeTransportContext context)
+        void ProcessMessage(MessageTransportContext context)
         {
             var dispatched = false;
-            ImmutableEnvelope envelope = null;
             try
             {
-                envelope = _streamer.ReadAsEnvelopeData(context.Unpacked);
-
-                if (_memory.DoWeRemember(envelope.EnvelopeId))
-                {
-                    _observer.Notify(new EnvelopeDuplicateDiscarded(context.QueueName, envelope.EnvelopeId));
-                }
-                else
-                {
-                    _dispatcher(envelope);
-                    _memory.Memorize(envelope.EnvelopeId);
-                }
+                _dispatcher(context.Unpacked);
 
                 dispatched = true;
             }
@@ -140,32 +120,17 @@ namespace Lokad.Cqrs.Core.Dispatch
                 // if the code below fails, it will just cause everything to be reprocessed later,
                 // which is OK (duplication manager will handle this)
 
-                _observer.Notify(new EnvelopeDispatchFailed(context, context.QueueName, dispatchEx));
+                _observer.Notify(new MessageDispatchFailed(context, context.QueueName, dispatchEx));
                 // quarantine is atomic with the processing
-
-
-                if (_quarantine.TryToQuarantine(context, envelope, dispatchEx))
-                {
-                    _observer.Notify(new EnvelopeQuarantined(dispatchEx, context, context.QueueName));
-                    // acking message is the last step!
-                    _inbox.AckMessage(context);
-                }
-                else
-                {
-                    _inbox.TryNotifyNack(context);
-                }
+                _inbox.TryNotifyNack(context);
             }
             if (!dispatched)
                 return;
             try
             {
-
-                // 1st step - dequarantine, if present
-                _quarantine.TryRelease(envelope);
-                // 2nd step - ack.
                 _inbox.AckMessage(context);
                 // 3rd - notify.
-                _observer.Notify(new EnvelopeAcked(context.QueueName, envelope.EnvelopeId, context));
+                _observer.Notify(new MessageAcked(context));
 
             }
             catch (ThreadAbortException)
@@ -175,7 +140,7 @@ namespace Lokad.Cqrs.Core.Dispatch
             catch (Exception ex)
             {
                 // not a big deal. Message will be processed again.
-                _observer.Notify(new EnvelopeAckFailed(ex, envelope.EnvelopeId, context.QueueName));
+                _observer.Notify(new MessageAckFailed(ex, context));
             }
         }
     }

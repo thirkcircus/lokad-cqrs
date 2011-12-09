@@ -35,16 +35,22 @@ namespace Snippets.MailQuarantine
             _container = root.GetContainer("sample-errors").Create();
         }
 
-        public bool TryToQuarantine(EnvelopeTransportContext context, ImmutableEnvelope envelope, Exception ex)
-        {
-            if (null == envelope)
-            {
-                RecordUnserializedError(context, ex);
 
-                // one time quarantine
-                return true;
-            }
-            var quarantined = _quarantine.TryToQuarantine(context, envelope, ex);
+
+   
+
+        IStreamingItem GetStreamingItem(DateTime dateTime, string envelopeId)
+        {
+            var file = string.Format("{0:yyyy-MM-dd-HH-mm}-{1}-engine.txt",
+                dateTime,
+                envelopeId.ToLowerInvariant());
+
+            return _container.GetItem(file);
+        }
+
+        public bool TryToQuarantine(ImmutableEnvelope envelope, Exception ex)
+        {
+            var quarantined = _quarantine.TryToQuarantine(envelope, ex);
 
 
             try
@@ -55,12 +61,11 @@ namespace Snippets.MailQuarantine
                 {
                     data = item.ReadText();
                 }
-                catch (StreamingItemNotFoundException) {}
+                catch (StreamingItemNotFoundException) { }
 
                 var builder = new StringBuilder(data);
                 if (builder.Length == 0)
                 {
-                    builder.AppendLine(string.Format("{0,12}: {1}", "Queue", context.QueueName));
                     builder.AppendLine(envelope.PrintToString(o => o.SerializeAndFormat()));
                 }
 
@@ -83,35 +88,23 @@ namespace Snippets.MailQuarantine
             return quarantined;
         }
 
-        void RecordUnserializedError(EnvelopeTransportContext context, Exception ex)
+        public void Quarantine(byte[] message, Exception ex)
         {
             try
-
             {
                 var item = GetStreamingItem(DateTime.UtcNow, "null-" + Guid.NewGuid().ToString().ToLowerInvariant());
 
                 var builder = new StringBuilder();
                 builder.AppendLine("Deserialization problem");
                 builder.Append(ex).AppendLine();
-                builder.AppendLine("Queue:" + context.QueueName);
-                builder.AppendLine("Transport:" + context.TransportMessage);
                 builder.AppendLine("Data");
-                builder.AppendLine(Convert.ToBase64String(context.Unpacked, Base64FormattingOptions.InsertLineBreaks));
+                builder.AppendLine(Convert.ToBase64String(message, Base64FormattingOptions.InsertLineBreaks));
                 item.WriteText(builder.ToString());
             }
             catch (Exception e)
             {
                 Trace.WriteLine(e);
             }
-        }
-
-        IStreamingItem GetStreamingItem(DateTime dateTime, string envelopeId)
-        {
-            var file = string.Format("{0:yyyy-MM-dd-HH-mm}-{1}-engine.txt",
-                dateTime,
-                envelopeId.ToLowerInvariant());
-
-            return _container.GetItem(file);
         }
 
         public void TryRelease(ImmutableEnvelope context)

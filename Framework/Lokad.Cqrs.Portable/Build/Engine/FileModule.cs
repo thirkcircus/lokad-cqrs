@@ -36,7 +36,7 @@ namespace Lokad.Cqrs.Build.Engine
                 m.DispatcherIsLambda(_ => handler);
                 if (null != quarantine)
                 {
-                    m.Quarantine(_ => quarantine);
+                    m.Quarantine(quarantine);
                 }
             });
         }
