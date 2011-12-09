@@ -23,6 +23,7 @@
         #tile:hover span { display: none; }
         
         #heatmapdiv {display: block; position: absolute; right: 10px; bottom: 10px;}
+        footer { position: absolute;bottom: 10px;}
     </style>
 </head>
 <body>
@@ -31,7 +32,7 @@
             <div class="page_container">
                 <div class="inner">
                     <div class="right description">
-                            <span>This sample is a part of Lokad.CQRS guidance.  Drag the image around, or check out <a href="ReadMe.markdown">Readme</a> for more details.</span>
+                        <span>This sample is a part of Lokad.CQRS guidance.  Drag the image around, or check out <a href="ReadMe.markdown">Readme</a> for more details.</span>
                     </div>
                     <div>
                         <a href="http://lokad.github.com/lokad-cqrs" style="border: none; outline: none;">
@@ -47,13 +48,125 @@
         </div>
 
         <div id="heatmapdiv">
-                <h4>Mouse clicks heat map</h4>
-                <a href="/heatmap.jpg">
-                    <img id="heatmap" src="/heatmap_thumb.jpg" alt="heatmap"></img>
-                </a>
+            <h4>Mouse clicks heat map</h4>
+            <a href="/heatmap.jpg">
+                <img id="heatmap" src="/heatmap_thumb.jpg" alt="heatmap"></img>
+            </a>
         </div>
     </div>
+    <footer>
+        <h4>Messages /sec graph</h4>
+        <canvas id="eventsgraph" width="400" height="250" ></canvas>
+    </footer>
     <script type="text/javascript">
+        var ctx = document
+                .getElementById("eventsgraph")
+                .getContext('2d');
+                
+        var graph = {
+            index : 0,
+            xMax : 400,
+            yMax : 250,
+            X : 0,
+
+            xOffset : 20,
+            yOffset : 20,
+
+            step : 1,
+            data : new Array(),
+
+            AddPoint : function (y) {
+                if (this.X > this.xMax) {
+                    this.X = 0;
+                    this.index = 0;
+                }
+
+                this.data[this.index] = { x: this.X, y: y };
+                this.index++;
+                this.X += this.step;
+
+                this.clearGraph(this.index);
+            },
+
+            Draw: function () {
+                ctx.clearRect(-1 * this.xOffset, 0, this.xMax, this.yMax);
+
+                ctx.moveTo(0, 0);
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.strokeStyle = 'black';
+                for (var i = 0; i < this.data.length; i++) {
+                    var value = this.data[i];
+
+                    if (value.y == -1) {
+                        ctx.moveTo(value.x, this.yMax - this.yOffset);
+                    } else {
+                        ctx.lineTo(value.x, this.yMax - value.y - this.yOffset);
+                    }
+                }
+                ctx.stroke();
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.strokeStyle = 'green';
+
+                var point = this.data[this.index - 1];
+                ctx.arc(point.x, this.yMax - point.y - this.yOffset, 3, 0, 2 * Math.PI, false);
+                ctx.fillStyle = 'green';
+                ctx.fill();
+                ctx.restore();
+
+                this.DrawGrid();
+            },
+
+            DrawGrid : function () {
+                ctx.save();
+                ctx.strokeText('100', -1 * this.xOffset, this.yMax - 100 - 10);
+                ctx.strokeText('200', -1 * this.xOffset, this.yMax - 200 - 10);
+                ctx.restore();
+
+                ctx.save();
+                ctx.beginPath();
+
+                ctx.lineWidth = 2;
+                // x axis
+                ctx.moveTo(0, this.yMax - this.yOffset);
+                ctx.lineTo(this.xMax, this.yMax - this.yOffset);
+
+                // y axis
+                ctx.moveTo(0, this.yMax - 0);
+                ctx.lineTo(0, 0);
+                ctx.stroke();
+
+                ctx.lineWidth = 1;
+
+                ctx.strokeStyle = 'gray';
+                // 100 msg /sec line
+                ctx.moveTo(0, this.yMax - 100 - this.yOffset);
+                ctx.lineTo(this.xMax, this.yMax - 100 - this.yOffset);
+
+                // 200 msg /sec line
+                ctx.moveTo(0, this.yMax - 200 - this.yOffset);
+                ctx.lineTo(this.xMax, this.yMax - 200 - this.yOffset);
+                ctx.stroke();
+
+                ctx.restore();
+            },
+
+            clearGraph : function (start) {
+                for (var i = start; i < start + 10; i++) {
+                    var p = this.data[i];
+                    if (p == null) break;
+
+                    this.data[i] = { x: p.x, y: -1 };
+                }
+            },
+            Init: function() {
+                ctx.translate(this.xOffset, 0);
+            }
+        };
+
         $(document).ready(function () {
             var mouseDown = false;
             var tile = $("#tile");
@@ -92,6 +205,9 @@
                     $("#result").html("Distance: " + data.Distance + "<br/>"
                                       + "Messages count: " + data.MessagesCount + "<br/>"
                                       + "Messages /sec: " + data.MessagesPerSecond + "<br/>");
+
+                    graph.AddPoint(data.MessagesPerSecond);
+                    graph.Draw();
                 });
             }
 
@@ -101,7 +217,7 @@
             function refreshHeatmap() {
                 $('#heatmap').attr('src', '/heatmap_thumb.jpg?' + new Date().getTime());
             }
-            
+
             // disable annoying selection
             function disableSelection(target) {
                 target.onselectstart = function () { return false; };
@@ -114,6 +230,9 @@
                 $('#result').css("border", "red 2px solid");
                 $('#result').html("Http engine is not accessible!");
             });
+
+            graph.Init();
+            graph.DrawGrid();
         });
     </script>
 </body>

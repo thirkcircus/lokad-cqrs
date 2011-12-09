@@ -7,6 +7,7 @@
 #endregion
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using Lokad.Cqrs;
 using Lokad.Cqrs.Build.Engine;
@@ -79,6 +80,7 @@ namespace Snippets.HttpEndpoint
                     c.Resolve<IAtomicWriter<unit, HeatMapView>>()
                     )));
 
+            Process.Start("http://localhost:8082/index.htm");
             // this is a test, so let's block everything
             builder.Build().RunForever();
         }
