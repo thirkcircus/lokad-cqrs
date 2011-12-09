@@ -61,8 +61,7 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
             var dispatcher = _dispatcher(context);
 
             var account = context.Resolve<MemoryAccount>();
-            var factory = new MemoryPartitionFactory(account);
-            var notifier = factory.GetMemoryInbox(_memoryQueues);
+            var notifier = account.GetMemoryInbox(_memoryQueues);
 
             var quarantine = _quarantineFactory(context);
             var manager = context.Resolve<MessageDuplicationManager>();

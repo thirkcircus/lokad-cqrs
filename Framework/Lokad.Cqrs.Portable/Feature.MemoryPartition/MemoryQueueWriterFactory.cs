@@ -21,9 +21,7 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
 
         public IQueueWriter GetWriteQueue(string queueName)
         {
-            return
-                new MemoryQueueWriter(
-                    _account.Delivery.GetOrAdd(queueName, s => new BlockingCollection<ImmutableEnvelope>()), queueName);
+            return _account.GetWriteQueue(queueName);
         }
     }
 }

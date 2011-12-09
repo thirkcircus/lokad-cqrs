@@ -192,7 +192,6 @@
     <Compile Include="Feature.AtomicStorage\IAtomicReader.cs" />
     <Compile Include="Feature.AtomicStorage\IAtomicWriter.cs" />
     <Compile Include="Core.Reactive\SystemObserver.cs" />
-    <Compile Include="Feature.MemoryPartition\MemoryPartitionFactory.cs" />
     <Compile Include="Feature.MemoryPartition\MemoryPartitionInbox.cs" />
     <Compile Include="Feature.MemoryPartition\MemoryPartitionModule.cs" />
     <Compile Include="Feature.MemoryPartition\MemoryQueueWriter.cs" />
