@@ -31,7 +31,7 @@ namespace Lokad.Cqrs.Build.Engine
 
         public void AddFileProcess(FileStorageConfig config, string firstQueue, Action<ImmutableEnvelope> handler, IEnvelopeQuarantine quarantine = null)
         {
-            AddFileProcess(config, new string[] { firstQueue }, m =>
+            AddFileProcess(config, new[] { firstQueue }, m =>
             {
                 m.DispatcherIsLambda(_ => handler);
                 if (null != quarantine)

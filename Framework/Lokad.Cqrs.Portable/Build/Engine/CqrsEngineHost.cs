@@ -24,7 +24,7 @@ namespace Lokad.Cqrs.Build.Engine
         public Container Container { get; private set; }
         readonly SystemObserver _observer;
         readonly IEnumerable<IEngineProcess> _serverProcesses;
-
+        
         public CqrsEngineHost(
             Container container,
             SystemObserver observer,
@@ -80,18 +80,7 @@ namespace Lokad.Cqrs.Build.Engine
             _observer.Notify(new EngineInitialized());
         }
 
-        public TService Resolve<TService>()
-        {
-            try
-            {
-                return Container.Resolve<TService>();
-            }
-            catch (TargetInvocationException e)
-            {
-                throw InvocationUtil.Inner(e);
-            }
-        }
-
+    
         public void Dispose()
         {
             Container.Dispose();
