@@ -47,8 +47,7 @@ namespace Lokad.Cqrs.Core.Dispatch
 
         public Task Start(CancellationToken token)
         {
-            return Task.Factory
-                .StartNew(() =>
+            return Task.Factory.StartNew(() =>
                     {
                         try
                         {
@@ -77,10 +76,8 @@ namespace Lokad.Cqrs.Core.Dispatch
                             break;
                         }
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
-                        // unexpected but possible: retry
-                        _observer.Notify(new MessageInboxFailed(ex, _inbox.ToString(),"@dispatch"));
                         continue;
                     }
                     

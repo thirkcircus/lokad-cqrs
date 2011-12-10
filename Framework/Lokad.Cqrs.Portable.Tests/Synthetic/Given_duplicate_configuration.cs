@@ -1,4 +1,5 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Diagnostics;
+using System.Runtime.Serialization;
 using System.Threading;
 using Lokad.Cqrs.Build;
 using Lokad.Cqrs.Build.Engine;
@@ -49,7 +50,16 @@ namespace Lokad.Cqrs.Synthetic
                         }
                     };
                 build.Start(token.Token);
-                token.Token.WaitHandle.WaitOne(10000);
+
+                if (Debugger.IsAttached)
+                {
+                    token.Token.WaitHandle.WaitOne();
+                }
+                else
+                {
+                    token.Token.WaitHandle.WaitOne(10000);
+                }
+
                 Assert.IsTrue(token.IsCancellationRequested);
             }
         }

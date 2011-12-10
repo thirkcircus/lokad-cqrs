@@ -55,7 +55,7 @@
     <Compile Include="Feature.HandlerClasses\IMessage.cs" />
     <Compile Include="Core.Serialization\ContractEvil.cs" />
     <Compile Include="Core.Dispatch\Events\DispatchRecoveryFailed.cs" />
-    <Compile Include="Core.Dispatch\Events\EnvelopeDuplicateDiscarded.cs" />
+    <Compile Include="Core.Envelope\Events\EnvelopeDuplicateDiscarded.cs" />
     <Compile Include="Core.Dispatch\IEnvelopeQuarantine.cs" />
     <Compile Include="Core.Envelope\EnvelopePrinter.cs" />
     <Compile Include="Core.Inbox\Events\EnvelopeDeserializationFailed.cs" />
@@ -111,6 +111,7 @@
     <Compile Include="Feature.FilePartition\FileQueueWriterFactory.cs" />
     <Compile Include="Feature.FilePartition\FilePartitionModule.cs" />
     <Compile Include="Feature.FilePartition\StatelessFileQueueReader.cs" />
+    <Compile Include="Core.Envelope\EnvelopeDispatcher.cs" />
     <Compile Include="Feature.StreamingStorage\MemoryStreamingContainer.cs" />
     <Compile Include="Feature.StreamingStorage\MemoryStreamingItem.cs" />
     <Compile Include="Feature.StreamingStorage\MemoryStreamingRoot.cs" />
@@ -153,7 +154,7 @@
     <Compile Include="Feature.AtomicStorage\NuclearStorage.cs" />
     <Compile Include="Feature.AtomicStorage\MemoryAtomicContainer.cs" />
     <Compile Include="Feature.AtomicStorage\MemoryAtomicStorageFactory.cs" />
-    <Compile Include="Core.Dispatch\Events\EnvelopeQuarantined.cs" />
+    <Compile Include="Core.Envelope\Events\EnvelopeQuarantined.cs" />
     <Compile Include="Core.Dispatch\MemoryQuarantine.cs" />
     <Compile Include="Core.Dispatch\Events\MessageAcked.cs" />
     <Compile Include="Core.Outbox\EnvelopeSent.cs" />

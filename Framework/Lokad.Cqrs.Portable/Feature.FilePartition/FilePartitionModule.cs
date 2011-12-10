@@ -11,6 +11,7 @@ using System.Linq;
 using Lokad.Cqrs.Build.Engine;
 using Lokad.Cqrs.Core;
 using Lokad.Cqrs.Core.Dispatch;
+using Lokad.Cqrs.Core.Envelope;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Evil;
 using Lokad.Cqrs.Feature.MemoryPartition;
@@ -81,7 +82,8 @@ namespace Lokad.Cqrs.Feature.FilePartition
                 var d = factory(container);
                 var manager = container.Resolve<MessageDuplicationManager>();
                 var streamer = container.Resolve<IEnvelopeStreamer>();
-                var wrapper = new DispatchWrapper(d, _quarantine, manager, streamer);
+                var observer = container.Resolve<ISystemObserver>();
+                var wrapper = new EnvelopeDispatcher(d, _quarantine, manager, streamer, observer);
                 return (buffer => wrapper.Dispatch(buffer));
             };
         }

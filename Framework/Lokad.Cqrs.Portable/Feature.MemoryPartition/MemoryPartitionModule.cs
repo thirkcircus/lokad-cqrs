@@ -6,11 +6,9 @@
 #endregion
 
 using System;
-using System.Threading;
 using Lokad.Cqrs.Build.Engine;
 using Lokad.Cqrs.Core.Dispatch;
-using Lokad.Cqrs.Core.Dispatch.Events;
-using Lokad.Cqrs.Core.Inbox.Events;
+using Lokad.Cqrs.Core.Envelope;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Core;
 
@@ -50,7 +48,8 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
                     var d = factory(container);
                     var manager = container.Resolve<MessageDuplicationManager>();
                     var streamer = container.Resolve<IEnvelopeStreamer>();
-                    var wrapper = new DispatchWrapper(d, _quarantine, manager, streamer);
+                    var observer = container.Resolve<ISystemObserver>();
+                    var wrapper = new EnvelopeDispatcher(d, _quarantine, manager, streamer, observer);
                     return (buffer => wrapper.Dispatch(buffer));
                 };
         }
@@ -90,71 +89,6 @@ should do.");
             var process = BuildConsumingProcess(container);
             var setup = container.Resolve<EngineSetup>();
             setup.AddProcess(process);
-        }
-    }
-
-    public sealed class DispatchWrapper
-    {
-        Action<ImmutableEnvelope> _action;
-        IEnvelopeQuarantine _quarantine;
-        MessageDuplicationMemory _manager;
-        IEnvelopeStreamer _streamer;
-        ISystemObserver _observer;
-
-        public DispatchWrapper(Action<ImmutableEnvelope> action, IEnvelopeQuarantine quarantine, MessageDuplicationManager manager, IEnvelopeStreamer streamer)
-        {
-            _action = action;
-            _quarantine = quarantine;
-            _manager = manager.GetOrAdd(this);
-            _streamer = streamer;
-        }
-
-
-        public void Dispatch(byte[] message)
-        {
-
-            ImmutableEnvelope envelope = null;
-            try
-            {
-                envelope = _streamer.ReadAsEnvelopeData(message);
-            }
-            catch (Exception ex)
-            {
-                // permanent quarantine for serialization problems
-                _quarantine.Quarantine(message, ex);
-                _observer.Notify(new EnvelopeDeserializationFailed(ex,"dispatch"));
-                return;
-            }
-
-            if (_manager.DoWeRemember(envelope.EnvelopeId))
-            {
-                _observer.Notify(new EnvelopeDuplicateDiscarded(envelope.EnvelopeId));
-                return;
-            }
-                
-
-            try
-            {
-                _action(envelope);
-                _manager.Memorize(envelope.EnvelopeId);
-                _quarantine.TryRelease(envelope);
-            }
-            catch (ThreadAbortException e)
-            {
-                return;
-
-            }
-            catch (Exception ex)
-            {
-                if (_quarantine.TryToQuarantine(envelope, ex))
-                {
-                    _observer.Notify(new EnvelopeQuarantined(ex, envelope));
-                    // message quarantined. Swallow
-                    return;
-                }
-                // if we are on a persistent queue, this will tell to retry
-                throw;
-            }
         }
     }
 }

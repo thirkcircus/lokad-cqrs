@@ -63,7 +63,7 @@ namespace Lokad.Cqrs.Synthetic
             Wire_partition_to_handler(builder);
 
             using (var source = new CancellationTokenSource())
-            using (builder.When<MessageAcked>(e => source.Cancel()))
+            using (builder.When<EnvelopeDispatched>(e => source.Cancel()))
             using (var engine = builder.Build())
             {
                 var sender = engine.Resolve<IMessageSender>();
@@ -73,7 +73,7 @@ namespace Lokad.Cqrs.Synthetic
 
                 var task = engine.Start(source.Token);
                 //    Trace.WriteLine("Started");
-                if (!task.Wait(TestSpeed))
+                if (!task.Wait(Debugger.IsAttached ? int.MaxValue : TestSpeed))
                 {
                     source.Cancel();
                     Assert.Fail("System should be stopped by now");
