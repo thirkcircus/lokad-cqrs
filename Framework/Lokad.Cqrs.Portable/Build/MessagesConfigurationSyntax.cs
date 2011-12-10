@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Lokad.Cqrs.Evil;
-using Lokad.Cqrs.Feature.HandlerClasses;
 
 namespace Lokad.Cqrs.Build
 {
@@ -60,10 +59,7 @@ namespace Lokad.Cqrs.Build
             {
                 _assemblies.AddRange(AppDomain.CurrentDomain.GetAssemblies().Where(AssemblyScanEvil.IsProbablyUserAssembly)); 
             }
-            if (!_constraintsDirty)
-            {
-                _constraints.Add(t => typeof(IMessage).IsAssignableFrom(t));
-            }
+
             return _assemblies
                 .SelectMany(a => a.GetExportedTypes())
                 .Where(t => _constraints.All(predicate => predicate(t)));

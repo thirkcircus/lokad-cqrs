@@ -21,8 +21,8 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
     /// </summary>
     public sealed class DefaultAtomicStorageStrategyBuilder : HideObjectMembersFromIntelliSense
     {
-        Predicate<Type> _entityTypeFilter = type => typeof (Define.AtomicEntity).IsAssignableFrom(type);
-        Predicate<Type> _singletonTypeFilter = type => typeof (Define.AtomicSingleton).IsAssignableFrom(type);
+        Predicate<Type> _entityTypeFilter = type => true;
+        Predicate<Type> _singletonTypeFilter = type => true;
         readonly List<Assembly> _extraAssemblies = new List<Assembly>();
 
         string _folderForSingleton = "atomic-singleton";
@@ -111,7 +111,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         }
 
         /// <summary>
-        /// Specifies base entity type to use in assembly scans. Default is <see cref="Define.AtomicEntity"/>
+        /// Specifies base entity type to use in assembly scans. 
         /// </summary>
         /// <typeparam name="TEntityBase">Base entity class from which all atomic entities are derived.</typeparam>
         public void WhereEntityIs<TEntityBase>()
@@ -120,8 +120,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         }
 
         /// <summary>
-        /// Allows to specify completely custom search pattern for entity types. Default is to look for inheritors from 
-        /// <see cref="Define.AtomicEntity"/>
+        /// Allows to specify completely custom search pattern for entity types.
         /// </summary>
         /// <param name="predicate">The predicate.</param>
         public void WhereEntity(Predicate<Type> predicate)
@@ -130,8 +129,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         }
 
         /// <summary>
-        /// Allows to specify completely custom search pattern for singleton types. Default behavior is to look for
-        /// inheritors from <see cref="Define.AtomicSingleton"/>
+        /// Allows to specify completely custom search pattern for singleton types. 
         /// </summary>
         /// <param name="predicate">The predicate.</param>
         public void WhereSingleton(Predicate<Type> predicate)
@@ -139,7 +137,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             _singletonTypeFilter = predicate;
         }
         /// <summary>
-        /// Specifies base singleton type to use in assembly scans. Default is <see cref="Define.AtomicSingleton"/>
+        /// Specifies base singleton type to use in assembly scans. 
         /// </summary>
         /// <typeparam name="TSingletonBase">Base singleton class from which all atomic singletons are derived.</typeparam>
         public void WhereSingletonIs<TSingletonBase>()
@@ -171,6 +169,8 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         /// <returns></returns>
         public IAtomicStorageStrategy Build()
         {
+            DisableFiltersIfNotAssigned();
+
             var types = AppDomain.CurrentDomain
                 .GetAssemblies()
                 .Where(AssemblyScanEvil.IsProbablyUserAssembly)
@@ -194,6 +194,18 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
                 _nameForSingleton, 
                 _folderForEntity, 
                 _nameForEntity, _serializer);
+        }
+
+        void DisableFiltersIfNotAssigned()
+        {
+            if (_entityTypeFilter(typeof(DBNull)))
+            {
+                _entityTypeFilter = type => false;
+            }
+            if (_singletonTypeFilter(typeof(DBNull)))
+            {
+                _singletonTypeFilter = type => false;
+            }
         }
     }
 }

@@ -14,7 +14,6 @@ using Lokad.Cqrs.Core.Envelope;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Core.Reactive;
 using Lokad.Cqrs.Core.Serialization;
-using Lokad.Cqrs.Feature.HandlerClasses;
 using Lokad.Cqrs.Feature.MemoryPartition;
 
 // ReSharper disable UnusedMethodReturnValue.Global
@@ -102,21 +101,7 @@ namespace Lokad.Cqrs.Build.Engine
         }
 
 
-        /// <summary>
-        /// Heavy-weight configuration that discovers and wires in both message contracts 
-        /// and messages handlers in an enterprise service bus style. Use <em>Messages</em>
-        /// overloads, if you want to use just lean and fast lambda delegates.
-        /// </summary>
-        /// <param name="factory">The factory that will add in a your favorite container.</param>
-        /// <param name="config">The configuration for dispatch directory module.</param>
-        public void MessagesWithHandlers(BuildsContainerForMessageHandlerClasses factory,
-            Action<MessagesWithHandlersConfigurationSyntax> config)
-        {
-            var module = new MessagesWithHandlersConfigurationSyntax(factory);
-            config(module);
-            _serializationTypes.AddRange(module.LookupMessages());
-            Advanced.ConfigureContainer(module.Configure);
-        }
+
 
         readonly IList<Func<Container, IQueueWriterFactory>> _activators =
             new List<Func<Container, IQueueWriterFactory>>();
