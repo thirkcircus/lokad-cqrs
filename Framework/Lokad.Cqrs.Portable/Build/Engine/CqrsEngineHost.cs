@@ -23,16 +23,21 @@ namespace Lokad.Cqrs.Build.Engine
     {
         public Container Container { get; private set; }
         readonly SystemObserver _observer;
-        readonly IEnumerable<IEngineProcess> _serverProcesses;
-        
+        readonly ICollection<IEngineProcess> _serverProcesses;
+
+        readonly Stack<IDisposable> _disposables = new Stack<IDisposable>(); 
         public CqrsEngineHost(
-            Container container,
             SystemObserver observer,
-            IEnumerable<IEngineProcess> serverProcesses)
+            ICollection<IEngineProcess> serverProcesses)
         {
-            Container = container;
             _serverProcesses = serverProcesses;
             _observer = observer;
+
+            _disposables.Push(_observer);
+            foreach (var engineProcess in serverProcesses)
+            {
+                _disposables.Push(engineProcess);
+            }
         }
 
         public void RunForever()
@@ -83,8 +88,15 @@ namespace Lokad.Cqrs.Build.Engine
     
         public void Dispose()
         {
-            Container.Dispose();
-            _observer.Dispose();
+            while (_disposables.Count> 0)
+            {
+                try
+                {
+                    _disposables.Pop().Dispose();
+                }
+                catch {}
+            }
+
         }
     }
 }

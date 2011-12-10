@@ -222,7 +222,7 @@ namespace Lokad.Cqrs.Build.Engine
 
             ExecuteAlterConfiguration();
 
-            var host = new CqrsEngineHost(_messyWires, _setup.Observer, _setup.GetProcesses());
+            var host = new CqrsEngineHost(_setup.Observer, _setup.GetProcesses());
             host.Initialize();
 
             ExecuteStartupTasks(host);

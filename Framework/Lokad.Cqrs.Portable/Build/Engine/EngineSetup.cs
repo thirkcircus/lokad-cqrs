@@ -51,7 +51,7 @@ namespace Lokad.Cqrs.Build.Engine
             }
         }
 
-        public IEnumerable<IEngineProcess> GetProcesses()
+        public ICollection<IEngineProcess> GetProcesses()
         {
             return _processes.AsReadOnly();
         }
