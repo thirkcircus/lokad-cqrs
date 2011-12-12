@@ -19,7 +19,6 @@ namespace Lokad.Cqrs.Build.Engine
     {
         readonly List<IEngineProcess> _processes;
 
-        public readonly SystemObserver Observer;
         public readonly QueueWriterRegistry Registry;
 
         public void AddProcess(IEngineProcess process)
@@ -56,9 +55,8 @@ namespace Lokad.Cqrs.Build.Engine
             return _processes.AsReadOnly();
         }
 
-        public EngineSetup(SystemObserver observer)
+        public EngineSetup()
         {
-            Observer = observer;
             Registry = new QueueWriterRegistry();
             _processes = new List<IEngineProcess>();
         }

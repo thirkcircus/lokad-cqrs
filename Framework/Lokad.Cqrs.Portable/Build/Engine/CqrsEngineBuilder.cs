@@ -21,9 +21,7 @@ namespace Lokad.Cqrs.Build.Engine
     public class CqrsEngineBuilder : HideObjectMembersFromIntelliSense
     {
       //  readonly StorageModule _storage;
-        readonly SystemObserver _observer;
 
-        public readonly IDictionary<Type, Func<object>> Container = new Dictionary<Type, Func<object>>();
 
         /// <summary>
         /// Tasks that are executed after engine is initialized and before starting up
@@ -54,8 +52,7 @@ namespace Lokad.Cqrs.Build.Engine
         public CqrsEngineBuilder()
         {
             // init time observer
-            _observer = new SystemObserver(new ImmediateTracingObserver());
-            _setup = new EngineSetup(_observer);
+            _setup = new EngineSetup();
 
             // snap in-memory stuff
 
@@ -97,12 +94,11 @@ namespace Lokad.Cqrs.Build.Engine
         public CqrsEngineHost Build()
         {
             // swap post-init observers into the place
-            _setup.Observer.Swap(_observers.ToArray());
-
+            
 
             ExecuteAlterConfiguration();
 
-            var host = new CqrsEngineHost(_setup.Observer, _setup.GetProcesses());
+            var host = new CqrsEngineHost(_setup.GetProcesses());
             host.Initialize();
 
             ExecuteStartupTasks(host);

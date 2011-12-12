@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace Lokad.Cqrs.Core.Reactive
 {
-    public sealed class ImmediateTracingObserver : IObserver<ISystemEvent>, ISystemObserver
+    public sealed class ImmediateTracingObserver : IObserver<ISystemEvent>
     {
         readonly DateTime _started = DateTime.UtcNow;
 

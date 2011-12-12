@@ -17,12 +17,10 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
     public sealed class AtomicStorageInitialization : IEngineStartupTask
     {
         readonly IEnumerable<IAtomicStorageFactory> _storage;
-        readonly ISystemObserver _observer;
 
-        public AtomicStorageInitialization(IEnumerable<IAtomicStorageFactory> storage, ISystemObserver observer)
+        public AtomicStorageInitialization(IEnumerable<IAtomicStorageFactory> storage)
         {
             _storage = storage;
-            _observer = observer;
         }
 
         public void Execute(CqrsEngineHost host)
@@ -32,7 +30,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
                 var folders = atomicStorageFactory.Initialize();
                 if (folders.Any())
                 {
-                    _observer.Notify(new AtomicStorageInitialized(folders.ToArray(), atomicStorageFactory.GetType()));
+                    SystemObserver.Notify(new AtomicStorageInitialized(folders.ToArray(), atomicStorageFactory.GetType()));
                 }
             }
         }

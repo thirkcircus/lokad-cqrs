@@ -20,16 +20,13 @@ namespace Lokad.Cqrs.Core.Dispatch
     public sealed class DispatcherProcess : IEngineProcess
     {
         readonly Action<byte[]> _dispatcher;
-        readonly ISystemObserver _observer;
         readonly IPartitionInbox _inbox;
 
         public DispatcherProcess(
-            ISystemObserver observer,
             Action<byte[]> dispatcher, 
             IPartitionInbox inbox)
         {
             _dispatcher = dispatcher;
-            _observer = observer;
             _inbox = inbox;
         }
 
@@ -92,7 +89,7 @@ namespace Lokad.Cqrs.Core.Dispatch
                     catch(Exception ex)
                     {
                         var e = new DispatchRecoveryFailed(ex, context, context.QueueName);
-                        _observer.Notify(e);
+                        SystemObserver.Notify(e);
                     }
                 }
             }
@@ -117,7 +114,7 @@ namespace Lokad.Cqrs.Core.Dispatch
                 // if the code below fails, it will just cause everything to be reprocessed later,
                 // which is OK (duplication manager will handle this)
 
-                _observer.Notify(new MessageDispatchFailed(context, context.QueueName, dispatchEx));
+                SystemObserver.Notify(new MessageDispatchFailed(context, context.QueueName, dispatchEx));
                 // quarantine is atomic with the processing
                 _inbox.TryNotifyNack(context);
             }
@@ -127,7 +124,7 @@ namespace Lokad.Cqrs.Core.Dispatch
             {
                 _inbox.AckMessage(context);
                 // 3rd - notify.
-                _observer.Notify(new MessageAcked(context));
+                SystemObserver.Notify(new MessageAcked(context));
 
             }
             catch (ThreadAbortException)
@@ -137,7 +134,7 @@ namespace Lokad.Cqrs.Core.Dispatch
             catch (Exception ex)
             {
                 // not a big deal. Message will be processed again.
-                _observer.Notify(new MessageAckFailed(ex, context));
+                SystemObserver.Notify(new MessageAckFailed(ex, context));
             }
         }
     }

@@ -146,7 +146,7 @@
     <Compile Include="Feature.AtomicStorage\ExtendAtomicSingletonReader.cs" />
     <Compile Include="Feature.AtomicStorage\IAtomicReader.cs" />
     <Compile Include="Feature.AtomicStorage\IAtomicWriter.cs" />
-    <Compile Include="Core.Reactive\SystemObserver.cs" />
+    <Compile Include="SystemObserver.cs" />
     <Compile Include="Feature.MemoryPartition\MemoryPartitionInbox.cs" />
     <Compile Include="Feature.MemoryPartition\MemoryQueueWriter.cs" />
     <Compile Include="Feature.StreamingStorage\ExtendStreamingItem.cs" />
@@ -175,7 +175,6 @@
     <Compile Include="Core.Outbox\IQueueWriter.cs" />
     <Compile Include="Core.Outbox\IQueueWriterFactory.cs" />
     <Compile Include="ISystemEvent.cs" />
-    <Compile Include="ISystemObserver.cs" />
     <Compile Include="Optional.1.cs" />
     <Compile Include="ImmutableEnvelope.cs" />
     <Compile Include="ImmutableMessage.cs" />

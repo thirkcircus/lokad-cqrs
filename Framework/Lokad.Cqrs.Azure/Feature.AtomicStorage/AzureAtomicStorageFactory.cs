@@ -58,7 +58,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
                 var message = string.Format(
                     "AzureAtomicStorage was configured, but without any entity or singleton definitions. Check info on your strategy: {0}",
                     _strategy.GetType());
-                _observer.Notify(new ConfigurationWarningEncountered(message));
+                SystemObserver.Notify(new ConfigurationWarningEncountered(message));
             }
 
             foreach (var type in entityTypes)
@@ -97,15 +97,12 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
 
         readonly IAtomicStorageStrategy _strategy;
         readonly IAzureStorageConfig _storage;
-        readonly ISystemObserver _observer;
 
 
-        public AzureAtomicStorageFactory(IAtomicStorageStrategy strategy, IAzureStorageConfig storage,
-            ISystemObserver observer)
+        public AzureAtomicStorageFactory(IAtomicStorageStrategy strategy, IAzureStorageConfig storage)
         {
             _strategy = strategy;
             _storage = storage;
-            _observer = observer;
         }
     }
 }

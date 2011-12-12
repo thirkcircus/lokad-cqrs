@@ -8,23 +8,19 @@
 using System;
 using System.Diagnostics;
 
-namespace Lokad.Cqrs.Core.Reactive
+namespace Lokad.Cqrs
 {
-    public sealed class SystemObserver : ISystemObserver, IDisposable
+    public static class SystemObserver 
     {
-        IObserver<ISystemEvent>[] _observers;
+        static IObserver<ISystemEvent>[] _observers = new IObserver<ISystemEvent>[0];
 
-        public SystemObserver(params IObserver<ISystemEvent>[] observers)
-        {
-            _observers = observers;
-        }
-
-        internal void Swap(IObserver<ISystemEvent>[] swap)
+   
+        public static void Swap(params IObserver<ISystemEvent>[] swap)
         {
             _observers = swap;
         }
 
-        public void Notify(ISystemEvent @event)
+        public static void  Notify(ISystemEvent @event)
         {
             foreach (var observer in _observers)
             {
@@ -40,7 +36,7 @@ namespace Lokad.Cqrs.Core.Reactive
             }
         }
 
-        public void Dispose()
+        public static void Complete()
         {
             foreach (var observer in _observers)
             {

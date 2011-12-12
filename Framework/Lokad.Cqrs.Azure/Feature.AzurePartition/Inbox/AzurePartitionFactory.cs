@@ -17,7 +17,6 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Inbox
     public sealed class AzurePartitionFactory 
     {
         readonly IEnvelopeStreamer _streamer;
-        readonly ISystemObserver _observer;
         readonly IAzureStorageConfig _config;
         readonly TimeSpan _queueVisibilityTimeout;
         readonly Func<uint, TimeSpan> _decayPolicy;
@@ -26,7 +25,6 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Inbox
 
         public AzurePartitionFactory(
             IEnvelopeStreamer streamer, 
-            ISystemObserver observer,
             IAzureStorageConfig config, 
             TimeSpan queueVisibilityTimeout,
             Func<uint, TimeSpan> decayPolicy)
@@ -35,7 +33,6 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Inbox
             _queueVisibilityTimeout = queueVisibilityTimeout;
             _decayPolicy = decayPolicy;
             _config = config;
-            _observer = observer;
         }
 
         StatelessAzureQueueReader BuildIntake(string name)
@@ -50,7 +47,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Inbox
                     return queueReference;
                 }, LazyThreadSafetyMode.ExecutionAndPublication);
 
-            var reader = new StatelessAzureQueueReader(name, queue, container, poisonQueue,  _observer, _streamer, _queueVisibilityTimeout);
+            var reader = new StatelessAzureQueueReader(name, queue, container, poisonQueue, _streamer, _queueVisibilityTimeout);
 
             return reader;
         }

@@ -12,15 +12,13 @@ namespace Lokad.Cqrs.Core.Envelope
         readonly IEnvelopeQuarantine _quarantine;
         readonly MessageDuplicationMemory _manager;
         readonly IEnvelopeStreamer _streamer;
-        readonly ISystemObserver _observer;
 
-        public EnvelopeDispatcher(Action<ImmutableEnvelope> action, IEnvelopeQuarantine quarantine, MessageDuplicationManager manager, IEnvelopeStreamer streamer, ISystemObserver observer)
+        public EnvelopeDispatcher(Action<ImmutableEnvelope> action, IEnvelopeQuarantine quarantine, MessageDuplicationManager manager, IEnvelopeStreamer streamer)
         {
             _action = action;
             _quarantine = quarantine;
             _manager = manager.GetOrAdd(this);
             _streamer = streamer;
-            _observer = observer;
         }
 
 
@@ -36,13 +34,13 @@ namespace Lokad.Cqrs.Core.Envelope
             {
                 // permanent quarantine for serialization problems
                 _quarantine.Quarantine(message, ex);
-                _observer.Notify(new EnvelopeDeserializationFailed(ex,"dispatch"));
+                SystemObserver.Notify(new EnvelopeDeserializationFailed(ex,"dispatch"));
                 return;
             }
 
             if (_manager.DoWeRemember(envelope.EnvelopeId))
             {
-                _observer.Notify(new EnvelopeDuplicateDiscarded(envelope.EnvelopeId));
+                SystemObserver.Notify(new EnvelopeDuplicateDiscarded(envelope.EnvelopeId));
                 return;
             }
                 
@@ -61,7 +59,7 @@ namespace Lokad.Cqrs.Core.Envelope
             {
                 if (_quarantine.TryToQuarantine(envelope, ex))
                 {
-                    _observer.Notify(new EnvelopeQuarantined(ex, envelope));
+                    SystemObserver.Notify(new EnvelopeQuarantined(ex, envelope));
                     // message quarantined. Swallow
                     return;
                 }
@@ -84,7 +82,7 @@ namespace Lokad.Cqrs.Core.Envelope
             }
             catch (Exception ex)
             {
-                _observer.Notify(new EnvelopeCleanupFailed(ex, envelope));
+                SystemObserver.Notify(new EnvelopeCleanupFailed(ex, envelope));
             }
 
             try
@@ -98,10 +96,10 @@ namespace Lokad.Cqrs.Core.Envelope
             }
             catch (Exception ex)
             {
-                _observer.Notify(new EnvelopeCleanupFailed(ex, envelope));
+                SystemObserver.Notify(new EnvelopeCleanupFailed(ex, envelope));
             }
 
-            _observer.Notify(new EnvelopeDispatched(envelope));
+            SystemObserver.Notify(new EnvelopeDispatched(envelope));
         }
     }
 }

@@ -22,15 +22,13 @@ namespace Lokad.Cqrs.Feature.Http
         HttpListener _listener = new HttpListener();
 
         readonly IHttpEnvironment _environment;
-        readonly ISystemObserver _observer;
         IEnumerable<IHttpRequestHandler> _handlers;
         readonly SemaphoreSlim _requestSemaphore = new SemaphoreSlim(128);
 
-        public Listener(IHttpEnvironment environment, ISystemObserver observer,
+        public Listener(IHttpEnvironment environment,
             IEnumerable<IHttpRequestHandler> handlers)
         {
             _environment = environment;
-            _observer = observer;
             _handlers = handlers;
         }
 
@@ -199,18 +197,18 @@ namespace Lokad.Cqrs.Feature.Http
                                     "Make sure to run as admin or reserve prefix. For reservation you can try executing as admin: netsh http add urlacl url={0} user={1}\\{2}",
                                     prefix, Environment.MachineName,
                                     Environment.UserName);
-                            _observer.Notify(new ConfigurationWarningEncountered("HttpListener can't connect to " + prefix + ". " + solution,
+                            SystemObserver.Notify(new ConfigurationWarningEncountered("HttpListener can't connect to " + prefix + ". " + solution,
                                 ex));
                         }
                         else
                         {
-                            _observer.Notify(new FailedToStartHttpListener(ex, prefix));
+                            SystemObserver.Notify(new FailedToStartHttpListener(ex, prefix));
                         }
                     }
 
                     catch (Exception ex)
                     {
-                        _observer.Notify(new FailedToStartHttpListener(ex, prefix));
+                        SystemObserver.Notify(new FailedToStartHttpListener(ex, prefix));
                     }
                     _listener.BeginGetContext(ar => GetContext(ar, token), null);
                     WaitTillAllProcessorsQuit(token);

@@ -44,7 +44,7 @@ namespace Lokad.Cqrs
         /// <returns></returns>
         public static NuclearStorage CreateNuclear(IAzureStorageConfig storageConfig, IAtomicStorageStrategy strategy)
         {
-            var factory = new AzureAtomicStorageFactory(strategy, storageConfig, new ImmediateTracingObserver());
+            var factory = new AzureAtomicStorageFactory(strategy, storageConfig);
             factory.Initialize();
             return new NuclearStorage(factory);
         }

@@ -4,12 +4,12 @@ using System.Linq;
 using Lokad.Cqrs.Core.Dispatch.Events;
 using Lokad.Cqrs.Core.Inbox;
 using Lokad.Cqrs.Core.Inbox.Events;
+using Lokad.Cqrs.Core.Reactive;
 
 namespace Lokad.Cqrs.Feature.FilePartition
 {
     public sealed class StatelessFileQueueReader
     {
-        readonly ISystemObserver _observer;
 
         readonly DirectoryInfo _queue;
         readonly string _queueName;
@@ -19,9 +19,8 @@ namespace Lokad.Cqrs.Feature.FilePartition
             get { return _queueName; }
         }
 
-        public StatelessFileQueueReader(ISystemObserver observer, DirectoryInfo queue, string queueName)
+        public StatelessFileQueueReader(DirectoryInfo queue, string queueName)
         {
-            _observer = observer;
             _queue = queue;
             _queueName = queueName;
         }
@@ -35,7 +34,7 @@ namespace Lokad.Cqrs.Feature.FilePartition
             }
             catch (Exception ex)
             {
-                _observer.Notify(new FailedToReadMessage(ex, _queueName));
+                SystemObserver.Notify(new FailedToReadMessage(ex, _queueName));
                 return GetEnvelopeResult.Error();
             }
 
@@ -57,13 +56,13 @@ namespace Lokad.Cqrs.Feature.FilePartition
                 // scare people.
                 if (!IsSharingViolation(ex))
                 {
-                    _observer.Notify(new FailedToAccessStorage(ex, _queue.Name, message.Name));
+                    SystemObserver.Notify(new FailedToAccessStorage(ex, _queue.Name, message.Name));
                 }
                 return GetEnvelopeResult.Retry;
             }
             catch (Exception ex)
             {
-                _observer.Notify(new MessageInboxFailed(ex, _queue.Name,message.FullName));
+                SystemObserver.Notify(new MessageInboxFailed(ex, _queue.Name, message.FullName));
                 // new poison details
                 return GetEnvelopeResult.Retry;
             }

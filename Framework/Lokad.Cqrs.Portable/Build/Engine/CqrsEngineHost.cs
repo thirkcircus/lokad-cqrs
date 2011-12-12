@@ -18,18 +18,13 @@ namespace Lokad.Cqrs.Build.Engine
 {
     public sealed class CqrsEngineHost : IDisposable
     {
-        readonly SystemObserver _observer;
         readonly ICollection<IEngineProcess> _serverProcesses;
 
         readonly Stack<IDisposable> _disposables = new Stack<IDisposable>(); 
-        public CqrsEngineHost(
-            SystemObserver observer,
-            ICollection<IEngineProcess> serverProcesses)
+        public CqrsEngineHost(ICollection<IEngineProcess> serverProcesses)
         {
             _serverProcesses = serverProcesses;
-            _observer = observer;
 
-            _disposables.Push(_observer);
             foreach (var engineProcess in serverProcesses)
             {
                 _disposables.Push(engineProcess);
@@ -55,7 +50,7 @@ namespace Lokad.Cqrs.Build.Engine
             var names =
                 _serverProcesses.Select(p => string.Format("{0}({1:X8})", p.GetType().Name, p.GetHashCode())).ToArray();
 
-            _observer.Notify(new EngineStarted(names));
+            SystemObserver.Notify(new EngineStarted(names));
 
             return Task.Factory.StartNew(() =>
                 {
@@ -66,19 +61,19 @@ namespace Lokad.Cqrs.Build.Engine
                     }
                     catch(OperationCanceledException)
                     {}
-                    _observer.Notify(new EngineStopped(watch.Elapsed));
+                    SystemObserver.Notify(new EngineStopped(watch.Elapsed));
                 });
         }
 
 
         internal void Initialize()
         {
-            _observer.Notify(new EngineInitializationStarted());
+            SystemObserver.Notify(new EngineInitializationStarted());
             foreach (var process in _serverProcesses)
             {
                 process.Initialize();
             }
-            _observer.Notify(new EngineInitialized());
+            SystemObserver.Notify(new EngineInitialized());
         }
 
     

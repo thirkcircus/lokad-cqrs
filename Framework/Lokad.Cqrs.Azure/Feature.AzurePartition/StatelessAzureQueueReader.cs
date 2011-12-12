@@ -17,7 +17,6 @@ namespace Lokad.Cqrs.Feature.AzurePartition
     public sealed class StatelessAzureQueueReader
     {
         readonly TimeSpan _visibilityTimeout;
-        readonly ISystemObserver _observer;
 
         readonly CloudBlobContainer _cloudBlob;
         readonly Lazy<CloudQueue> _posionQueue;
@@ -35,13 +34,11 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             CloudQueue primaryQueue,
             CloudBlobContainer container,
             Lazy<CloudQueue> poisonQueue,
-            ISystemObserver provider,
             IEnvelopeStreamer streamer, TimeSpan visibilityTimeout)
         {
             _cloudBlob = container;
             _queue = primaryQueue;
             _posionQueue = poisonQueue;
-            _observer = provider;
             _queueName = name;
             _visibilityTimeout = visibilityTimeout;
         }
@@ -67,7 +64,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             }
             catch (Exception ex)
             {
-                _observer.Notify(new FailedToReadMessage(ex, _queueName));
+                SystemObserver.Notify(new FailedToReadMessage(ex, _queueName));
                 return GetEnvelopeResult.Error();
             }
 
@@ -83,12 +80,12 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             }
             catch (StorageClientException ex)
             {
-                _observer.Notify(new FailedToAccessStorage(ex, _queue.Name, message.Id));
+                SystemObserver.Notify(new FailedToAccessStorage(ex, _queue.Name, message.Id));
                 return GetEnvelopeResult.Retry;
             }
             catch (Exception ex)
             {
-                _observer.Notify(new MessageInboxFailed(ex, _queue.Name, message.Id));
+                SystemObserver.Notify(new MessageInboxFailed(ex, _queue.Name, message.Id));
                 // new poison details
                 _posionQueue.Value.AddMessage(message);
                 _queue.DeleteMessage(message);

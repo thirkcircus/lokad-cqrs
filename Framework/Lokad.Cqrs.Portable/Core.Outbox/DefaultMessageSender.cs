@@ -16,14 +16,12 @@ namespace Lokad.Cqrs.Core.Outbox
     sealed class DefaultMessageSender : IMessageSender
     {
         readonly IQueueWriter[] _queues;
-        readonly ISystemObserver _observer;
         readonly Func<string> _idGenerator;
         readonly IEnvelopeStreamer _streamer;
 
-        public DefaultMessageSender(IQueueWriter[] queues, ISystemObserver observer, Func<string> idGenerator, IEnvelopeStreamer streamer)
+        public DefaultMessageSender(IQueueWriter[] queues, Func<string> idGenerator, IEnvelopeStreamer streamer)
         {
             _queues = queues;
-            _observer = observer;
             _idGenerator = idGenerator;
             _streamer = streamer;
 
@@ -84,7 +82,7 @@ namespace Lokad.Cqrs.Core.Outbox
             {
                 queue.PutMessage(data);
 
-                _observer.Notify(new EnvelopeSent(queue.Name, envelope.EnvelopeId, false,
+                SystemObserver.Notify(new EnvelopeSent(queue.Name, envelope.EnvelopeId, false,
                     envelope.Items.Select(x => x.MappedType.Name).ToArray(), envelope.GetAllAttributes()));
             }
             else
@@ -92,7 +90,7 @@ namespace Lokad.Cqrs.Core.Outbox
                 var action = new CommitActionEnlistment(() =>
                     {
                         queue.PutMessage(data);
-                        _observer.Notify(new EnvelopeSent(queue.Name, envelope.EnvelopeId, true,
+                        SystemObserver.Notify(new EnvelopeSent(queue.Name, envelope.EnvelopeId, true,
                             envelope.Items.Select(x => x.MappedType.Name).ToArray(), envelope.GetAllAttributes()));
                     });
                 Transaction.Current.EnlistVolatile(action, EnlistmentOptions.None);
