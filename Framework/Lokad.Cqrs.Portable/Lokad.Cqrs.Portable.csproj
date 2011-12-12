@@ -39,15 +39,10 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Build\Client\IAdvancedClientBuilder.cs" />
     <Compile Include="ConfigurationWarningEncountered.cs" />
     <Compile Include="Build\Engine\EngineSetup.cs" />
     <Compile Include="Build\MessagesConfigurationSyntax.cs" />
     <Compile Include="Build\Engine\AtomicRegistrationSource.cs" />
-    <Compile Include="Build\Client\FileClientModule.cs" />
-    <Compile Include="Build\Engine\FileModule.cs" />
-    <Compile Include="Core.Dispatch\IAdvancedDispatchBuilder.cs" />
-    <Compile Include="Build\Engine\IAdvancedEngineBuilder.cs" />
     <Compile Include="Core.Serialization\AbstractDataSerializer.cs" />
     <Compile Include="Core.Serialization\ContractEvil.cs" />
     <Compile Include="Core.Dispatch\Events\DispatchRecoveryFailed.cs" />
@@ -62,18 +57,6 @@
     <Compile Include="Core.Outbox\QueueWriterRegistry.cs" />
     <Compile Include="Core.Reactive\ImmediateConsoleObserver.cs" />
     <Compile Include="Core.Reactive\ImmediateEventsObserver.cs" />
-    <Compile Include="Core\Container.Adapter.cs" />
-    <Compile Include="Core\Container.cs" />
-    <Compile Include="Core\Container.Overloads.cs" />
-    <Compile Include="Core\IFunqlet.cs" />
-    <Compile Include="Core\IRegistrationSource.cs" />
-    <Compile Include="Core\Owner.cs" />
-    <Compile Include="Core\ResolutionException.cs" />
-    <Compile Include="Core\ReuseScope.cs" />
-    <Compile Include="Core\ServiceEntry.cs" />
-    <Compile Include="Core\ServiceEntry.Generic.cs" />
-    <Compile Include="Core\ServiceKey.cs" />
-    <Compile Include="Core\Syntax.cs" />
     <Compile Include="Evil\DecayEvil.cs" />
     <Compile Include="Feature.AtomicStorage\AddOrUpdateHint.cs" />
     <Compile Include="Feature.AtomicStorage\AtomicStorageInitialized.cs" />
@@ -88,7 +71,6 @@
     <Compile Include="Feature.FilePartition\FilePartitionInbox.cs" />
     <Compile Include="Feature.FilePartition\FileQueueWriter.cs" />
     <Compile Include="Feature.FilePartition\FileQueueWriterFactory.cs" />
-    <Compile Include="Feature.FilePartition\FilePartitionModule.cs" />
     <Compile Include="Feature.FilePartition\StatelessFileQueueReader.cs" />
     <Compile Include="Core.Envelope\EnvelopeDispatcher.cs" />
     <Compile Include="Feature.StreamingStorage\MemoryStreamingContainer.cs" />
@@ -110,16 +92,12 @@
     <Compile Include="Feature.TapeStorage\TapeRecord.cs" />
     <Compile Include="FileStorageConfig.cs" />
     <Compile Include="Feature.TimerService\StreamingTimerService.cs" />
-    <Compile Include="HandlerFactory.cs" />
     <Compile Include="IAfterConfigurationTask.cs" />
     <Compile Include="IEngineStartupTask.cs" />
     <Compile Include="ImmutableAttribute.cs" />
     <Compile Include="MemoryStorage.cs" />
     <Compile Include="MessageContext.cs" />
     <Compile Include="HideObjectMembersFromIntelliSense.cs" />
-    <Compile Include="Build\Client\CqrsClient.cs" />
-    <Compile Include="Build\Client\CqrsClientBuilder.cs" />
-    <Compile Include="Build\Engine\MemoryModule.cs" />
     <Compile Include="Build\Engine\StorageModule.cs" />
     <Compile Include="Core.Dispatch\Events\EventHadNoConsumers.cs" />
     <Compile Include="Core.Reactive\ImmediateTracingObserver.cs" />
@@ -129,7 +107,6 @@
     <Compile Include="Feature.AtomicStorage\ExtendAtomicEntityReader.cs" />
     <Compile Include="Feature.AtomicStorage\NuclearStorageExtensions.cs" />
     <Compile Include="Feature.AtomicStorage\IAtomicStorageFactory.cs" />
-    <Compile Include="Feature.AtomicStorage\MemoryAtomicStorageModule.cs" />
     <Compile Include="Feature.AtomicStorage\NuclearStorage.cs" />
     <Compile Include="Feature.AtomicStorage\MemoryAtomicContainer.cs" />
     <Compile Include="Feature.AtomicStorage\MemoryAtomicStorageFactory.cs" />
@@ -167,13 +144,11 @@
     <Compile Include="Core.Envelope\EnvelopeHeaderContract.cs" />
     <Compile Include="Core.Outbox\CommitActionEnlistment.cs" />
     <Compile Include="Core.Outbox\DefaultMessageSender.cs" />
-    <Compile Include="Core.Outbox\SendMessageModule.cs" />
     <Compile Include="Feature.AtomicStorage\ExtendAtomicSingletonReader.cs" />
     <Compile Include="Feature.AtomicStorage\IAtomicReader.cs" />
     <Compile Include="Feature.AtomicStorage\IAtomicWriter.cs" />
     <Compile Include="Core.Reactive\SystemObserver.cs" />
     <Compile Include="Feature.MemoryPartition\MemoryPartitionInbox.cs" />
-    <Compile Include="Feature.MemoryPartition\MemoryPartitionModule.cs" />
     <Compile Include="Feature.MemoryPartition\MemoryQueueWriter.cs" />
     <Compile Include="Feature.StreamingStorage\ExtendStreamingItem.cs" />
     <Compile Include="Feature.StreamingStorage\FileStreamingContainer.cs" />
@@ -215,11 +190,7 @@
     <Folder Include="Build\Events\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Core\Container.xdoc" />
     <None Include="ReadMe.markdown" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Core\License.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

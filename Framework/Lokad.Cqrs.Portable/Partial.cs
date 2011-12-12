@@ -8,10 +8,10 @@ using Lokad.Cqrs.Core;
 
 namespace Lokad.Cqrs
 {
-
+    using Container = Func<Type, object>;
     public sealed class HandlerComposer : HideObjectMembersFromIntelliSense
     {
-        readonly IDictionary<Type, Action<Container, object>> _handler = new Dictionary<Type, Action<Container, object>>();
+        readonly IDictionary<Type, Action<Container,object>> _handler = new Dictionary<Type, Action<Container, object>>();
         readonly Func<TransactionScope> _optionalTxProvider;
         readonly Action<Container, object> _whenNotFound = (container, o) => { };
 
@@ -19,8 +19,8 @@ namespace Lokad.Cqrs
         {
             _handler.Add(typeof(TMessage), (container, o) =>
                 {
-                    var a1 = container.Resolve<TArg1>();
-                    var a2 = container.Resolve<TArg2>();
+                    var a1 = (TArg1)container(typeof(TArg1));
+                    var a2 = (TArg2)container(typeof(TArg2));
                     add((TMessage) o, a1, a2);
                 });
         }
@@ -44,7 +44,7 @@ namespace Lokad.Cqrs
         {
             _handler.Add(typeof(TMessage), (container, o) =>
                 {
-                    var a1 = container.Resolve<TArg>();
+                    var a1 = (TArg)container(typeof(TArg));
                     add((TMessage) o, a1);
                 });
         }
@@ -53,14 +53,10 @@ namespace Lokad.Cqrs
         {
             return envelope => Execute(container, envelope);
         }
-        public HandlerFactory BuildFactory()
-        {
-            return container => (envelope => Execute(container, envelope));
-        }
+        
+        public static Action<ImmutableEnvelope> Empty = (envelope => { }); 
 
-        public static HandlerFactory Empty = container => (envelope => { }); 
-
-        void Execute(Container container, ImmutableEnvelope envelope)
+        public void Execute(Container container, ImmutableEnvelope envelope)
         {
             if (_optionalTxProvider == null)
             {

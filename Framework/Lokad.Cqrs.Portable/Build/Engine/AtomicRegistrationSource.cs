@@ -12,9 +12,9 @@ using Lokad.Cqrs.Feature.AtomicStorage;
 
 namespace Lokad.Cqrs.Build.Engine
 {
-    public sealed class AtomicRegistrationCore : IRegistrationSource
+    public sealed class AtomicRegistrationCore
     {
-        object Resolve(IAtomicStorageFactory factory, Type serviceType)
+        public object Resolve(IAtomicStorageFactory factory, Type serviceType)
         {
             Contract.Requires(factory != null);
             Contract.Requires(serviceType != null);
@@ -51,13 +51,6 @@ namespace Lokad.Cqrs.Build.Engine
             return true;
         }
 
-        public Func<Container,object> GetProvider(Type type)
-        {
-            return container =>
-                {
-                    var factory = container.Resolve<IAtomicStorageFactory>();
-                    return Resolve(factory, type);
-                };
-        }
+       
     }
 }

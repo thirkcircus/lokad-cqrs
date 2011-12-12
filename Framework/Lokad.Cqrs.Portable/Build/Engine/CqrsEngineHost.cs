@@ -9,19 +9,15 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Lokad.Cqrs.Build.Engine.Events;
-using Lokad.Cqrs.Core;
 using Lokad.Cqrs.Core.Reactive;
-using Lokad.Cqrs.Evil;
 
 namespace Lokad.Cqrs.Build.Engine
 {
     public sealed class CqrsEngineHost : IDisposable
     {
-        public Container Container { get; private set; }
         readonly SystemObserver _observer;
         readonly ICollection<IEngineProcess> _serverProcesses;
 

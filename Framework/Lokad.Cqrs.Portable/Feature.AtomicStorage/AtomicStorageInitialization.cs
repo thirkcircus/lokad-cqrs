@@ -10,10 +10,11 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using Lokad.Cqrs.Build.Engine;
 
 namespace Lokad.Cqrs.Feature.AtomicStorage
 {
-    public sealed class AtomicStorageInitialization : IEngineProcess
+    public sealed class AtomicStorageInitialization : IEngineStartupTask
     {
         readonly IEnumerable<IAtomicStorageFactory> _storage;
         readonly ISystemObserver _observer;
@@ -24,9 +25,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             _observer = observer;
         }
 
-        public void Dispose() {}
-
-        public void Initialize()
+        public void Execute(CqrsEngineHost host)
         {
             foreach (var atomicStorageFactory in _storage)
             {
@@ -36,12 +35,6 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
                     _observer.Notify(new AtomicStorageInitialized(folders.ToArray(), atomicStorageFactory.GetType()));
                 }
             }
-        }
-
-        public Task Start(CancellationToken token)
-        {
-            // don't do anything
-            return new Task(() => { });
         }
     }
 }
