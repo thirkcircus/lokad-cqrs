@@ -45,12 +45,12 @@ namespace Lokad.Cqrs.Core.Outbox
             {
                 return value;
             }
-            throw new InvalidOperationException(
+            throw new InvalidOperationException(string.Format(
                 @"Failed to locate queue factory for '{0}'. Please ensure registration.
 Normally Lokad.Cqrs tries to auto-register a factory, based on certain configs,
 however this is not always the case. So you might need to do something like:
 
-builder.Advanced.RegisterQueueWriterFactory()");
+builder.Advanced.RegisterQueueWriterFactory()", endpoint));
         }
 
         public override string ToString()
