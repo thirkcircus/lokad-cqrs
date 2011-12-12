@@ -20,7 +20,7 @@ namespace Lokad.Cqrs.Build.Engine
     /// </summary>
     public class CqrsEngineBuilder : HideObjectMembersFromIntelliSense
     {
-        readonly StorageModule _storage;
+      //  readonly StorageModule _storage;
         readonly SystemObserver _observer;
 
         public readonly IDictionary<Type, Func<object>> Container = new Dictionary<Type, Func<object>>();
@@ -63,7 +63,7 @@ namespace Lokad.Cqrs.Build.Engine
             _setup.Registry.Add(new MemoryQueueWriterFactory(memoryAccount));
 
 
-            _storage = new StorageModule(_observer);
+         //   _storage = new StorageModule(_observer);
         }
 
 
@@ -85,14 +85,7 @@ namespace Lokad.Cqrs.Build.Engine
         }
 
 
-        /// <summary>
-        /// Adds configuration to the storage module.
-        /// </summary>
-        /// <param name="configure">The configure.</param>
-        public void Storage(Action<StorageModule> configure)
-        {
-            configure(_storage);
-        }
+
 
         readonly EngineSetup _setup;
 

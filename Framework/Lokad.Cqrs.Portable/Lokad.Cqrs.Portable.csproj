@@ -98,7 +98,6 @@
     <Compile Include="MemoryStorage.cs" />
     <Compile Include="MessageContext.cs" />
     <Compile Include="HideObjectMembersFromIntelliSense.cs" />
-    <Compile Include="Build\Engine\StorageModule.cs" />
     <Compile Include="Core.Dispatch\Events\EventHadNoConsumers.cs" />
     <Compile Include="Core.Reactive\ImmediateTracingObserver.cs" />
     <Compile Include="Evil\AssemblyScanEvil.cs" />

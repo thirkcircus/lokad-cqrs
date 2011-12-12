@@ -38,7 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Feature.Http\Handlers\AbstractHttpRequestHandler.cs" />
-    <Compile Include="ExtendCqrsEngineBuilder.cs" />
     <Compile Include="Feature.Http\ExtendIHttpContext.cs" />
     <Compile Include="Feature.Http\Events\FailedToStartHttpListener.cs" />
     <Compile Include="Feature.Http\Handlers\EmbeddedResourceHttpRequestHandler.cs" />
