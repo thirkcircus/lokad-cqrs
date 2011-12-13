@@ -66,6 +66,17 @@ namespace Lokad.Cqrs
             container.Create();
             return container;
         }
+        public static IStreamingRoot CreateStreaming(this FileStorageConfig config, string optionalSubFolder = null)
+        {
+            var path = config.FullPath;
+            if (optionalSubFolder != null)
+            {
+                path = Path.Combine(path, optionalSubFolder);
+            }
+            var container = new FileStreamingContainer(path);
+            container.Create();
+            return container;
+        }
 
         /// <summary>
         /// Creates and initializes the tape storage in the provided folder.
@@ -75,6 +86,18 @@ namespace Lokad.Cqrs
         public static FileTapeStorageFactory CreateTape(string folderPath)
         {
             var factory = new FileTapeStorageFactory(folderPath);
+            factory.InitializeForWriting();
+            return factory;
+        }
+
+        public static FileTapeStorageFactory CreateTape(this FileStorageConfig config, string optionalSubFolder = null)
+        {
+            var path = config.FullPath;
+            if (optionalSubFolder!=null)
+            {
+                path = Path.Combine(path, optionalSubFolder);
+            }
+            var factory = new FileTapeStorageFactory(path);
             factory.InitializeForWriting();
             return factory;
         }
