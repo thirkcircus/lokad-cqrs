@@ -114,7 +114,7 @@ namespace Lokad.Cqrs
             return new FileStorageConfig(info, optionalName ?? info.Name);
         }
 
-        public static FilePartitionInbox CreateQueueInbox(this FileStorageConfig cfg, string name, Func<uint, TimeSpan> decay = null)
+        public static FilePartitionInbox CreateQueueReader(this FileStorageConfig cfg, string name, Func<uint, TimeSpan> decay = null)
         {
             var reader = new StatelessFileQueueReader(cfg.Folder, name);
 
@@ -123,9 +123,15 @@ namespace Lokad.Cqrs
             inbox.Init();
             return inbox;
         }
-        public static FileQueueWriterFactory CreateQueueWriterFactory(this FileStorageConfig cfg)
+        public static FileQueueWriter CreateQueueWriter(this FileStorageConfig cfg, string queueName)
         {
-            return new FileQueueWriterFactory(cfg);
+            var full = Path.Combine(cfg.Folder.FullName, queueName);
+            if (!Directory.Exists(full))
+            {
+                Directory.CreateDirectory(full);
+            }
+            return
+                new FileQueueWriter(new DirectoryInfo(full), queueName);
         }
     }
 }

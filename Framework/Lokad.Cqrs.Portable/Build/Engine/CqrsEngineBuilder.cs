@@ -1,109 +1,55 @@
-#region (c) 2010-2011 Lokad CQRS - New BSD License 
-
-// Copyright (c) Lokad SAS 2010-2011 (http://www.lokad.com)
-// This code is released as Open Source under the terms of the New BSD Licence
-// Homepage: http://lokad.github.com/lokad-cqrs/
-
-#endregion
-
 using System;
 using System.Collections.Generic;
-using Lokad.Cqrs.Core.Reactive;
-using Lokad.Cqrs.Feature.MemoryPartition;
-
-// ReSharper disable UnusedMethodReturnValue.Global
+using System.Threading;
+using System.Threading.Tasks;
+using Lokad.Cqrs.Core.Dispatch;
+using Lokad.Cqrs.Core.Envelope;
+using Lokad.Cqrs.Core.Inbox;
 
 namespace Lokad.Cqrs.Build.Engine
 {
-    /// <summary>
-    /// Fluent API for creating and configuring <see cref="CqrsEngineHost"/>
-    /// </summary>
-    public class CqrsEngineBuilder : HideObjectMembersFromIntelliSense
+    public sealed class CqrsEngineBuilder : HideObjectMembersFromIntelliSense
     {
-      //  readonly StorageModule _storage;
+        public readonly IEnvelopeQuarantine Quarantine;
+        public readonly MessageDuplicationManager Duplication;
+        public readonly IEnvelopeStreamer Streamer;
+        public readonly List<IEngineProcess> Processes; 
 
-
-        /// <summary>
-        /// Tasks that are executed after engine is initialized and before starting up
-        /// </summary>
-        public List<IEngineStartupTask> StartupTasks = new List<IEngineStartupTask>();
-
-        /// <summary>
-        /// Tasks that are executed before engine is being built
-        /// </summary>
-        public List<IAfterConfigurationTask> AfterConfigurationTasks = new List<IAfterConfigurationTask>();
-
-        void ExecuteAlterConfiguration()
+        public CqrsEngineBuilder(IEnvelopeStreamer streamer, IEnvelopeQuarantine quarantine = null, MessageDuplicationManager duplication = null)
         {
-            foreach (var task in AfterConfigurationTasks)
-            {
-                task.Execute(this);
-            }
-        }
+            Processes = new List<IEngineProcess>();
+            Streamer = streamer;
+            Quarantine = quarantine ?? new MemoryQuarantine();
+            Duplication = duplication ?? new MessageDuplicationManager();
 
-        void ExecuteStartupTasks(CqrsEngineHost host)
-        {
-            foreach (var task in StartupTasks)
-            {
-                task.Execute(host);
-            }
-        }
-
-        public CqrsEngineBuilder()
-        {
-            // init time observer
-            _setup = new EngineSetup();
-
-            // snap in-memory stuff
-
-            var memoryAccount = new MemoryAccount();
-            _setup.Registry.Add(new MemoryQueueWriterFactory(memoryAccount));
-
-
-         //   _storage = new StorageModule(_observer);
+            Processes.Add(Duplication);
         }
 
 
-        readonly List<IObserver<ISystemEvent>> _observers = new List<IObserver<ISystemEvent>>
-            {
-                new ImmediateTracingObserver()
-            };
-
-
-        public EngineSetup Setup
+        public void AddProcess(IEngineProcess process)
         {
-            get { return _setup; }
+            Processes.Add(process);
         }
 
-
-        public IList<IObserver<ISystemEvent>> Observers
+        public void AddProcess(Func<CancellationToken, Task> factoryToStartTask)
         {
-            get { return _observers; }
+            Processes.Add(new TaskProcess(factoryToStartTask));
         }
 
+        public void AddDispatcher(Action<byte[]> lambda, IPartitionInbox inbox)
+        {
+            Processes.Add(new DispatcherProcess(lambda, inbox));
+        }
 
+        public void AddDispatcher(Action<ImmutableEnvelope> lambda, IPartitionInbox inbox)
+        {
+            var dispatcher = new EnvelopeDispatcher(lambda, Streamer, Quarantine, Duplication);
+            AddProcess(new DispatcherProcess(dispatcher.Dispatch, inbox));
+        }
 
-
-        readonly EngineSetup _setup;
-
-
-        /// <summary>
-        /// Builds this <see cref="CqrsEngineHost"/>.
-        /// </summary>
-        /// <returns>new instance of cloud engine host</returns>
         public CqrsEngineHost Build()
         {
-            // swap post-init observers into the place
-            
-
-            ExecuteAlterConfiguration();
-
-            var host = new CqrsEngineHost(_setup.GetProcesses());
-            host.Initialize();
-
-            ExecuteStartupTasks(host);
-
-            return host;
+            return new CqrsEngineHost(Processes.AsReadOnly());
         }
     }
 }

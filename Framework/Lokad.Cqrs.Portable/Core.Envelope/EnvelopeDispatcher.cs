@@ -6,14 +6,14 @@ using Lokad.Cqrs.Core.Inbox.Events;
 
 namespace Lokad.Cqrs.Core.Envelope
 {
-    public sealed class EnvelopeDispatcher
+    public sealed class EnvelopeDispatcher 
     {
         readonly Action<ImmutableEnvelope> _action;
         readonly IEnvelopeQuarantine _quarantine;
         readonly MessageDuplicationMemory _manager;
         readonly IEnvelopeStreamer _streamer;
 
-        public EnvelopeDispatcher(Action<ImmutableEnvelope> action, IEnvelopeQuarantine quarantine, MessageDuplicationManager manager, IEnvelopeStreamer streamer)
+        public EnvelopeDispatcher(Action<ImmutableEnvelope> action, IEnvelopeStreamer streamer, IEnvelopeQuarantine quarantine, MessageDuplicationManager manager)
         {
             _action = action;
             _quarantine = quarantine;
@@ -101,5 +101,7 @@ namespace Lokad.Cqrs.Core.Envelope
 
             SystemObserver.Notify(new EnvelopeDispatched(envelope));
         }
+
+        
     }
 }

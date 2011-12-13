@@ -31,7 +31,7 @@ namespace Lokad.Cqrs.Build.Engine
             _processes.Add(new SimpleProcess(factoryToStartTask));
         }
 
-        sealed class SimpleProcess : IEngineProcess
+        public sealed class SimpleProcess : IEngineProcess
         {
             readonly Func<CancellationToken, Task> _factoryToStartTask;
 

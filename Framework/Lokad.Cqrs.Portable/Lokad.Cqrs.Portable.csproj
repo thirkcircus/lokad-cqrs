@@ -40,7 +40,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConfigurationWarningEncountered.cs" />
-    <Compile Include="Build\Engine\EngineSetup.cs" />
+    <Compile Include="Build\Engine\CqrsEngineBuilder.cs" />
     <Compile Include="Build\MessagesConfigurationSyntax.cs" />
     <Compile Include="Build\Engine\AtomicRegistrationSource.cs" />
     <Compile Include="Core.Serialization\AbstractDataSerializer.cs" />
@@ -92,7 +92,6 @@
     <Compile Include="Feature.TapeStorage\TapeRecord.cs" />
     <Compile Include="FileStorageConfig.cs" />
     <Compile Include="Feature.TimerService\StreamingTimerService.cs" />
-    <Compile Include="IAfterConfigurationTask.cs" />
     <Compile Include="IEngineStartupTask.cs" />
     <Compile Include="ImmutableAttribute.cs" />
     <Compile Include="MemoryStorage.cs" />
@@ -113,7 +112,6 @@
     <Compile Include="Core.Dispatch\MemoryQuarantine.cs" />
     <Compile Include="Core.Dispatch\Events\MessageAcked.cs" />
     <Compile Include="Core.Outbox\EnvelopeSent.cs" />
-    <Compile Include="Build\Engine\CqrsEngineBuilder.cs" />
     <Compile Include="Build\Engine\CqrsEngineHost.cs" />
     <Compile Include="Build\Engine\Events\EngineInitializationStarted.cs" />
     <Compile Include="Build\Engine\Events\EngineInitialized.cs" />
@@ -182,6 +180,7 @@
     <Compile Include="Partial.cs" />
     <Compile Include="Core.Serialization\DataSerializerWithDataContracts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TaskProcess.cs" />
     <Compile Include="unit.cs" />
   </ItemGroup>
   <ItemGroup>

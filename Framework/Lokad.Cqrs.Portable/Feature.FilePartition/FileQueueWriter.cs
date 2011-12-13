@@ -17,7 +17,7 @@ namespace Lokad.Cqrs.Feature.FilePartition
         readonly DirectoryInfo _folder;
 
         public string Name { get; private set; }
-        public readonly string Suffix ;
+        public readonly string Suffix;
 
         public FileQueueWriter(DirectoryInfo folder, string name)
         {
@@ -26,14 +26,14 @@ namespace Lokad.Cqrs.Feature.FilePartition
             Suffix = Guid.NewGuid().ToString().Substring(0, 4);
         }
 
-            static long UniversalCounter;
+        static long UniversalCounter;
 
-            public void PutMessage(byte[] envelope)
-            {
-                var id = Interlocked.Increment(ref UniversalCounter);
-                var fileName = string.Format("{0:yyyy-MM-dd-HH-mm-ss}-{1:00000000}-{2}", DateTime.UtcNow, id, Suffix);
-                var full = Path.Combine(_folder.FullName, fileName);
-                File.WriteAllBytes(full, envelope);
-            }
+        public void PutMessage(byte[] envelope)
+        {
+            var id = Interlocked.Increment(ref UniversalCounter);
+            var fileName = string.Format("{0:yyyy-MM-dd-HH-mm-ss}-{1:00000000}-{2}", DateTime.UtcNow, id, Suffix);
+            var full = Path.Combine(_folder.FullName, fileName);
+            File.WriteAllBytes(full, envelope);
+        }
     }
 }
