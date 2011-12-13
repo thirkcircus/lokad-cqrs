@@ -7,7 +7,9 @@
 
 using System;
 using System.IO;
+using Lokad.Cqrs.Evil;
 using Lokad.Cqrs.Feature.AtomicStorage;
+using Lokad.Cqrs.Feature.FilePartition;
 using Lokad.Cqrs.Feature.StreamingStorage;
 using Lokad.Cqrs.Feature.TapeStorage;
 // ReSharper disable UnusedMember.Global
@@ -87,6 +89,20 @@ namespace Lokad.Cqrs
         public static FileStorageConfig CreateConfig(DirectoryInfo info, string optionalName = null)
         {
             return new FileStorageConfig(info, optionalName ?? info.Name);
+        }
+
+        public static FilePartitionInbox CreateQueueInbox(this FileStorageConfig cfg, string name, Func<uint, TimeSpan> decay = null)
+        {
+            var reader = new StatelessFileQueueReader(cfg.Folder, name);
+
+            var waiter = decay ?? DecayEvil.BuildExponentialDecay(500);
+            var inbox = new FilePartitionInbox(new[]{reader, }, waiter);
+            inbox.Init();
+            return inbox;
+        }
+        public static FileQueueWriterFactory CreateQueueWriterFactory(this FileStorageConfig cfg)
+        {
+            return new FileQueueWriterFactory(cfg);
         }
     }
 }

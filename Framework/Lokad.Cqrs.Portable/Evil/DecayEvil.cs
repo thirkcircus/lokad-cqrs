@@ -39,5 +39,10 @@ namespace Lokad.Cqrs.Evil
                     return TimeSpan.FromSeconds(foo);
                 };
         }
+
+        public static Func<uint,TimeSpan> BuildExponentialDecay(int maxIntervalMilliseconds)
+        {
+            return BuildExponentialDecay(TimeSpan.FromMilliseconds(maxIntervalMilliseconds));
+        } 
     }
 }
