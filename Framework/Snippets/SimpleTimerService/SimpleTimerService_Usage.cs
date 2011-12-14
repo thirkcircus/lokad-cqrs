@@ -26,11 +26,10 @@ namespace Snippets.SimpleTimerService
         {
             var streamer = EnvelopeStreamer.CreateDefault(typeof(SecondPassed));
             var builder = new CqrsEngineBuilder(streamer);
-            var store = FileStorage.CreateConfig(GetType().Name);
-            store.Reset();
+            var store = FileStorage.CreateConfig(GetType().Name, reset:true);
 
 
-            builder.Handle(store.CreateInbox("inbox"), BuildRounter(store, streamer));
+            builder.Handle(store.CreateInbox("inbox"), BuildRouter(store, streamer));
             builder.Handle(store.CreateInbox("process"), ie => Console.WriteLine("Message from past!"));
 
             var inboxWriter = store.CreateQueueWriter("inbox");
@@ -49,7 +48,7 @@ namespace Snippets.SimpleTimerService
             }
         }
 
-        static Action<ImmutableEnvelope> BuildRounter(FileStorageConfig storage, IEnvelopeStreamer streamer)
+        static Action<ImmutableEnvelope> BuildRouter(FileStorageConfig storage, IEnvelopeStreamer streamer)
         {
             return envelope =>
                 {
