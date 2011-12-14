@@ -5,6 +5,9 @@
 
 #endregion
 
+using System;
+using Lokad.Cqrs.Core.Envelope;
+
 namespace Lokad.Cqrs
 {
     /// <summary>
@@ -26,4 +29,18 @@ namespace Lokad.Cqrs
         /// <returns>mes    sage envelope</returns>
         ImmutableEnvelope ReadAsEnvelopeData(byte[] buffer);
     }
+
+    public static class ExtendIEnvelopeStreamer
+{
+        public static byte[] SaveEnvelopeData(this IEnvelopeStreamer streamer, object message, Action<EnvelopeBuilder> build = null)
+        {
+            var builder = new EnvelopeBuilder(Guid.NewGuid().ToString());
+            builder.AddItem(message);
+            if (null != build)
+            {
+                build(builder);
+            }
+            return streamer.SaveEnvelopeData(builder.Build());
+        }
+}
 }

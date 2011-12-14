@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Lokad.Cqrs.Core.Dispatch;
 using Lokad.Cqrs.Core.Envelope;
 using Lokad.Cqrs.Core.Inbox;
+using Lokad.Cqrs.Core.Outbox;
 
 namespace Lokad.Cqrs.Build.Engine
 {
@@ -31,19 +32,20 @@ namespace Lokad.Cqrs.Build.Engine
             Processes.Add(process);
         }
 
+        
         public void AddProcess(Func<CancellationToken, Task> factoryToStartTask)
         {
             Processes.Add(new TaskProcess(factoryToStartTask));
         }
 
-        public void AddDispatcher(Action<byte[]> lambda, IPartitionInbox inbox)
+        public void Dispatch(IPartitionInbox inbox, Action<byte[]> lambda)
         {
             Processes.Add(new DispatcherProcess(lambda, inbox));
         }
 
         static int _counter = 0;
 
-        public void AddEnvelopeDispatcher(Action<ImmutableEnvelope> lambda, IPartitionInbox inbox, string name = null)
+        public void Handle(IPartitionInbox inbox, Action<ImmutableEnvelope> lambda, string name = null)
         {
             var dispatcherName = name ?? "inbox-" + Interlocked.Increment(ref _counter);
             var dispatcher = new EnvelopeDispatcher(lambda, Streamer, Quarantine, Duplication, dispatcherName);

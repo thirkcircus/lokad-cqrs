@@ -6,7 +6,10 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.IO;
+using Lokad.Cqrs.Core.Serialization;
+using System.Linq;
 
 //using ProtoBuf;
 
@@ -21,6 +24,15 @@ namespace Lokad.Cqrs.Core.Envelope
         {
             _envelopeSerializer = envelopeSerializer;
             _dataSerializer = dataSerializer;
+        }
+
+        public static EnvelopeStreamer CreateDefault(params Type[] types)
+        {
+            return new EnvelopeStreamer(new EnvelopeSerializerWithDataContracts(), new DataSerializerWithDataContracts(types));
+        }
+        public static EnvelopeStreamer CreateDefault(IEnumerable<Type> types)
+        {
+            return CreateDefault(types.Where(t => !t.IsAbstract).ToArray());
         }
 
         public byte[] SaveEnvelopeData(ImmutableEnvelope envelope)

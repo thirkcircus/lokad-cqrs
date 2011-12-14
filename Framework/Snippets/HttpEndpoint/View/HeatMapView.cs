@@ -11,7 +11,7 @@ using Lokad.Cqrs;
 namespace Snippets.HttpEndpoint.View
 {
     [DataContract]
-    public class HeatMapView : Define.AtomicSingleton
+    public class HeatMapView 
     {
         public HeatMapView()
         {

@@ -11,7 +11,7 @@ using Lokad.Cqrs;
 namespace Snippets.HttpEndpoint.View
 {
     [DataContract]
-    public class PointsView : Define.AtomicSingleton
+    public class PointsView 
     {
         public PointsView()
         {

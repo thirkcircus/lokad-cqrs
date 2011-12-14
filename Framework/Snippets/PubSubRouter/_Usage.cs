@@ -7,18 +7,19 @@
 #endregion
 
 using System;
-using System.Diagnostics;
+using System.Linq;
+using System.Reflection;
 using System.Runtime.Serialization;
 using System.Threading;
 using Lokad.Cqrs;
+using Lokad.Cqrs.Build;
 using Lokad.Cqrs.Build.Engine;
-using Lokad.Cqrs.Core;
-using Lokad.Cqrs.Core.Dispatch;
-using Lokad.Cqrs.Core.Outbox;
-using Lokad.Cqrs.Feature.AtomicStorage;
+using Lokad.Cqrs.Core.Envelope;
+using Lokad.Cqrs.Feature.MemoryPartition;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
+
 namespace Snippets.PubSubRouter
 {
     /// <summary>
@@ -30,28 +31,33 @@ namespace Snippets.PubSubRouter
         [Test]
         public void Test()
         {
-            var builder = new CqrsEngineBuilder();
+            var types = Assembly.GetExecutingAssembly().GetExportedTypes()
+                .Where(t => typeof(IPS_SampleMessage).IsAssignableFrom(t));
+            var streamer = EnvelopeStreamer.CreateDefault(types);
+            var builder = new CqrsEngineBuilder(streamer);
             // only message contracts within this class
-            builder.Messages(m => m.WhereMessages(t => t.DeclaringType == GetType()));
 
             // configure in memory:
             //                            -> sub 1 
             //  inbox -> [PubSubRouter] <
             //                            -> sub 2
             //
-            builder.Memory(m =>
-                {
-                    m.AddMemorySender("inbox", x => x.IdGeneratorForTests());
-                    m.AddMemoryProcess("inbox", x => x.DispatcherIs(ConfigureDispatcher));
-                    m.AddMemoryProcess("sub1", container => (envelope => Trace.WriteLine("sub1 got")) );
-                    m.AddMemoryProcess("sub2", container => (envelope => Trace.WriteLine("sub2 got")));
-                });
+            var store = new MemoryAccount();
+            var nuclear = store.CreateNuclear();
+
+            var router = new PubSubRouter(nuclear, store.CreateWriteQueueFactory(), streamer);
+            router.Init();
+
+            builder.Dispatch(store.CreateInbox("sub1"), b => Console.WriteLine("sub1 hit"));
+            builder.Dispatch(store.CreateInbox("sub2"), b => Console.WriteLine("sub2 hit"));
+            builder.Handle(store.CreateInbox("inbox"), router.DispatchMessage);
+
+            var sender = new SimpleMessageSender(streamer, store.CreateWriteQueue("inbox"));
 
             using (var engine = builder.Build())
             using (var cts = new CancellationTokenSource())
             {
                 var task = engine.Start(cts.Token);
-                var sender = engine.Resolve<IMessageSender>();
 
                 // no handler should get these.
                 sender.SendOne(new SomethingHappened());
@@ -75,35 +81,15 @@ namespace Snippets.PubSubRouter
                 sender.SendOne(new SomethingHappened());
                 sender.SendOne(new OtherHappened());
 
-                
 
                 task.Wait(5000);
-
             }
         }
 
         [DataContract]
-        public sealed class SomethingHappened : Define.Event
-        {
-            
-        }
+        public sealed class SomethingHappened : IPS_SampleEvent {}
 
         [DataContract]
-        public sealed class OtherHappened : Define.Event
-        {
-            
-        }
-
-        static ISingleThreadMessageDispatcher ConfigureDispatcher(Container arg)
-        {
-            var storage = arg.Resolve<NuclearStorage>();
-            var registry = arg.Resolve<QueueWriterRegistry>();
-            IQueueWriterFactory factory;
-            if (!registry.TryGet("memory", out factory))
-            {
-                throw new InvalidOperationException("Failed to get queue: memory");
-            }
-            return new PubSubRouter(storage, factory, arg.Resolve<IEnvelopeStreamer>());
-        }
+        public sealed class OtherHappened : IPS_SampleEvent {}
     }
 }

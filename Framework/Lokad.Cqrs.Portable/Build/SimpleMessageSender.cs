@@ -10,24 +10,27 @@ using System;
 using System.Linq;
 using System.Transactions;
 using Lokad.Cqrs.Core.Envelope;
+using Lokad.Cqrs.Core.Outbox;
 
-namespace Lokad.Cqrs.Core.Outbox
+namespace Lokad.Cqrs.Build
 {
-    sealed class DefaultMessageSender : IMessageSender
+    public sealed class SimpleMessageSender : IMessageSender
     {
         readonly IQueueWriter[] _queues;
         readonly Func<string> _idGenerator;
         readonly IEnvelopeStreamer _streamer;
 
-        public DefaultMessageSender(IQueueWriter[] queues, Func<string> idGenerator, IEnvelopeStreamer streamer)
+        public SimpleMessageSender(IEnvelopeStreamer streamer, IQueueWriter[] queues, Func<string> idGenerator = null)
         {
             _queues = queues;
-            _idGenerator = idGenerator;
+            _idGenerator = idGenerator ?? (() =>Guid.NewGuid().ToString());
             _streamer = streamer;
 
             if (queues.Length == 0)
                 throw new InvalidOperationException("There should be at least one queue");
         }
+
+        public SimpleMessageSender(IEnvelopeStreamer streamer, params IQueueWriter[] queues) : this(streamer, queues,null) {}
 
         public void SendOne(object content)
         {

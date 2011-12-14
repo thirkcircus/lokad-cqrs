@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lokad.Cqrs.Http", "Lokad.Cq
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Http", "Http", "{6261F4BE-D5C8-46B8-9CDA-D174EC674140}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Snippets", "Snippets\Snippets.csproj", "{81FE0373-6BCA-4CF6-8238-AABE4D9D3E4F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,16 @@ Global
 		{31870DB4-9A82-4476-9E6D-F36001029559}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{31870DB4-9A82-4476-9E6D-F36001029559}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{31870DB4-9A82-4476-9E6D-F36001029559}.Release|x86.ActiveCfg = Release|Any CPU
+		{81FE0373-6BCA-4CF6-8238-AABE4D9D3E4F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81FE0373-6BCA-4CF6-8238-AABE4D9D3E4F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81FE0373-6BCA-4CF6-8238-AABE4D9D3E4F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{81FE0373-6BCA-4CF6-8238-AABE4D9D3E4F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{81FE0373-6BCA-4CF6-8238-AABE4D9D3E4F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{81FE0373-6BCA-4CF6-8238-AABE4D9D3E4F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81FE0373-6BCA-4CF6-8238-AABE4D9D3E4F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81FE0373-6BCA-4CF6-8238-AABE4D9D3E4F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{81FE0373-6BCA-4CF6-8238-AABE4D9D3E4F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{81FE0373-6BCA-4CF6-8238-AABE4D9D3E4F}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

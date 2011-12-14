@@ -11,16 +11,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Lokad.Cqrs;
-using Lokad.Cqrs.Core.Dispatch;
 using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Feature.AtomicStorage;
 
 namespace Snippets.PubSubRouter
 {
+    public interface IPS_SampleMessage {}
+
+    public interface IPS_SampleCommand : IPS_SampleMessage{}
+    public interface IPS_SampleEvent : IPS_SampleMessage{}
+
     /// <summary>
     /// See ReadMe.markdown for details and <see cref="_Usage"/> for wiring
     /// </summary>
-    class PubSubRouter : ISingleThreadMessageDispatcher
+    class PubSubRouter 
     {
         readonly NuclearStorage _storage;
         readonly IEnvelopeStreamer _streamer;
@@ -42,18 +46,23 @@ namespace Snippets.PubSubRouter
                 {
                     throw new InvalidOperationException("Router control message should not have any content");
                 }
+
                 _storage.UpdateSingletonEnforcingNew<RouteTable>(rt => UpgradeRouterTable(controls, rt));
+                foreach (var attribute in controls)
+                {
+                    Console.WriteLine("  route {0}: {1}",attribute.Key, attribute.Value);
+                }
                 ReloadRouteMap();
                 return;
             }
 
             // replace with your logic to detect commands.
-            if (message.Items.All(m => m.Content is Define.Command))
+            if (message.Items.All(m => m.Content is IPS_SampleCommand))
             {
                 _queueFactory.GetWriteQueue("commands").PutMessage(_streamer.SaveEnvelopeData(message));
                 return;
             }
-            if (message.Items.All(m => m.Content is Define.Event))
+            if (message.Items.All(m => m.Content is IPS_SampleEvent))
             {
                 PublishEvent(message);
                 return;

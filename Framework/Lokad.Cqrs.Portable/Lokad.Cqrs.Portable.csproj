@@ -39,6 +39,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Build\Engine\RawEngineBuilder.cs" />
     <Compile Include="ConfigurationWarningEncountered.cs" />
     <Compile Include="Build\Engine\CqrsEngineBuilder.cs" />
     <Compile Include="Build\MessagesConfigurationSyntax.cs" />
@@ -54,7 +55,6 @@
     <Compile Include="Core.Inbox\Events\FailedToReadMessage.cs" />
     <Compile Include="Core.Inbox\GetEnvelopeResult.cs" />
     <Compile Include="Core.Inbox\GetEnvelopeResultState.cs" />
-    <Compile Include="Core.Outbox\QueueWriterRegistry.cs" />
     <Compile Include="Core.Reactive\ImmediateConsoleObserver.cs" />
     <Compile Include="Core.Reactive\ImmediateEventsObserver.cs" />
     <Compile Include="Evil\DecayEvil.cs" />
@@ -115,10 +115,8 @@
     <Compile Include="Build\Engine\Events\EngineStarted.cs" />
     <Compile Include="Build\Engine\Events\EngineStopped.cs" />
     <Compile Include="Core.Dispatch\DispatcherProcess.cs" />
-    <Compile Include="Core.Dispatch\DispatchMessagesToRoute.cs" />
     <Compile Include="Core.Dispatch\Events\MessageAckFailed.cs" />
     <Compile Include="Core.Dispatch\Events\MessageDispatchFailed.cs" />
-    <Compile Include="Core.Dispatch\ISingleThreadMessageDispatcher.cs" />
     <Compile Include="Core.Dispatch\MessageDuplicationManager.cs" />
     <Compile Include="Core.Dispatch\MessageDuplicationMemory.cs" />
     <Compile Include="Core.Envelope\EnvelopeBuilder.cs" />
@@ -137,7 +135,7 @@
     <Compile Include="Core.Envelope\MessageAttributes.cs" />
     <Compile Include="Core.Envelope\EnvelopeHeaderContract.cs" />
     <Compile Include="Core.Outbox\CommitActionEnlistment.cs" />
-    <Compile Include="Core.Outbox\DefaultMessageSender.cs" />
+    <Compile Include="Build\SimpleMessageSender.cs" />
     <Compile Include="Feature.AtomicStorage\ExtendAtomicSingletonReader.cs" />
     <Compile Include="Feature.AtomicStorage\IAtomicReader.cs" />
     <Compile Include="Feature.AtomicStorage\IAtomicWriter.cs" />

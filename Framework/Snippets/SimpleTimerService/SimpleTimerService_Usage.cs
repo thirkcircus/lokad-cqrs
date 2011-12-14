@@ -1,13 +1,21 @@
+#region (c) 2010-2011 Lokad CQRS - New BSD License 
+
+// Copyright (c) Lokad SAS 2010-2011 (http://www.lokad.com)
+// This code is released as Open Source under the terms of the New BSD Licence
+// Homepage: http://lokad.github.com/lokad-cqrs/
+
+#endregion
+
 using System;
-using System.Diagnostics;
 using System.Runtime.Serialization;
-using System.Threading;
 using Lokad.Cqrs;
 using Lokad.Cqrs.Build.Engine;
-using Lokad.Cqrs.Core;
+using Lokad.Cqrs.Core.Envelope;
+using Lokad.Cqrs.Feature.TimerService;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
+
 namespace Snippets.SimpleTimerService
 {
     [TestFixture, Explicit]
@@ -16,57 +24,42 @@ namespace Snippets.SimpleTimerService
         [Test]
         public void Test()
         {
-            var builder = new CqrsEngineBuilder();
-            // only message contracts within this class
-            builder.Messages(m => m.WhereMessages(t => t== typeof(SecondPassed)));
+            var streamer = EnvelopeStreamer.CreateDefault(typeof(SecondPassed));
+            var builder = new CqrsEngineBuilder(streamer);
+            var store = FileStorage.CreateConfig(GetType().Name);
+            store.Reset();
 
 
-            var storage = FileStorage.CreateConfig(GetType().Name, "fb");
-            storage.Reset();
-            Console.WriteLine(storage.FullPath);
-            builder.File(module =>
-                {
-                    module.AddFileSender(storage, "inbox", x => x.IdGeneratorForTests());
-                    module.AddFileTimer(storage, "timer", "inbox");
-                    module.AddFileProcess(storage, "process", c => (envelope => Console.WriteLine(envelope.DeliverOnUtc)));
-                    module.AddFileRouter(storage, "inbox", OnConfig);
-                });
+            builder.Handle(store.CreateInbox("inbox"), BuildRounter(store, streamer));
+            builder.Handle(store.CreateInbox("process"), ie => Console.WriteLine("Message from past!"));
+
+            var inboxWriter = store.CreateQueueWriter("inbox");
+            var futureContainer = store.CreateStreaming().GetContainer("future");
+            var timer = new StreamingTimerService(inboxWriter, futureContainer, streamer);
+
+            builder.AddProcess(timer);
+            builder.Handle(store.CreateInbox("timer"), timer.PutMessage);
 
             using (var engine = builder.Build())
             {
-                engine.Resolve<IMessageSender>().SendOne(new SecondPassed(), c => c.DelayBy(TimeSpan.FromSeconds(4)));
+                var bytes = streamer.SaveEnvelopeData(new SecondPassed(), c => c.DelayBy(TimeSpan.FromSeconds(4)));
+                inboxWriter.PutMessage(bytes);
+                Console.WriteLine("Sent message to future...");
                 engine.RunForever();
             }
         }
 
-        string OnConfig(ImmutableEnvelope cb)
+        static Action<ImmutableEnvelope> BuildRounter(FileStorageConfig storage, IEnvelopeStreamer streamer)
         {
-            Console.WriteLine("Routed");
-            return cb.DeliverOnUtc < DateTime.UtcNow ? "fb:process" : "fb:timer";
-        }
-
-        // ReSharper disable InconsistentNaming
-
-        static void WhenSecondPassed(SecondPassed p)
-        {
-            Trace.WriteLine("yet another second passed");
-        }
-
-        static Action<ImmutableEnvelope> Bootstrap(Container container)
-        {
-            var composer = new HandlerComposer();
-
-            composer.Add<SecondPassed>(WhenSecondPassed);
-
-            var action = composer.BuildHandler(container);
-
-
-            return action;
+            return envelope =>
+                {
+                    var target = (envelope.DeliverOnUtc < DateTime.UtcNow ? "process" : "timer");
+                    Console.WriteLine("Routed to " + target);
+                    storage.CreateQueueWriter(target).PutMessage(streamer.SaveEnvelopeData(envelope));
+                };
         }
     }
+
     [DataContract]
-    public sealed class SecondPassed
-    {
-        
-    }
+    public sealed class SecondPassed {}
 }

@@ -9,6 +9,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Lokad.Cqrs.Feature.AtomicStorage;
+using Lokad.Cqrs.Feature.MemoryPartition;
 using Lokad.Cqrs.Feature.StreamingStorage;
 using Lokad.Cqrs.Feature.TapeStorage;
 // ReSharper disable UnusedMember.Global
@@ -51,10 +52,13 @@ namespace Lokad.Cqrs
         /// <param name="configStrategy">The config strategy.</param>
         /// <returns></returns>
         public static NuclearStorage CreateNuclear(MemStore dictionary,
-            Action<DefaultAtomicStorageStrategyBuilder> configStrategy)
+            Action<DefaultAtomicStorageStrategyBuilder> configStrategy = null)
         {
             var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
-            configStrategy(strategyBuilder);
+            if (null != configStrategy)
+            {
+                configStrategy(strategyBuilder);
+            }
             var strategy = strategyBuilder.Build();
             return CreateNuclear(dictionary, strategy);
         }
@@ -84,6 +88,8 @@ namespace Lokad.Cqrs
             return container;
         }
 
+
+
         /// <summary>
         /// Creates memory-based tape storage factory.
         /// </summary>
@@ -93,6 +99,17 @@ namespace Lokad.Cqrs
             var dictionary = new ConcurrentDictionary<string, List<byte[]>>();
 
             return CreateTape(dictionary);
+        }
+
+          public static NuclearStorage CreateNuclear(this MemoryAccount dictionary,
+            Action<DefaultAtomicStorageStrategyBuilder> configStrategy = null)
+          {
+              return CreateNuclear(dictionary.Data, configStrategy);
+          }
+
+        public static MemoryQueueWriterFactory CreateWriteQueueFactory(this MemoryAccount account)
+        {
+            return new MemoryQueueWriterFactory(account);
         }
 
         /// <summary>
