@@ -32,6 +32,12 @@ namespace Lokad.Cqrs.Feature.Http
             _handlers = handlers;
         }
 
+        public Listener(IHttpEnvironment environment, params IHttpRequestHandler[] handlers)
+        {
+            _environment = environment;
+            _handlers = handlers;
+        }
+
         public void Dispose() {}
 
         public void Initialize()

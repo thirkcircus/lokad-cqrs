@@ -118,10 +118,15 @@ namespace Lokad.Cqrs
         }
 
 
-        public static FileStorageConfig CreateConfig(string fullPath, string optionalName = null)
+        public static FileStorageConfig CreateConfig(string fullPath, string optionalName = null, bool reset = false)
         {
             var folder = new DirectoryInfo(fullPath);
-            return new FileStorageConfig(folder, optionalName ?? folder.Name);
+            var config = new FileStorageConfig(folder, optionalName ?? folder.Name);
+            if (reset)
+            {
+                config.Reset();
+            }
+            return config;
         }
 
         public static FileStorageConfig CreateConfig(DirectoryInfo info, string optionalName = null)

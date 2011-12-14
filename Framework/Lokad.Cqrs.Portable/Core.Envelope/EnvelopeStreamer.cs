@@ -20,15 +20,15 @@ namespace Lokad.Cqrs.Core.Envelope
         readonly IEnvelopeSerializer _envelopeSerializer;
         readonly IDataSerializer _dataSerializer;
 
-        public EnvelopeStreamer(IEnvelopeSerializer envelopeSerializer, IDataSerializer dataSerializer)
+        public EnvelopeStreamer(IDataSerializer dataSerializer, IEnvelopeSerializer envelopeSerializer = null)
         {
-            _envelopeSerializer = envelopeSerializer;
+            _envelopeSerializer = envelopeSerializer ?? new EnvelopeSerializerWithDataContracts();
             _dataSerializer = dataSerializer;
         }
 
         public static EnvelopeStreamer CreateDefault(params Type[] types)
         {
-            return new EnvelopeStreamer(new EnvelopeSerializerWithDataContracts(), new DataSerializerWithDataContracts(types));
+            return new EnvelopeStreamer(new DataSerializerWithDataContracts(types), new EnvelopeSerializerWithDataContracts());
         }
         public static EnvelopeStreamer CreateDefault(IEnumerable<Type> types)
         {
