@@ -14,7 +14,7 @@ using Lokad.Cqrs.Core.Outbox;
 
 namespace Lokad.Cqrs.Build
 {
-    public sealed class SimpleMessageSender : IMessageSender
+    public sealed class SimpleMessageSender 
     {
         readonly IQueueWriter[] _queues;
         readonly Func<string> _idGenerator;

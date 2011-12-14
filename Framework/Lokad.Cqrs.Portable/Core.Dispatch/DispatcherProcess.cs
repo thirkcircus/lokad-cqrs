@@ -22,9 +22,7 @@ namespace Lokad.Cqrs.Core.Dispatch
         readonly Action<byte[]> _dispatcher;
         readonly IPartitionInbox _inbox;
 
-        public DispatcherProcess(
-            Action<byte[]> dispatcher, 
-            IPartitionInbox inbox)
+        public DispatcherProcess(Action<byte[]> dispatcher, IPartitionInbox inbox)
         {
             _dispatcher = dispatcher;
             _inbox = inbox;

@@ -163,7 +163,6 @@
     <Compile Include="IEngineProcess.cs" />
     <Compile Include="IEnvelopeSerializer.cs" />
     <Compile Include="IEnvelopeStreamer.cs" />
-    <Compile Include="IMessageSender.cs" />
     <Compile Include="IDataSerializer.cs" />
     <Compile Include="Core.Outbox\IQueueWriter.cs" />
     <Compile Include="Core.Outbox\IQueueWriterFactory.cs" />
@@ -178,9 +177,7 @@
     <Compile Include="TaskProcess.cs" />
     <Compile Include="unit.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Build\Events\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="ReadMe.markdown" />
   </ItemGroup>
