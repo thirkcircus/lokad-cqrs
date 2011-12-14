@@ -12,11 +12,13 @@ namespace Lokad.Cqrs.Core.Envelope
         readonly IEnvelopeQuarantine _quarantine;
         readonly MessageDuplicationMemory _manager;
         readonly IEnvelopeStreamer _streamer;
+        readonly string _dispatcherName;
 
-        public EnvelopeDispatcher(Action<ImmutableEnvelope> action, IEnvelopeStreamer streamer, IEnvelopeQuarantine quarantine, MessageDuplicationManager manager)
+        public EnvelopeDispatcher(Action<ImmutableEnvelope> action, IEnvelopeStreamer streamer, IEnvelopeQuarantine quarantine, MessageDuplicationManager manager, string dispatcherName)
         {
             _action = action;
             _quarantine = quarantine;
+            _dispatcherName = dispatcherName;
             _manager = manager.GetOrAdd(this);
             _streamer = streamer;
         }
@@ -59,7 +61,7 @@ namespace Lokad.Cqrs.Core.Envelope
             {
                 if (_quarantine.TryToQuarantine(envelope, ex))
                 {
-                    SystemObserver.Notify(new EnvelopeQuarantined(ex, envelope));
+                    SystemObserver.Notify(new EnvelopeQuarantined(ex,_dispatcherName, envelope));
                     // message quarantined. Swallow
                     return;
                 }
@@ -82,7 +84,7 @@ namespace Lokad.Cqrs.Core.Envelope
             }
             catch (Exception ex)
             {
-                SystemObserver.Notify(new EnvelopeCleanupFailed(ex, envelope));
+                SystemObserver.Notify(new EnvelopeCleanupFailed(ex,_dispatcherName, envelope));
             }
 
             try
@@ -96,10 +98,10 @@ namespace Lokad.Cqrs.Core.Envelope
             }
             catch (Exception ex)
             {
-                SystemObserver.Notify(new EnvelopeCleanupFailed(ex, envelope));
+                SystemObserver.Notify(new EnvelopeCleanupFailed(ex, _dispatcherName, envelope));
             }
 
-            SystemObserver.Notify(new EnvelopeDispatched(envelope));
+            SystemObserver.Notify(new EnvelopeDispatched(envelope,_dispatcherName));
         }
 
         

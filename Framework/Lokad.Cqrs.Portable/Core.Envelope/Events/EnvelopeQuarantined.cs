@@ -7,12 +7,13 @@ namespace Lokad.Cqrs.Core.Dispatch.Events
     public sealed class EnvelopeQuarantined : ISystemEvent
     {
         public Exception LastException { get; private set; }
+        public string Dispatcher { get; private set; }
         public ImmutableEnvelope Envelope { get; private set; }
 
-
-        public EnvelopeQuarantined(Exception lastException, ImmutableEnvelope envelope)
+        public EnvelopeQuarantined(Exception lastException, string dispatcher, ImmutableEnvelope envelope)
         {
             LastException = lastException;
+            Dispatcher = dispatcher;
             Envelope = envelope;
         }
 
@@ -26,11 +27,13 @@ namespace Lokad.Cqrs.Core.Dispatch.Events
     public sealed class EnvelopeCleanupFailed : ISystemEvent
     {
         public Exception Exception { get; private set; }
+        public string Dispatcher { get; private set; }
         public ImmutableEnvelope Envelope { get; private set; }
 
-        public EnvelopeCleanupFailed(Exception exception, ImmutableEnvelope envelope)
+        public EnvelopeCleanupFailed(Exception exception, string dispatcher, ImmutableEnvelope envelope)
         {
             Exception = exception;
+            Dispatcher = dispatcher;
             Envelope = envelope;
         }
     }
@@ -39,10 +42,11 @@ namespace Lokad.Cqrs.Core.Dispatch.Events
     public sealed class EnvelopeDispatched : ISystemEvent
     {
         public ImmutableEnvelope Envelope { get; private set; }
-
-        public EnvelopeDispatched(ImmutableEnvelope envelope)
+        public string Dispatcher { get; private set; }
+        public EnvelopeDispatched(ImmutableEnvelope envelope, string dispatcher)
         {
             Envelope = envelope;
+            Dispatcher = dispatcher;
         }
     }
 }

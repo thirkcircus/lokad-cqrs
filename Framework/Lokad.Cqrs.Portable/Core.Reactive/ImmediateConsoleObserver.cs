@@ -10,7 +10,7 @@ using System.Diagnostics;
 
 namespace Lokad.Cqrs.Core.Reactive
 {
-    public sealed class ImmediateConsoleObserver : IObserver<ISystemEvent>
+    public class ImmediateConsoleObserver : IObserver<ISystemEvent>
     {
         readonly Stopwatch _watch = Stopwatch.StartNew();
 

@@ -41,9 +41,12 @@ namespace Lokad.Cqrs.Build.Engine
             Processes.Add(new DispatcherProcess(lambda, inbox));
         }
 
-        public void AddEnvelopeDispatcher(Action<ImmutableEnvelope> lambda, IPartitionInbox inbox)
+        static int _counter = 0;
+
+        public void AddEnvelopeDispatcher(Action<ImmutableEnvelope> lambda, IPartitionInbox inbox, string name = null)
         {
-            var dispatcher = new EnvelopeDispatcher(lambda, Streamer, Quarantine, Duplication);
+            var dispatcherName = name ?? "inbox-" + Interlocked.Increment(ref _counter);
+            var dispatcher = new EnvelopeDispatcher(lambda, Streamer, Quarantine, Duplication, dispatcherName);
             AddProcess(new DispatcherProcess(dispatcher.Dispatch, inbox));
         }
 
