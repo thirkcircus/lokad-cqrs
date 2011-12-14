@@ -7,10 +7,7 @@
 #endregion
 
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Lokad.Cqrs.Feature.AtomicStorage
 {
@@ -18,7 +15,15 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
     {
         public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
         {
-            return new AzureAtomicWriter<TKey, TEntity>(_storage, _strategy);
+            var writer = new AzureAtomicWriter<TKey, TEntity>(_storage, _strategy);
+
+            var value = Tuple.Create(typeof(TKey), typeof(TEntity));
+            if (_initialized.Add(value))
+            {
+                // we've added a new record. Need to initialize
+                writer.InitializeIfNeeded();
+            }
+            return writer;
         }
 
         public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
@@ -26,78 +31,11 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             return new AzureAtomicReader<TKey, TEntity>(_storage, _strategy);
         }
 
-        readonly object _initializationLock = new object();
-        bool _initialized;
-
-
-        /// <summary>
-        /// Call this once on start-up to initialize folders
-        /// </summary>
-        public IEnumerable<string> Initialize()
-        {
-            lock (_initializationLock)
-            {
-                if (_initialized)
-                    return Enumerable.Empty<string>();
-                var result = DoInitialize();
-
-                _initialized = true;
-                return result;
-            }
-        }
-
-        string[] DoInitialize()
-        {
-            var folders = new HashSet<string>();
-
-            var entityTypes = _strategy.GetEntityTypes().ToArray();
-            var singletonTypes = _strategy.GetSingletonTypes().ToArray();
-
-            if (entityTypes.Length == 0 && singletonTypes.Length == 0)
-            {
-                var message = string.Format(
-                    "AzureAtomicStorage was configured, but without any entity or singleton definitions. Check info on your strategy: {0}",
-                    _strategy.GetType());
-                SystemObserver.Notify(new ConfigurationWarningEncountered(message));
-            }
-
-            foreach (var type in entityTypes)
-            {
-                var folder = _strategy.GetFolderForEntity(type);
-                folders.Add(folder);
-            }
-
-            folders.Add(_strategy.GetFolderForSingleton());
-            var client = _storage.CreateBlobClient();
-
-
-            var bag = new ConcurrentBag<string>();
-            var all = folders
-                .AsParallel()
-                .Select(f =>
-                    {
-                        var container = client.GetContainerReference(f);
-                        return Task.Factory.FromAsync(container.BeginCreateIfNotExist,
-                            result =>
-                                {
-                                    var created = container.EndCreateIfNotExist(result);
-                                    if (created)
-                                    {
-                                        bag.Add(f);
-                                    }
-                                    return created;
-                                }, null);
-                    })
-                .ToArray();
-
-            Task.WaitAll(all);
-
-            return bag.ToArray();
-        }
 
         readonly IAtomicStorageStrategy _strategy;
         readonly IAzureStorageConfig _storage;
 
+        readonly HashSet<Tuple<Type, Type>> _initialized = new HashSet<Tuple<Type, Type>>();
 
         public AzureAtomicStorageFactory(IAtomicStorageStrategy strategy, IAzureStorageConfig storage)
         {

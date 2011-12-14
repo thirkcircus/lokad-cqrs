@@ -38,6 +38,8 @@ namespace Lokad.Cqrs.Core.Dispatch.Events
         }
     }
 
+
+
     [Serializable]
     public sealed class EnvelopeDispatched : ISystemEvent
     {

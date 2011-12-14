@@ -12,13 +12,9 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
 {
     public interface IAtomicStorageStrategy 
     {
-        string GetFolderForEntity(Type entityType);
-        string GetFolderForSingleton();
+        string GetFolderForEntity(Type entityType, Type keyType);
         string GetNameForEntity(Type entity, object key);
-        string GetNameForSingleton(Type singletonType);
         void Serialize<TEntity>(TEntity entity, Stream stream);
         TEntity Deserialize<TEntity>(Stream stream);
-        Type[] GetEntityTypes();
-        Type[] GetSingletonTypes();
     }
 }

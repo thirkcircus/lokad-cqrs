@@ -1,7 +1,7 @@
-﻿using System;
+﻿
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace Lokad.Cqrs.Feature.AtomicStorage
 {
@@ -10,74 +10,30 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         readonly string _folderPath;
         readonly IAtomicStorageStrategy _strategy;
 
+
         public FileAtomicStorageFactory(string folderPath, IAtomicStorageStrategy strategy)
         {
             _folderPath = folderPath;
             _strategy = strategy;
         }
 
+
+        readonly HashSet<Tuple<Type, Type>> _initialized = new HashSet<Tuple<Type, Type>>();
+
+
         public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
         {
-            return new FileAtomicContainer<TKey, TEntity>(_folderPath, _strategy);
+            var container = new FileAtomicContainer<TKey, TEntity>(_folderPath, _strategy);
+            if (_initialized.Add(Tuple.Create(typeof(TKey),typeof(TEntity))))
+            {
+                container.InitIfNeeded();
+            }
+            return container;
         }
 
         public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
         {
             return new FileAtomicContainer<TKey, TEntity>(_folderPath, _strategy);
-        }
-
-        readonly object _initializationLock = new object();
-        bool _initialized;
-
-        /// <summary>
-        /// Call this once on start-up to initialize folders
-        /// </summary>
-        public IEnumerable<string> Initialize()
-        {
-            lock (_initializationLock)
-            {
-                if (_initialized)
-                    return Enumerable.Empty<string>();
-                var collection = DoInitialize();
-
-                _initialized = true;
-                return collection;
-            }
-        }
-
-        ICollection<string> DoInitialize()
-        {
-            var folders = new HashSet<string>();
-
-            var entityTypes = _strategy.GetEntityTypes().ToArray();
-            var singletonTypes = _strategy.GetSingletonTypes().ToArray();
-
-            if (entityTypes.Length == 0 && singletonTypes.Length == 0)
-            {
-                throw new InvalidOperationException(
-                    string.Format("FileAtomicStorage was configured, but without any entity or singleton definitions. Check info on your strategy: {0}", _strategy.GetType()));
-            }
-
-            foreach (var type in entityTypes)
-            {
-                var folder = _strategy.GetFolderForEntity(type);
-                folders.Add(folder);
-            }
-
-            var list = new List<string>();
-
-            folders.Add(_strategy.GetFolderForSingleton());
-            foreach (var folder in folders)
-            {
-                var path = Path.Combine(_folderPath, folder);
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                    list.Add(path);
-                }
-                
-            }
-            return list;
         }
     }
 }

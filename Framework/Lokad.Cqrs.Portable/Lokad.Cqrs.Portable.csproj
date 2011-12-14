@@ -59,7 +59,6 @@
     <Compile Include="Core.Reactive\ImmediateEventsObserver.cs" />
     <Compile Include="Evil\DecayEvil.cs" />
     <Compile Include="Feature.AtomicStorage\AddOrUpdateHint.cs" />
-    <Compile Include="Feature.AtomicStorage\AtomicStorageInitialized.cs" />
     <Compile Include="Feature.AtomicStorage\AtomicStorageSerializerWithDataContracts.cs" />
     <Compile Include="Feature.AtomicStorage\AtomicStorageSerializerWithDelegates.cs" />
     <Compile Include="Feature.AtomicStorage\DefaultAtomicStorageStrategy.cs" />
@@ -92,7 +91,6 @@
     <Compile Include="Feature.TapeStorage\TapeRecord.cs" />
     <Compile Include="FileStorageConfig.cs" />
     <Compile Include="Feature.TimerService\StreamingTimerService.cs" />
-    <Compile Include="IEngineStartupTask.cs" />
     <Compile Include="ImmutableAttribute.cs" />
     <Compile Include="MemoryStorage.cs" />
     <Compile Include="MessageContext.cs" />
@@ -100,7 +98,6 @@
     <Compile Include="Core.Dispatch\Events\EventHadNoConsumers.cs" />
     <Compile Include="Core.Reactive\ImmediateTracingObserver.cs" />
     <Compile Include="Evil\AssemblyScanEvil.cs" />
-    <Compile Include="Feature.AtomicStorage\AtomicStorageInitialization.cs" />
     <Compile Include="Feature.AtomicStorage\ExtendAtomicEntityWriter.cs" />
     <Compile Include="Feature.AtomicStorage\ExtendAtomicEntityReader.cs" />
     <Compile Include="Feature.AtomicStorage\NuclearStorageExtensions.cs" />

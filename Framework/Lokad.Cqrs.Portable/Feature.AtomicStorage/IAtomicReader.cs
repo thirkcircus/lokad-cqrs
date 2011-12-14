@@ -9,7 +9,6 @@
 namespace Lokad.Cqrs.Feature.AtomicStorage
 {
     public interface IAtomicReader<in TKey,TView>
-        //where TView : IAtomicEntity<TKey>
     {
         /// <summary>
         /// Gets the view with the specified key.

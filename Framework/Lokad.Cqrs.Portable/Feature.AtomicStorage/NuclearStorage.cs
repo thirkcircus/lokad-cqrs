@@ -18,6 +18,8 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
     {
         public readonly IAtomicStorageFactory Factory;
 
+
+
         public NuclearStorage(IAtomicStorageFactory factory)
         {
             Factory = factory;

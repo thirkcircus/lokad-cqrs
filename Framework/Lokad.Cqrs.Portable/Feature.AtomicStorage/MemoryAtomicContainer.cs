@@ -14,7 +14,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         {
             _store = store;
             _strategy = strategy;
-            _entityPrefix = _strategy.GetFolderForEntity(typeof(TEntity)) + ":";
+            _entityPrefix = _strategy.GetFolderForEntity(typeof(TEntity),typeof(TKey)) + ":";
         }
 
         public bool TryGet(TKey key, out TEntity entity)

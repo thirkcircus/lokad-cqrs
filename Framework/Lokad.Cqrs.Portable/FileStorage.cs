@@ -57,9 +57,7 @@ namespace Lokad.Cqrs
         /// <returns></returns>
         public static NuclearStorage CreateNuclear(string storageFolder, IAtomicStorageStrategy strategy)
         {
-            var factory = new FileAtomicStorageFactory(storageFolder, strategy);
-            factory.Initialize();
-            return new NuclearStorage(factory);
+            return new NuclearStorage(new FileAtomicStorageFactory(storageFolder, strategy));
         }
 
         public static NuclearStorage CreateNuclear(this FileStorageConfig config)

@@ -15,14 +15,17 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
                                                              IAtomicWriter<TKey, TEntity>
     {
         readonly IAtomicStorageStrategy _strategy;
-        readonly string _entityPath;
-        readonly string _singletonPath;
+        readonly string _folder;
 
         public FileAtomicContainer(string directoryPath, IAtomicStorageStrategy strategy)
         {
             _strategy = strategy;
-            _entityPath = Path.Combine(directoryPath, _strategy.GetFolderForEntity(typeof(TEntity)));
-            _singletonPath = Path.Combine(directoryPath, _strategy.GetFolderForSingleton());
+            _folder = Path.Combine(directoryPath, strategy.GetFolderForEntity(typeof(TEntity), typeof(TKey)));
+        }
+
+        public void InitIfNeeded()
+        {
+            Directory.CreateDirectory(_folder);
         }
 
         public bool TryGet(TKey key, out TEntity view)
@@ -49,11 +52,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
 
         string GetName(TKey key)
         {
-            if (typeof(TKey) == typeof(unit))
-            {
-                return Path.Combine(_singletonPath, _strategy.GetNameForSingleton(typeof(TEntity)));
-            }
-            return Path.Combine(_entityPath, _strategy.GetNameForEntity(typeof(TEntity), key));
+            return Path.Combine(_folder, _strategy.GetNameForEntity(typeof(TEntity),key));
         }
 
         public TEntity AddOrUpdate(TKey key, Func<TEntity> addFactory, Func<TEntity, TEntity> update,
@@ -99,8 +98,8 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             catch (DirectoryNotFoundException)
             {
                 var s = string.Format(
-                    "Container '{0}' does not exist. You need to initialize this atomic storage and ensure that '{1}' is known to '{2}'.",
-                    _entityPath, typeof(TEntity).Name, _strategy.GetType().Name);
+                    "Container '{0}' does not exist.",
+                    _folder);
                 throw new InvalidOperationException(s);
             }
         }

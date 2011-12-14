@@ -21,8 +21,6 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
     /// </summary>
     public sealed class DefaultAtomicStorageStrategyBuilder : HideObjectMembersFromIntelliSense
     {
-        Predicate<Type> _entityTypeFilter = type => true;
-        Predicate<Type> _singletonTypeFilter = type => true;
         readonly List<Assembly> _extraAssemblies = new List<Assembly>();
 
         string _folderForSingleton = "atomic-singleton";
@@ -110,58 +108,10 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             _nameForEntity = namingConvention;
         }
 
-        /// <summary>
-        /// Specifies base entity type to use in assembly scans. 
-        /// </summary>
-        /// <typeparam name="TEntityBase">Base entity class from which all atomic entities are derived.</typeparam>
-        public void WhereEntityIs<TEntityBase>()
-        {
-            _entityTypeFilter = type => typeof (TEntityBase).IsAssignableFrom(type);
-        }
 
-        /// <summary>
-        /// Allows to specify completely custom search pattern for entity types.
-        /// </summary>
-        /// <param name="predicate">The predicate.</param>
-        public void WhereEntity(Predicate<Type> predicate)
-        {
-            _entityTypeFilter = predicate;
-        }
 
-        /// <summary>
-        /// Allows to specify completely custom search pattern for singleton types. 
-        /// </summary>
-        /// <param name="predicate">The predicate.</param>
-        public void WhereSingleton(Predicate<Type> predicate)
-        {
-            _singletonTypeFilter = predicate;
-        }
-        /// <summary>
-        /// Specifies base singleton type to use in assembly scans. 
-        /// </summary>
-        /// <typeparam name="TSingletonBase">Base singleton class from which all atomic singletons are derived.</typeparam>
-        public void WhereSingletonIs<TSingletonBase>()
-        {
-            _singletonTypeFilter = type => typeof (TSingletonBase).IsAssignableFrom(type);
-        }
 
-        /// <summary>
-        /// Specifies an additional assembly to scan for atomic types (in addition to the loaded assemblies)
-        /// </summary>
-        /// <param name="assembly">The assembly to include into scan for atomic types.</param>
-        public void WithAssembly(Assembly assembly)
-        {
-            _extraAssemblies.Add(assembly);
-        }
 
-        /// <summary>
-        /// Specifies an additional assembly to scan for atomic types (in addition to the loaded assemblies)
-        /// </summary>
-        /// <typeparam name="T">type, located in assembly to include in scan</typeparam>
-        public void WithAssemblyOf<T>()
-        {
-            _extraAssemblies.Add(typeof(T).Assembly);
-        }
 
         /// <summary>
         /// Builds new instance of immutable <see cref="IAtomicStorageStrategy"/>
@@ -169,43 +119,12 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         /// <returns></returns>
         public IAtomicStorageStrategy Build()
         {
-            DisableFiltersIfNotAssigned();
-
-            var types = AppDomain.CurrentDomain
-                .GetAssemblies()
-                .Where(AssemblyScanEvil.IsProbablyUserAssembly)
-                .Concat(_extraAssemblies)
-                .Distinct()
-                .SelectMany(t => t.GetExportedTypes())
-                .Where(t => !t.IsAbstract)
-                .ToArray();
-            var entities = types
-                .Where(t => _entityTypeFilter(t))
-                .ToArray();
-
-            var singletons = types
-                .Where(t => _singletonTypeFilter(t))
-                .ToArray();
-
             return new DefaultAtomicStorageStrategy(
-                entities, 
-                singletons, 
                 _folderForSingleton, 
                 _nameForSingleton, 
                 _folderForEntity, 
                 _nameForEntity, _serializer);
         }
 
-        void DisableFiltersIfNotAssigned()
-        {
-            if (_entityTypeFilter(typeof(DBNull)))
-            {
-                _entityTypeFilter = type => false;
-            }
-            if (_singletonTypeFilter(typeof(DBNull)))
-            {
-                _singletonTypeFilter = type => false;
-            }
-        }
     }
 }

@@ -45,7 +45,6 @@ namespace Lokad.Cqrs
         public static NuclearStorage CreateNuclear(IAzureStorageConfig storageConfig, IAtomicStorageStrategy strategy)
         {
             var factory = new AzureAtomicStorageFactory(strategy, storageConfig);
-            factory.Initialize();
             return new NuclearStorage(factory);
         }
         /// <summary> Creates the simplified nuclear storage wrapper around Atomic storage. </summary>
