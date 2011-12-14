@@ -41,7 +41,7 @@ namespace Lokad.Cqrs.Build.Engine
             Processes.Add(new DispatcherProcess(lambda, inbox));
         }
 
-        public void AddDispatcher(Action<ImmutableEnvelope> lambda, IPartitionInbox inbox)
+        public void AddEnvelopeDispatcher(Action<ImmutableEnvelope> lambda, IPartitionInbox inbox)
         {
             var dispatcher = new EnvelopeDispatcher(lambda, Streamer, Quarantine, Duplication);
             AddProcess(new DispatcherProcess(dispatcher.Dispatch, inbox));
@@ -49,7 +49,9 @@ namespace Lokad.Cqrs.Build.Engine
 
         public CqrsEngineHost Build()
         {
-            return new CqrsEngineHost(Processes.AsReadOnly());
+            var host = new CqrsEngineHost(Processes.AsReadOnly());
+            host.Initialize();
+            return host;
         }
     }
 }

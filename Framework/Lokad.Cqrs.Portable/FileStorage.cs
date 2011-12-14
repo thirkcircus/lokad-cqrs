@@ -47,6 +47,8 @@ namespace Lokad.Cqrs
         }
 
 
+
+
         /// <summary>
         /// Creates the simplified nuclear storage wrapper around Atomic storage.
         /// </summary>
@@ -60,12 +62,27 @@ namespace Lokad.Cqrs
             return new NuclearStorage(factory);
         }
 
+        public static NuclearStorage CreateNuclear(this FileStorageConfig config)
+        {
+            return CreateNuclear(config.FullPath);
+        }
+
+        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IAtomicStorageStrategy strategy)
+        {
+            return CreateNuclear(config.FullPath, strategy);
+        }
+        public static NuclearStorage CreateNuclear(this FileStorageConfig self, Action<DefaultAtomicStorageStrategyBuilder> config)
+        {
+            return CreateNuclear(self.FullPath, config);
+        }
+
         public static IStreamingRoot CreateStreaming(string storageFolder)
         {
             var container = new FileStreamingContainer(storageFolder);
             container.Create();
             return container;
         }
+
         public static IStreamingRoot CreateStreaming(this FileStorageConfig config, string optionalSubFolder = null)
         {
             var path = config.FullPath;
@@ -116,7 +133,7 @@ namespace Lokad.Cqrs
 
         public static FilePartitionInbox CreateQueueReader(this FileStorageConfig cfg, string name, Func<uint, TimeSpan> decay = null)
         {
-            var reader = new StatelessFileQueueReader(cfg.Folder, name);
+            var reader = new StatelessFileQueueReader(Path.Combine(cfg.FullPath, name), name);
 
             var waiter = decay ?? DecayEvil.BuildExponentialDecay(500);
             var inbox = new FilePartitionInbox(new[]{reader, }, waiter);

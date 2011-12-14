@@ -25,6 +25,12 @@ namespace Lokad.Cqrs.Feature.FilePartition
             _queueName = queueName;
         }
 
+        public StatelessFileQueueReader(string path, string queueName)
+        {
+            _queue = new DirectoryInfo(path);
+            _queueName = queueName;
+        }
+
         public GetEnvelopeResult TryGetMessage()
         {
             FileInfo message;

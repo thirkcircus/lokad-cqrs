@@ -22,6 +22,11 @@ namespace Lokad.Cqrs
             AccountName = accountName;
         }
 
+        public FileStorageConfig SubFolder(string path, string account = null)
+        {
+            return new FileStorageConfig(new DirectoryInfo(Path.Combine(Folder.FullName, path)), account ?? AccountName + "-" + path);
+        }
+
         public void Wipe()
         {
             if (Folder.Exists)
