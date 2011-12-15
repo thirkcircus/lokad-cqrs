@@ -6,7 +6,6 @@
 
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Net;
 using Lokad.Cqrs;
 using Lokad.Cqrs.Feature.AtomicStorage;

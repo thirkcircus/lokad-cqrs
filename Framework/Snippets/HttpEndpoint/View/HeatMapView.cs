@@ -6,7 +6,6 @@
 
 using System.Drawing;
 using System.Runtime.Serialization;
-using Lokad.Cqrs;
 
 namespace Snippets.HttpEndpoint.View
 {

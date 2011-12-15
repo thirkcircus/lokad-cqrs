@@ -6,7 +6,6 @@
 
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Lokad.Cqrs;
 
 namespace Snippets.HttpEndpoint.View
 {
