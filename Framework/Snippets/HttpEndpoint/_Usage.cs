@@ -95,8 +95,8 @@ namespace Snippets.HttpEndpoint
 
             stats.MessagesCount++;
 
-            stats.Distance += (long)Math.Sqrt(Math.Pow(mouseMovedEvent.x1 - mouseMovedEvent.x2, 2)
-                                  + Math.Pow(mouseMovedEvent.y1 - mouseMovedEvent.y2, 2));
+            stats.Distance += (long)Math.Sqrt(Math.Pow(mouseMovedEvent.X1 - mouseMovedEvent.X2, 2)
+                                  + Math.Pow(mouseMovedEvent.Y1 - mouseMovedEvent.Y2, 2));
             stats.RecordMessage();
         }
 
@@ -107,14 +107,14 @@ namespace Snippets.HttpEndpoint
             writer.AddOrUpdate(unit.it, () => new PointsView(),
                 v =>
                 {
-                    var Point = v.Points.FirstOrDefault(p => p.X == mouseMovedEvent.x && p.Y == mouseMovedEvent.y);
+                    var Point = v.Points.FirstOrDefault(p => p.X == mouseMovedEvent.X && p.Y == mouseMovedEvent.Y);
                     if (Point != null)
                     {
                         Point.Intensity += 10;
                     }
                     else
                     {
-                        v.Points.Add(new HeatPoint(mouseMovedEvent.x, mouseMovedEvent.y, 50));
+                        v.Points.Add(new HeatPoint(mouseMovedEvent.X, mouseMovedEvent.Y, 50));
                     }
                 });
         }

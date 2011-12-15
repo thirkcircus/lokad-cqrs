@@ -15,17 +15,17 @@ namespace Snippets.HttpEndpoint
     public sealed class MouseMoved
     {
         [DataMember]
-        public int x1 { get; set; }
+        public int X1 { get; set; }
         [DataMember]
-        public int y1 { get; set; }
+        public int Y1 { get; set; }
         [DataMember]
-        public int x2 { get; set; }
+        public int X2 { get; set; }
         [DataMember]
-        public int y2 { get; set; }
+        public int Y2 { get; set; }
 
         public override string ToString()
         {
-            return String.Format("x1: {0}, y1: {1}, x2: {2}, y2: {3}", x1, y1, x2, y2);
+            return String.Format("x1: {0}, y1: {1}, x2: {2}, y2: {3}", X1, Y1, X2, Y2);
         }
 
     }
@@ -34,8 +34,8 @@ namespace Snippets.HttpEndpoint
     public sealed class MouseClick
     {
         [DataMember]
-        public int x { get; set; }
+        public int X { get; set; }
         [DataMember]
-        public int y { get; set; }
+        public int Y { get; set; }
     }
 }
