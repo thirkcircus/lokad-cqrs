@@ -133,8 +133,10 @@
                 $('#result').html("Http engine is not accessible!");
             });
 
-            graph.Init();
-            graph.DrawGrid();
+            if (graph.Ready) {
+                graph.Init();
+                graph.DrawGrid();
+            }
         });
     </script>
 </body>
