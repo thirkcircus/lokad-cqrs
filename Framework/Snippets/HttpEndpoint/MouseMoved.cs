@@ -14,9 +14,13 @@ namespace Snippets.HttpEndpoint
     [DataContract]
     public sealed class MouseMoved
     {
+        [DataMember]
         public int x1 { get; set; }
+        [DataMember]
         public int y1 { get; set; }
+        [DataMember]
         public int x2 { get; set; }
+        [DataMember]
         public int y2 { get; set; }
 
         public override string ToString()
