@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+﻿<!DOCTYPE html>
 <html>
 <head>
     <title>Lokad.CQRS.Http sample</title>
@@ -58,14 +58,16 @@
     </div>
     <footer>
         <h4>Messages /sec graph</h4>
-        <canvas id="eventsgraph" width="400" height="250" ></canvas>
+        <canvas id="eventsgraph" width="400" height="250" >
+            This text is displayed if your browser does not support HTML5 Canvas.
+        </canvas>
     </footer>
     <script type="text/javascript">
         $(document).ready(function () {
 
             var graph = new Graph();
             graph.Init("eventsgraph");
-            
+
             var mouseDown = false;
             var tile = $("#tile");
             var oldMouseEvents;
@@ -104,8 +106,10 @@
                                       + "Messages count: " + data.MessagesCount + "<br/>"
                                       + "Messages /sec: " + data.MessagesPerSecond + "<br/>");
 
-                    graph.AddPoint(data.MessagesPerSecond);
-                    graph.Draw();
+                    if (graph.Ready) {
+                        graph.AddPoint(data.MessagesPerSecond);
+                        graph.Draw();
+                    }
                 });
             }
 

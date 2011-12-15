@@ -7,6 +7,7 @@
     var x = 0;
     var xOffset = 20;
     var yOffset = 20;
+    this.Ready = false;
 
     var step = 1;
     var data = new Array();
@@ -100,10 +101,13 @@
     };
 
     this.Init = function (canvasId) {
-        ctx = document
-        .getElementById("eventsgraph")
-        .getContext('2d');
+        var canvas = document
+            .getElementById(canvasId);
 
-        ctx.translate(xOffset, 0);
+        if (canvas && canvas.getContext) {
+            ctx = canvas.getContext('2d');
+            ctx.translate(xOffset, 0);
+            this.Ready = true;
+        }
     };
 }
