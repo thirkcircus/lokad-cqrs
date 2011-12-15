@@ -101,6 +101,9 @@
     <EmbeddedResource Include="HttpEndpoint\index.htm" />
     <EmbeddedResource Include="HttpEndpoint\scripts\jquery-1.6.2.min.js" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="HttpEndpoint\scripts\json2.js" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
