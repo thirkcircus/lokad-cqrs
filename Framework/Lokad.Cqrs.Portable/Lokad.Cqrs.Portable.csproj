@@ -90,7 +90,6 @@
     <Compile Include="TimerService\StreamingTimerService.cs" />
     <Compile Include="Envelope\ImmutableAttribute.cs" />
     <Compile Include="MemoryStorage.cs" />
-    <Compile Include="MessageContext.cs" />
     <Compile Include="HideObjectMembersFromIntelliSense.cs" />
     <Compile Include="ImmediateTracingObserver.cs" />
     <Compile Include="Evil\AssemblyScanEvil.cs" />
