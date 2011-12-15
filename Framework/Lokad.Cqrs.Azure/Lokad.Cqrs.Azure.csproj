@@ -48,7 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Build\AzureStorageConfig.cs" />
+    <Compile Include="AzureStorageConfig.cs" />
     <Compile Include="AzureStorage.cs" />
     <Compile Include="Partition\AzureMessageOverflows.cs" />
     <Compile Include="TapeStorage\BlobRecordUtil.cs" />
@@ -66,7 +66,7 @@
     <Compile Include="AtomicStorage\AzureAtomicWriter.cs" />
     <Compile Include="AtomicStorage\AzureAtomicReader.cs" />
     <Compile Include="AtomicStorage\AzureAtomicStorageFactory.cs" />
-    <Compile Include="Build\AzureStorageConfigurationBuilder.cs" />
+    <Compile Include="AzureStorageConfigurationBuilder.cs" />
     <Compile Include="Partition\AzurePartitionInbox.cs" />
     <Compile Include="Partition\StatelessAzureQueueReader.cs" />
     <Compile Include="IAzureStorageConfig.cs" />
