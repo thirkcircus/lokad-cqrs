@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="HttpEndpoint\scripts\graph.js" />
     <Compile Include="HttpEndpoint\Util\HeatMap.cs" />
     <Compile Include="HttpEndpoint\HeatMapGenerateTask.cs" />
     <Compile Include="HttpEndpoint\HeatMapRequestHandler.cs" />
