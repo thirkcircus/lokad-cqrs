@@ -11,9 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using Lokad.Cqrs;
 using Lokad.Cqrs.Build.Engine;
-using Lokad.Cqrs.Core;
 using Lokad.Cqrs.Core.Envelope;
-using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Feature.AtomicStorage;
 using Lokad.Cqrs.Feature.Http;
 using Lokad.Cqrs.Feature.Http.Handlers;
@@ -50,7 +48,7 @@ namespace Snippets.HttpEndpoint
             var messages = new[] { typeof(MouseMoved), typeof(MouseClick) };
             var serializer = new MyJsonSerializer(messages);
             var streamer = new EnvelopeStreamer(serializer);
-            var store = FileStorage.CreateConfig(GetType().Name, reset : true);
+            var store = new MemoryAccount();
             var atomic = store.CreateNuclear().Factory;
 
             // let's configure our custom Http server to 
