@@ -16,25 +16,34 @@ namespace Snippets.HttpEndpoint
         public int MessagesPerSecond { get; set; }
         public long Distance { get; set; }
 
-        readonly int[] _circularBuffer = new int[60];
+        int _messageCounter;
+        int _currentSecond;
 
         public void RecordMessage()
         {
-            _circularBuffer[DateTime.Now.Second] += 1;
+            var second = DateTime.Now.Second;
+
+            if (second == _currentSecond)
+            {
+                _messageCounter += 1;
+            }
+            else
+            {
+                _currentSecond = second;
+                MessagesPerSecond = _messageCounter;
+                _messageCounter = 1;
+            }
         }
 
         public void RefreshStatistics()
         {
-            // clears the opposite side of the message count tracking 
-            // buffer
-            var offset = DateTime.Now.Second;
-            for (int i = 0; i < 20; i++)
-            {
-                var loc = (offset + 20) % 60;
-                _circularBuffer[loc] = 0;
-            }
+            var second = DateTime.Now.Second;
+            if (second == _currentSecond) return;
 
-            MessagesPerSecond = _circularBuffer[offset - 1];
+            _currentSecond = second;
+            MessagesPerSecond = _messageCounter;
+            _messageCounter = 0;
+
         }
     }
 }
