@@ -52,7 +52,8 @@ namespace Snippets.PubSubRouter
             builder.Dispatch(store.CreateInbox("sub2"), b => Console.WriteLine("sub2 hit"));
             builder.Handle(store.CreateInbox("inbox"), router.DispatchMessage);
 
-            var sender = new SimpleMessageSender(streamer, store.CreateWriteQueue("inbox"));
+
+            var sender = store.CreateSimpleSender(streamer, "inbox");
 
             using (var engine = builder.Build())
             using (var cts = new CancellationTokenSource())

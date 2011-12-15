@@ -6,11 +6,12 @@ namespace Lokad.Cqrs.Feature.TapeStorage
     public sealed class MemoryTapeStorageFactory : ITapeStorageFactory
     {
         readonly ConcurrentDictionary<string, List<byte[]>> _storage;
+        readonly string _prefix;
 
-
-        public MemoryTapeStorageFactory(ConcurrentDictionary<string, List<byte[]>> storage)
+        public MemoryTapeStorageFactory(ConcurrentDictionary<string, List<byte[]>> storage, string prefix)
         {
             _storage = storage;
+            _prefix = prefix;
         }
 
         public void InitializeForWriting()
@@ -18,7 +19,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
         }
         public ITapeStream GetOrCreateStream(string name)
         {
-            return new MemoryTapeStream(_storage, name);
+            return new MemoryTapeStream(_storage, _prefix + ":" + name);
         }
     }
 }

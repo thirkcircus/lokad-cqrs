@@ -42,8 +42,6 @@
     <Compile Include="Build\Engine\RawEngineBuilder.cs" />
     <Compile Include="ConfigurationWarningEncountered.cs" />
     <Compile Include="Build\Engine\CqrsEngineBuilder.cs" />
-    <Compile Include="Build\MessagesConfigurationSyntax.cs" />
-    <Compile Include="Build\Engine\AtomicRegistrationSource.cs" />
     <Compile Include="Core.Serialization\AbstractDataSerializer.cs" />
     <Compile Include="Core.Serialization\ContractEvil.cs" />
     <Compile Include="Core.Dispatch\Events\DispatchRecoveryFailed.cs" />
@@ -81,7 +79,7 @@
     <Compile Include="Feature.TapeStorage\FileTapeStorageFactory.cs" />
     <Compile Include="Feature.TapeStorage\ITapeStream.cs" />
     <Compile Include="Feature.TapeStorage\ITapeStorageFactory.cs" />
-    <Compile Include="Feature.MemoryPartition\MemoryAccount.cs" />
+    <Compile Include="MemoryAccount.cs" />
     <Compile Include="Feature.MemoryPartition\MemoryQueueWriterFactory.cs" />
     <Compile Include="Feature.TapeStorage\TapeStreamSerializer.cs" />
     <Compile Include="FileStorage.cs" />
@@ -135,7 +133,7 @@
     <Compile Include="Core.Envelope\MessageAttributes.cs" />
     <Compile Include="Core.Envelope\EnvelopeHeaderContract.cs" />
     <Compile Include="Core.Outbox\CommitActionEnlistment.cs" />
-    <Compile Include="Build\SimpleMessageSender.cs" />
+    <Compile Include="SimpleMessageSender.cs" />
     <Compile Include="Feature.AtomicStorage\ExtendAtomicSingletonReader.cs" />
     <Compile Include="Feature.AtomicStorage\IAtomicReader.cs" />
     <Compile Include="Feature.AtomicStorage\IAtomicWriter.cs" />

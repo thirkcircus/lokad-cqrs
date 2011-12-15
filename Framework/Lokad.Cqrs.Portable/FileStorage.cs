@@ -18,100 +18,43 @@ namespace Lokad.Cqrs
 {
     public static class FileStorage
     {
-        /// <summary>
-        /// Creates the simplified nuclear storage wrapper around Atomic storage, using the default
-        /// storage configuration and atomic strategy.
-        /// </summary>
-        /// <param name="storageFolder">The storage folder.</param>
-        /// <returns>
-        /// new instance of the nuclear storage
-        /// </returns>
-        public static NuclearStorage CreateNuclear(string storageFolder)
+        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IAtomicStorageStrategy strategy)
         {
-            return CreateNuclear(storageFolder, b => { });
+            var factory = new FileAtomicStorageFactory(config.FullPath, strategy);
+            
+            return new NuclearStorage(factory);
         }
 
-        /// <summary>
-        /// Creates the simplified nuclear storage wrapper around Atomic storage.
-        /// </summary>
-        /// <param name="storageFolder">The storage folder.</param>
-        /// <param name="configStrategy">The config strategy.</param>
-        /// <returns></returns>
-        public static NuclearStorage CreateNuclear(string storageFolder,
-            Action<DefaultAtomicStorageStrategyBuilder> configStrategy)
+
+        public static NuclearStorage CreateNuclear(this FileStorageConfig self, Action<DefaultAtomicStorageStrategyBuilder> config)
         {
             var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
-            configStrategy(strategyBuilder);
+            config(strategyBuilder);
             var strategy = strategyBuilder.Build();
-            return CreateNuclear(storageFolder, strategy);
-        }
-
-
-
-
-        /// <summary>
-        /// Creates the simplified nuclear storage wrapper around Atomic storage.
-        /// </summary>
-        /// <param name="storageFolder">The storage folder.</param>
-        /// <param name="strategy">The atomic storage strategy.</param>
-        /// <returns></returns>
-        public static NuclearStorage CreateNuclear(string storageFolder, IAtomicStorageStrategy strategy)
-        {
-            return new NuclearStorage(new FileAtomicStorageFactory(storageFolder, strategy));
+            return CreateNuclear(self, strategy);
         }
 
         public static NuclearStorage CreateNuclear(this FileStorageConfig config)
         {
-            return CreateNuclear(config.FullPath);
+            return CreateNuclear(config, builder => { });
         }
 
-        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IAtomicStorageStrategy strategy)
-        {
-            return CreateNuclear(config.FullPath, strategy);
-        }
-        public static NuclearStorage CreateNuclear(this FileStorageConfig self, Action<DefaultAtomicStorageStrategyBuilder> config)
-        {
-            return CreateNuclear(self.FullPath, config);
-        }
 
-        public static IStreamingRoot CreateStreaming(string storageFolder)
-        {
-            var container = new FileStreamingContainer(storageFolder);
-            container.Create();
-            return container;
-        }
-
-        public static IStreamingRoot CreateStreaming(this FileStorageConfig config, string optionalSubFolder = null)
+        public static IStreamingRoot CreateStreaming(this FileStorageConfig config)
         {
             var path = config.FullPath;
-            if (optionalSubFolder != null)
-            {
-                path = Path.Combine(path, optionalSubFolder);
-            }
             var container = new FileStreamingContainer(path);
             container.Create();
             return container;
         }
-
-        /// <summary>
-        /// Creates and initializes the tape storage in the provided folder.
-        /// </summary>
-        /// <param name="folderPath">The folder path.</param>
-        /// <returns></returns>
-        public static FileTapeStorageFactory CreateTape(string folderPath)
+        public static IStreamingContainer CreateStreaming(this FileStorageConfig config, string subfolder)
         {
-            var factory = new FileTapeStorageFactory(folderPath);
-            factory.InitializeForWriting();
-            return factory;
+            return config.CreateStreaming(subfolder).Create();
         }
-
-        public static FileTapeStorageFactory CreateTape(this FileStorageConfig config, string optionalSubFolder = null)
+        
+        public static FileTapeStorageFactory CreateTape(this FileStorageConfig config, string subfolder = "tapes") 
         {
-            var path = config.FullPath;
-            if (optionalSubFolder!=null)
-            {
-                path = Path.Combine(path, optionalSubFolder);
-            }
+            var path = Path.Combine(config.FullPath, subfolder);
             var factory = new FileTapeStorageFactory(path);
             factory.InitializeForWriting();
             return factory;
@@ -152,6 +95,11 @@ namespace Lokad.Cqrs
             }
             return
                 new FileQueueWriter(new DirectoryInfo(full), queueName);
+        }
+
+        public static SimpleMessageSender CreateSimpleSender(this FileStorageConfig account, IEnvelopeStreamer streamer, string queueName)
+        {
+            return new SimpleMessageSender(streamer, CreateQueueWriter(account, queueName));
         }
     }
 }

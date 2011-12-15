@@ -21,7 +21,7 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
 
         public IQueueWriter GetWriteQueue(string queueName)
         {
-            return _account.CreateWriteQueue(queueName);
+            return _account.CreateQueueWriter(queueName);
         }
     }
 }

@@ -12,7 +12,7 @@ using System.Transactions;
 using Lokad.Cqrs.Core.Envelope;
 using Lokad.Cqrs.Core.Outbox;
 
-namespace Lokad.Cqrs.Build
+namespace Lokad.Cqrs
 {
     public sealed class SimpleMessageSender 
     {

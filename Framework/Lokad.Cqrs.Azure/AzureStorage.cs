@@ -16,16 +16,7 @@ namespace Lokad.Cqrs
     public static class AzureStorage
     {
 
-        /// <summary>
-        /// Creates the simplified nuclear storage wrapper around Atomic storage, using the default
-        /// storage configuration and atomic strategy.
-        /// </summary>
-        /// <param name="storageAccount">The storage account.</param>
-        /// <returns>new instance of the nuclear storage</returns>
-        public static NuclearStorage CreateNuclear(CloudStorageAccount storageAccount)
-        {
-            return CreateNuclear(storageAccount, b => { });
-        }
+
 
         /// <summary>
         /// Creates the simplified nuclear storage wrapper around Atomic storage, using the default storage
@@ -33,7 +24,7 @@ namespace Lokad.Cqrs
         /// </summary>
         /// <param name="storageConfig">The storage config.</param>
         /// <returns>new instance of the nuclear storage</returns>
-        public static NuclearStorage CreateNuclear(IAzureStorageConfig storageConfig)
+        public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig)
         {
             return CreateNuclear(storageConfig, b => { });
         }
@@ -42,26 +33,17 @@ namespace Lokad.Cqrs
         /// <param name="storageConfig">The storage config.</param>
         /// <param name="strategy">The atomic storage strategy.</param>
         /// <returns></returns>
-        public static NuclearStorage CreateNuclear(IAzureStorageConfig storageConfig, IAtomicStorageStrategy strategy)
+        public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig, IAtomicStorageStrategy strategy)
         {
             var factory = new AzureAtomicStorageFactory(strategy, storageConfig);
             return new NuclearStorage(factory);
-        }
-        /// <summary> Creates the simplified nuclear storage wrapper around Atomic storage. </summary>
-        /// <param name="storageAccount">The storage account.</param>
-        /// <param name="configStrategy">The config strategy builder.</param>
-        /// <returns></returns>
-        public static NuclearStorage CreateNuclear(CloudStorageAccount storageAccount, Action<DefaultAtomicStorageStrategyBuilder> configStrategy)
-        {
-            var config = new AzureStorageConfigurationBuilder(storageAccount).Build();
-            return CreateNuclear(config, configStrategy);
         }
 
         /// <summary> Creates the simplified nuclear storage wrapper around Atomic storage. </summary>
         /// <param name="storageConfig">The storage config.</param>
         /// <param name="configStrategy">The config strategy.</param>
         /// <returns></returns>
-        public static NuclearStorage CreateNuclear(IAzureStorageConfig storageConfig, Action<DefaultAtomicStorageStrategyBuilder> configStrategy)
+        public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig, Action<DefaultAtomicStorageStrategyBuilder> configStrategy)
         {
             var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
             configStrategy(strategyBuilder);
@@ -124,20 +106,15 @@ namespace Lokad.Cqrs
         /// </summary>
         /// <param name="config">The config.</param>
         /// <returns></returns>
-        public static IStreamingRoot CreateStreaming(IAzureStorageConfig config)
+        public static IStreamingRoot CreateStreaming(this IAzureStorageConfig config)
         {
             return new BlobStreamingRoot(config.CreateBlobClient());
         }
 
-        /// <summary>
-        /// Creates the streaming storage out of the provided cloud storage account.
-        /// </summary>
-        /// <param name="config">The config.</param>
-        /// <returns></returns>
-        public static IStreamingRoot CreateStreaming(CloudStorageAccount config)
+  
+        public static IStreamingContainer CreateStreaming(this IAzureStorageConfig config, string container)
         {
-            var account = new AzureStorageConfigurationBuilder(config);
-            return CreateStreaming(account.Build());
+            return config.CreateStreaming().GetContainer(container).Create();
         }
 
         /// <summary>
@@ -147,27 +124,12 @@ namespace Lokad.Cqrs
         /// <param name="containerName">Name of the container.</param>
         /// <param name="initializeForWriting">if set to <c>true</c>, then storage is initialized for writing as needed.</param>
         /// <returns></returns>
-        public static BlobTapeStorageFactory CreateTape(IAzureStorageConfig config, string containerName, bool initializeForWriting = true)
+        public static BlobTapeStorageFactory CreateTape(this IAzureStorageConfig config, string containerName = "tapes")
         {
             var factory = new BlobTapeStorageFactory(config, containerName);
-            if (initializeForWriting)
-            {
-                factory.InitializeForWriting();
-            }
+            factory.InitializeForWriting();
             return factory;
         }
 
-        /// <summary>
-        /// Creates the tape storage factory for windows Azure storage.
-        /// </summary>
-        /// <param name="account">Azure account to create tape storage from.</param>
-        /// <param name="containerName">Name of the container.</param>
-        /// <param name="initializeForWriting">if set to <c>true</c>, then storage is initialized for writing as needed.</param>
-        /// <returns></returns>
-        public static BlobTapeStorageFactory CreateTape(CloudStorageAccount account, string containerName, bool initializeForWriting)
-        {
-            var builder = new AzureStorageConfigurationBuilder(account);
-            return CreateTape(builder.Build(), containerName, initializeForWriting);
-        }
     }
 }

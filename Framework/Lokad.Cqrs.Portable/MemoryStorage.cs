@@ -7,16 +7,16 @@
 
 using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
+using System.Linq;
+using Lokad.Cqrs.Build;
+using Lokad.Cqrs.Core.Outbox;
 using Lokad.Cqrs.Feature.AtomicStorage;
 using Lokad.Cqrs.Feature.MemoryPartition;
-using Lokad.Cqrs.Feature.StreamingStorage;
 using Lokad.Cqrs.Feature.TapeStorage;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
 namespace Lokad.Cqrs
 {
-    using MemStore = ConcurrentDictionary<string, byte[]>;
 
     public static class MemoryStorage
     {
@@ -28,22 +28,12 @@ namespace Lokad.Cqrs
         /// <returns>
         /// new instance of the nuclear storage
         /// </returns>
-        public static NuclearStorage CreateNuclear(MemStore dictionary)
+        public static NuclearStorage CreateNuclear(this MemoryAccount dictionary)
         {
             return CreateNuclear(dictionary, b => { });
         }
 
-        /// <summary>
-        /// Creates the simplified nuclear storage wrapper around Atomic storage, using the default
-        /// storage configuration and atomic strategy.
-        /// </summary>
-        /// <returns>
-        /// new instance of the nuclear storage
-        /// </returns>
-         public static NuclearStorage CreateNuclear()
-        {
-            return CreateNuclear(new MemStore(), b => { });
-        }
+  
 
         /// <summary>
         /// Creates the simplified nuclear storage wrapper around Atomic storage.
@@ -51,14 +41,12 @@ namespace Lokad.Cqrs
         /// <param name="dictionary">The dictionary.</param>
         /// <param name="configStrategy">The config strategy.</param>
         /// <returns></returns>
-        public static NuclearStorage CreateNuclear(MemStore dictionary,
-            Action<DefaultAtomicStorageStrategyBuilder> configStrategy = null)
+        public static NuclearStorage CreateNuclear(this MemoryAccount dictionary,
+            Action<DefaultAtomicStorageStrategyBuilder> configStrategy)
         {
             var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
-            if (null != configStrategy)
-            {
-                configStrategy(strategyBuilder);
-            }
+            configStrategy(strategyBuilder);
+
             var strategy = strategyBuilder.Build();
             return CreateNuclear(dictionary, strategy);
         }
@@ -70,42 +58,18 @@ namespace Lokad.Cqrs
         /// <param name="dictionary">The dictionary.</param>
         /// <param name="strategy">The atomic storage strategy.</param>
         /// <returns></returns>
-        public static NuclearStorage CreateNuclear(MemStore dictionary, IAtomicStorageStrategy strategy)
+        public static NuclearStorage CreateNuclear(this MemoryAccount dictionary, IAtomicStorageStrategy strategy)
         {
-            var factory = new MemoryAtomicStorageFactory(dictionary, strategy);
+            var factory = new MemoryAtomicStorageFactory(dictionary.Data, strategy);
             factory.Initialize();
             return new NuclearStorage(factory);
         }
 
-        /// <summary>
-        /// Creates memory-based streaming storage.
-        /// </summary>
-        /// <param name="storageFolder"></param>
-        /// <returns></returns>
-        public static IStreamingRoot CreateStreaming()
-        {
-            var container = new MemoryStreamingRoot();
-            return container;
-        }
 
 
 
-        /// <summary>
-        /// Creates memory-based tape storage factory.
-        /// </summary>
-        /// <returns></returns>
-        public static MemoryTapeStorageFactory CreateTape()
-        {
-            var dictionary = new ConcurrentDictionary<string, List<byte[]>>();
 
-            return CreateTape(dictionary);
-        }
 
-          public static NuclearStorage CreateNuclear(this MemoryAccount dictionary,
-            Action<DefaultAtomicStorageStrategyBuilder> configStrategy = null)
-          {
-              return CreateNuclear(dictionary.Data, configStrategy);
-          }
 
         public static MemoryQueueWriterFactory CreateWriteQueueFactory(this MemoryAccount account)
         {
@@ -117,11 +81,31 @@ namespace Lokad.Cqrs
         /// </summary>
         /// <param name="dictionary">The dictionary.</param>
         /// <returns></returns>
-        public static MemoryTapeStorageFactory CreateTape(ConcurrentDictionary<string, List<byte[]>> dictionary)
+        public static MemoryTapeStorageFactory CreateTape(this MemoryAccount account, string container = "tapes")
         {
-            var factory = new MemoryTapeStorageFactory(dictionary);
+            var factory = new MemoryTapeStorageFactory(account.Tapes, container);
             factory.InitializeForWriting();
             return factory;
+        }
+
+        public static MemoryPartitionInbox CreateInbox(this MemoryAccount account,  params string[] queueNames)
+        {
+            var queues = queueNames
+                .Select(n => account.Queues.GetOrAdd(n, s => new BlockingCollection<byte[]>()))
+                .ToArray();
+
+            return new MemoryPartitionInbox(queues, queueNames);
+        }
+
+        public static IQueueWriter CreateQueueWriter(this MemoryAccount account, string queueName)
+        {
+            var collection = account.Queues.GetOrAdd(queueName, s => new BlockingCollection<byte[]>());
+            return new MemoryQueueWriter(collection, queueName);
+        }
+
+        public static SimpleMessageSender CreateSimpleSender(this MemoryAccount account, IEnvelopeStreamer streamer, string queueName)
+        {
+            return new SimpleMessageSender(streamer, CreateQueueWriter(account, queueName));
         }
     }
 }
