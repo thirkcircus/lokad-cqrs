@@ -83,7 +83,7 @@ namespace Lokad.Cqrs.Feature.FilePartition
             return (hResult & 0xFFFF) == sharingViolation;
         }
 
-        public void Initialize()
+        public void InitIfNeeded()
         {
             _queue.Create();
         }

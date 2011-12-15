@@ -37,6 +37,7 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Feature.Http\Events\ConfigurationWarningEncountered.cs" />
     <Compile Include="Feature.Http\Handlers\AbstractHttpRequestHandler.cs" />
     <Compile Include="Feature.Http\ExtendIHttpContext.cs" />
     <Compile Include="Feature.Http\Events\FailedToStartHttpListener.cs" />

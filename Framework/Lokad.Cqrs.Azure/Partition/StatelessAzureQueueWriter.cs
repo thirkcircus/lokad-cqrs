@@ -35,9 +35,8 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             return new CloudQueueMessage(blob);
         }
 
-        public StatelessAzureQueueWriter(IEnvelopeStreamer streamer, CloudBlobContainer container, CloudQueue queue, string name)
+        public StatelessAzureQueueWriter(CloudBlobContainer container, CloudQueue queue, string name)
         {
-            _streamer = streamer;
             _cloudBlob = container;
             _queue = queue;
             Name = name;
@@ -51,7 +50,6 @@ namespace Lokad.Cqrs.Feature.AzurePartition
 
 
         const string DateFormatInBlobName = "yyyy-MM-dd-HH-mm-ss-ffff";
-        readonly IEnvelopeStreamer _streamer;
         readonly CloudBlobContainer _cloudBlob;
         readonly CloudQueue _queue;
     }

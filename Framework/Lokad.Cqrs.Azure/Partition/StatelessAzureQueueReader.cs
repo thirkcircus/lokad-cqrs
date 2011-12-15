@@ -18,7 +18,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition
     {
         readonly TimeSpan _visibilityTimeout;
 
-        readonly CloudBlobContainer _cloudBlob;
+        readonly CloudBlobDirectory _cloudBlob;
         readonly Lazy<CloudQueue> _posionQueue;
         readonly CloudQueue _queue;
         readonly string _queueName;
@@ -32,9 +32,9 @@ namespace Lokad.Cqrs.Feature.AzurePartition
         public StatelessAzureQueueReader(
             string name,
             CloudQueue primaryQueue,
-            CloudBlobContainer container,
+            CloudBlobDirectory container,
             Lazy<CloudQueue> poisonQueue,
-            IEnvelopeStreamer streamer, TimeSpan visibilityTimeout)
+            TimeSpan visibilityTimeout)
         {
             _cloudBlob = container;
             _queue = primaryQueue;
@@ -43,11 +43,15 @@ namespace Lokad.Cqrs.Feature.AzurePartition
             _visibilityTimeout = visibilityTimeout;
         }
 
-        public void Initialize()
+        bool _initialized;
+
+        public void InitIfNeeded()
         {
+            if (_initialized)
+                return;
             _queue.CreateIfNotExist();
-            _cloudBlob.CreateIfNotExist();
-            
+            _cloudBlob.Container.CreateIfNotExist();
+            _initialized = true;
         }
 
         public GetEnvelopeResult TryGetMessage()

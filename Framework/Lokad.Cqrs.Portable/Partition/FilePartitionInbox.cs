@@ -35,9 +35,14 @@ namespace Lokad.Cqrs.Feature.FilePartition
 
         public void Init()
         {
+         
+        }
+
+        public void InitIfNeeded()
+        {
             foreach (var info in _readers)
             {
-                info.Initialize();
+                info.InitIfNeeded();
             }
         }
 

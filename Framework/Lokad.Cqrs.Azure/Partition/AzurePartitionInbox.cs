@@ -37,11 +37,12 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Inbox
             _name = string.Format("Azure Inbox [{0}]", string.Join(",", readers.Select(r => r.Name).ToArray()));
         }
 
-        public void Init()
+
+        public void InitIfNeeded()
         {
-            foreach (var queue in _readers)
+            foreach (var x in _readers)
             {
-                queue.Initialize();
+                x.InitIfNeeded();
             }
         }
 

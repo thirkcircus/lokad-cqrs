@@ -35,7 +35,7 @@ namespace Lokad.Cqrs.Core.Dispatch
 
         public void Initialize()
         {
-            _inbox.Init();
+            _inbox.InitIfNeeded();
         }
 
         readonly CancellationTokenSource _disposal = new CancellationTokenSource();

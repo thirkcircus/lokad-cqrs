@@ -13,17 +13,13 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Sender
     public sealed class AzureQueueWriterFactory : IQueueWriterFactory
     {
         readonly IAzureStorageConfig _config;
-        readonly IEnvelopeStreamer _streamer;
 
         readonly ConcurrentDictionary<string, IQueueWriter> _writeQueues =
             new ConcurrentDictionary<string, IQueueWriter>();
 
-        public AzureQueueWriterFactory(
-            IAzureStorageConfig accounts,
-            IEnvelopeStreamer streamer)
+        public AzureQueueWriterFactory(IAzureStorageConfig accounts)
         {
             _config = accounts;
-            _streamer = streamer;
         }
 
         public string Endpoint { get { return _config.AccountName; } }
@@ -35,7 +31,7 @@ namespace Lokad.Cqrs.Feature.AzurePartition.Sender
             {
                 var queue = _config.CreateQueueClient().GetQueueReference(name);
                 var container = _config.CreateBlobClient().GetContainerReference(name);
-                var v = new StatelessAzureQueueWriter(_streamer, container, queue, name);
+                var v = new StatelessAzureQueueWriter( container, queue, name);
                 v.Init();
                 return v;
             });

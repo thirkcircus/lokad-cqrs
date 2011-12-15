@@ -31,8 +31,10 @@ namespace Lokad.Cqrs.Feature.MemoryPartition
             _names = names;
         }
 
-        public void Init()
+        
+        public void InitIfNeeded()
         {
+            
         }
 
         public void AckMessage(MessageTransportContext message)

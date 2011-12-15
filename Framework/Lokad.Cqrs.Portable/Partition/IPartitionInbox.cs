@@ -14,10 +14,8 @@ namespace Lokad.Cqrs.Core.Inbox
     /// </summary>
     public interface IPartitionInbox
     {
-        /// <summary>
-        /// Initializes this instance.
-        /// </summary>
-        void Init();
+
+        void InitIfNeeded();
         /// <summary>
         /// Acks the message (removing it from the original queue).
         /// </summary>
