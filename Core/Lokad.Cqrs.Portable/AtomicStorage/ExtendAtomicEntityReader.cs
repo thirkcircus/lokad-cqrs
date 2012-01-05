@@ -1,0 +1,28 @@
+﻿using System;
+
+namespace Lokad.Cqrs.AtomicStorage
+{
+    public static class ExtendAtomicEntityReader
+    {
+        public static Optional<TEntity> Get<TKey,TEntity>(this IAtomicReader<TKey,TEntity> self, TKey key)
+        {
+            TEntity entity;
+            if (self.TryGet(key, out entity))
+            {
+                return entity;
+            }
+            return Optional<TEntity>.Empty;
+        }
+
+        public static TEntity Load<TKey,TEntity>(this IAtomicReader<TKey,TEntity> self, TKey key)
+        {
+            TEntity entity;
+            if (self.TryGet(key, out entity))
+            {
+                return entity;
+            }
+            var txt = string.Format("Failed to load '{0}' with key '{1}'.", typeof(TEntity).Name, key);
+            throw new InvalidOperationException(txt);
+        }
+    }
+}
