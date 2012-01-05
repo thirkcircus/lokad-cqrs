@@ -5,6 +5,7 @@
 
 #endregion
 
+using Lokad.Cqrs.AtomicStorage;
 using NUnit.Framework;
 
 namespace Lokad.Cqrs.Feature.AtomicStorage
@@ -22,10 +23,10 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         {
             var type = typeof (Nested_Underscore);
             var key = "000-00A";
-            Assert.AreEqual("atomic-nested-underscore", Default.GetFolderForEntity(type));
+            Assert.AreEqual("atomic-nested-underscore", Default.GetFolderForEntity(type, typeof(string)));
             Assert.AreEqual("nested-underscore-000-00a.pb", Default.GetNameForEntity(type, key));
 
-            Assert.AreEqual("nested-underscore.pb", Default.GetNameForSingleton(type));
+            Assert.AreEqual("nested-underscore.pb", Default.GetNameForEntity(type, unit.it));
         }
 
 
@@ -35,9 +36,9 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             var entity = typeof (NestedAComposite);
             var key = "000-00A";
 
-            Assert.AreEqual("atomic-nested-acomposite", Default.GetFolderForEntity(entity));
+            Assert.AreEqual("atomic-nested-acomposite", Default.GetFolderForEntity(entity, typeof(string)));
             Assert.AreEqual("nested-acomposite-000-00a.pb", Default.GetNameForEntity(entity, key));
-            Assert.AreEqual("nested-acomposite.pb", Default.GetNameForSingleton(entity));
+            Assert.AreEqual("nested-acomposite.pb", Default.GetNameForEntity(entity, unit.it));
         }
 
 

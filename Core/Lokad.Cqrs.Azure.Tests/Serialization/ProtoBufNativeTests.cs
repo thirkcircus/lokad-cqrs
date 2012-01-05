@@ -5,6 +5,7 @@
 
 #endregion
 
+using Lokad.Cqrs.Evil;
 using NUnit.Framework;
 using ProtoBuf;
 

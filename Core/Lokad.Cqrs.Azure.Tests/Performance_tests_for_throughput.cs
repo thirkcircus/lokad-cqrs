@@ -1,18 +1,16 @@
-#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
+#region (c) 2010-2011 Lokad CQRS - New BSD License 
 
-// Copyright (c) Lokad 2010-2011, http://www.lokad.com
+// Copyright (c) Lokad SAS 2010-2011 (http://www.lokad.com)
 // This code is released as Open Source under the terms of the New BSD Licence
+// Homepage: http://lokad.github.com/lokad-cqrs/
 
 #endregion
 
 using System;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.Serialization;
 using System.Threading;
-using Lokad.Cqrs.Build.Engine;
-using Lokad.Cqrs.Core;
-using Lokad.Cqrs.Core.Dispatch.Events;
+using Lokad.Cqrs.Build;
+using Lokad.Cqrs.Dispatch.Events;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
@@ -25,45 +23,41 @@ namespace Lokad.Cqrs
         [Test]
         public void Memory_lambda()
         {
-            TestConfiguration(c => c.Memory(m =>
+            var config = new MemoryAccount();
+            var writer = config.CreateQueueWriter("test");
+            var inbox = config.CreateInbox("test");
+
+            var builder = new RawEngineBuilder();
+            builder.Dispatch(inbox, bytes => { });
+
+            var setup = new Setup
                 {
-                    m.AddMemorySender("test");
-                    m.AddMemoryProcess("test", x => x.DispatcherIsLambda(Handler));
-                }), 1000000);
+                    Send = i => writer.PutMessage(new[] {i}),
+                    Engine = builder.Build()
+                };
+
+            TestConfiguration(setup, 1000000);
         }
 
-        [Test]
-        public void Memory_polymorphic()
-        {
-            TestConfiguration(c => c.Memory(m =>
-            {
-                m.AddMemorySender("test");
-                m.AddMemoryProcess("test", Handler);
-            }), 100000);
-        }
-
-        [Test]
-        public void Throughput_Azure_polymorphic()
-        {
-            var config = AzureStorage.CreateConfigurationForDev();
-            WipeAzureAccount.Fast(s => s.StartsWith("throughput"), config);
-            TestConfiguration(c => c.Azure(m =>
-            {
-                m.AddAzureSender(config, "throughput");
-                m.AddAzureProcess(config, "throughput", Handler);
-            }), 100);
-        }
 
         [Test]
         public void Throughput_Azure_lambda()
         {
             var config = AzureStorage.CreateConfigurationForDev();
             WipeAzureAccount.Fast(s => s.StartsWith("throughput"), config);
-            TestConfiguration(c => c.Azure(m =>
-            {
-                m.AddAzureSender(config, "throughput");
-                m.AddAzureProcess(config, "throughput", Handler);
-            }), 100);
+
+            var writer = config.CreateQueueWriter("test");
+            var inbox = config.CreateInbox("test", u => TimeSpan.Zero);
+            var builder = new RawEngineBuilder();
+            builder.Dispatch(inbox, bytes => { });
+
+            var setup = new Setup
+                {
+                    Send = i => writer.PutMessage(new[] {i}),
+                    Engine = builder.Build()
+                };
+
+            TestConfiguration(setup, 100);
         }
 
         [Test]
@@ -71,60 +65,42 @@ namespace Lokad.Cqrs
         {
             var config = FileStorage.CreateConfig("throughput-tests");
             config.Wipe();
-            TestConfiguration(c => c.File(m =>
+
+            var writer = config.CreateQueueWriter("test");
+            var inbox = config.CreateInbox("test",  u => TimeSpan.FromMilliseconds(0));
+            var builder = new RawEngineBuilder();
+            builder.Dispatch(inbox, bytes => { });
+
+            var setup = new Setup
                 {
-                    m.AddFileSender(config, "test");
-                    m.AddFileProcess(config, "test", Handler);
-                }), 10000);
-        }
-
-        [Test]
-        public void File_polymorphic()
-        {
-            var config = FileStorage.CreateConfig("throughput-tests");
-            config.Wipe();
-            TestConfiguration(c => c.File(m =>
-            {
-                m.AddFileSender(config, "test");
-                m.AddFileProcess(config, "test", Handler);
-            }), 10000);
-        }
-
-
-        static Action<ImmutableEnvelope> Handler(Container ctx)
-        {
-            // pass through the envelope
-            return envelope =>
-                {
-                    var msg = ((UsualMessage) (envelope.Items[0].Content));
-                    if (!msg.HasData)
-                        throw new InvalidOperationException("Data should be present to check for deserialization");
+                    Send = i => writer.PutMessage(new[] {i}),
+                    Engine = builder.Build()
                 };
+
+            TestConfiguration(setup, 1000);
         }
 
-
-        [DataContract]
-        public sealed class UsualMessage : Define.Command
+        sealed class Setup : IDisposable
         {
-            [DataMember(Order = 1)]
-            public bool HasData { get; set; }
+            public readonly CancellationTokenSource Source = new CancellationTokenSource();
+            public Action<byte> Send;
+            public CqrsEngineHost Engine;
+
+            public void Dispose()
+            {
+                Source.Dispose();
+                Engine.Dispose();
+            }
         }
 
-        static void TestConfiguration(Action<CqrsEngineBuilder> build, int useMessages)
+        static void TestConfiguration(Setup setup, int useMessages)
         {
-            var builder = new CqrsEngineBuilder();
-            build(builder);
-
-            builder.Advanced.Observers.Clear();
-            builder.UseProtoBufSerialization();
-            
-
             var step = (useMessages / 5);
             int count = 0;
             var watch = new Stopwatch();
-            using (var token = new CancellationTokenSource())
-            {
-                using (builder.When<MessageAcked>(ea =>
+
+
+            using (TestObserver.When<MessageAcked>(ea =>
                 {
                     count += 1;
 
@@ -133,30 +109,24 @@ namespace Lokad.Cqrs
                         var messagesPerSecond = count / watch.Elapsed.TotalSeconds;
                         Console.WriteLine("{0} - {1}", count, Math.Round(messagesPerSecond, 1));
                     }
-
-
-                    //if (ea.Attributes.Any(ia => ia.Key == "last"))
-                    //{
-                    //    token.Cancel();
-                    //}
-                }))
-
-                using (var engine = builder.Build())
-                {
-                    // first we send X then we check
-                    var sender = engine.Resolve<IMessageSender>();
-
-                    for (int i = 0; i < useMessages; i++)
+                    if (ea.Context.Unpacked[0] == 42)
                     {
-                        sender.SendOne(new UsualMessage { HasData = true });
+                        setup.Source.Cancel();
                     }
-                    sender.SendOne(new UsualMessage { HasData = true}, b => b.AddString("last"));
+                }, includeTracing:false))
+            using (setup.Source)
+            using (setup.Engine)
+            {
+                // first we send X then we check
 
-
-                    watch.Start();
-                    engine.Start(token.Token);
-                    token.Token.WaitHandle.WaitOne(10000);
+                for (int i = 0; i < useMessages; i++)
+                {
+                    setup.Send(1);
                 }
+                setup.Send(42);
+                watch.Start();
+                setup.Engine.Start(setup.Source.Token);
+                setup.Source.Token.WaitHandle.WaitOne(10000);
             }
         }
     }

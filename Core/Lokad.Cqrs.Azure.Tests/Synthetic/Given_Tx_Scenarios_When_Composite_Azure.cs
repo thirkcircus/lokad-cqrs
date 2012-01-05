@@ -6,32 +6,18 @@
 
 #endregion
 
-using Lokad.Cqrs.Build.Engine;
-using Lokad.Cqrs.Feature.AtomicStorage;
+using System;
+using Lokad.Cqrs.Envelope;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
+
 namespace Lokad.Cqrs.Synthetic
 {
     [TestFixture]
     public sealed class Given_Tx_Scenarios_When_Composite_Azure : Given_Tx_Scenarios
     {
-        public sealed class Handler : Define.Handle<Act>
-        {
-            readonly NuclearStorage _storage;
-
-            public Handler(NuclearStorage storage)
-            {
-                _storage = storage;
-            }
-
-            public void Handle(Act message)
-            {
-                Given_Tx_Scenarios.Consume(message, _storage);
-            }
-        }
-
-        protected override void Wire_partition_to_handler(CqrsEngineBuilder config)
+        protected override Setup ComposeComponents(IEnvelopeStreamer streamer)
         {
             // Azure dev is implemented via WS on top of SQL on top of FS.
             // this can be slow. And it will be
@@ -39,16 +25,16 @@ namespace Lokad.Cqrs.Synthetic
 
             var dev = AzureStorage.CreateConfigurationForDev();
             WipeAzureAccount.Fast(s => s.StartsWith("test-"), dev);
-            config.MessagesWithHandlersFromAutofac(d => d.WhereMessages(t => typeof(Act) == t));
-            config.Azure(m =>
+
+            return new Setup
                 {
-                    m.AddAzureProcess(dev, new[] {"test-incoming"}, c =>
+                    Sender = dev.CreateSimpleSender(streamer, "test-incoming"),
+                    Inbox = dev.CreateInbox("test-incoming", visibilityTimeout : TimeSpan.FromMilliseconds(1)),
+                    Storage = dev.CreateNuclear(builder =>
                         {
-                            c.QueueVisibility(1);
-                            c.DispatchAsCommandBatch();
-                        });
-                    m.AddAzureSender(dev, "test-incoming", x => x.IdGeneratorForTests());
-                });
+                            builder.FolderForSingleton("test-single");
+                        })
+                };
         }
     }
 }

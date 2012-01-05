@@ -22,12 +22,6 @@ namespace Lokad.Cqrs
     public sealed class BasicEngineConfigurationTests
     {
         // ReSharper disable InconsistentNaming
-
-
-   
-
-
-
         static void TestConfiguration(IQueueWriter sender, RawEngineBuilder builder)
         {
             int i = 0;

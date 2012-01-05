@@ -7,6 +7,7 @@
 
 using System.IO;
 using Lokad.Cqrs.Feature.StreamingStorage.Scenarios;
+using Lokad.Cqrs.StreamingStorage;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
 using NUnit.Framework;
@@ -29,7 +30,8 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
         public IStreamingContainer GetContainer(string path)
         {
             //UseLocalFiddler();
-            var root = AzureStorage.CreateStreaming(CloudStorageAccount.DevelopmentStorageAccount);
+
+            var root = AzureStorage.CreateConfigurationForDev().CreateStreaming();
             return root.GetContainer(path);
         }
 

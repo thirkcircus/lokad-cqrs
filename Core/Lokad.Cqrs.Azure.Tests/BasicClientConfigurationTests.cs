@@ -1,48 +1,46 @@
-﻿using System.Runtime.Serialization;
+﻿#region (c) 2010-2011 Lokad CQRS - New BSD License 
+
+// Copyright (c) Lokad SAS 2010-2011 (http://www.lokad.com)
+// This code is released as Open Source under the terms of the New BSD Licence
+// Homepage: http://lokad.github.com/lokad-cqrs/
+
+#endregion
+
+using System.Runtime.Serialization;
 using System.Threading;
-using Lokad.Cqrs.Build.Client;
-using Lokad.Cqrs.Build.Engine;
-using Lokad.Cqrs.Core.Dispatch.Events;
+using Lokad.Cqrs.Build;
 using NUnit.Framework;
-using System.Linq;
 
 namespace Lokad.Cqrs
 {
     [TestFixture]
     public sealed class BasicClientConfigurationTests
     {
-        [DataContract]
-        public sealed class Message : Define.Command
-        {
-            
-        }
-
-        
-        
         // ReSharper disable InconsistentNaming
         [Test]
         public void Test()
         {
-            var dev = AzureStorage.CreateConfigurationForDev();
-            WipeAzureAccount.Fast(s => s.StartsWith("test-"), dev);
-
-            var b = new CqrsEngineBuilder();
-            b.Azure(c => c.AddAzureProcess(dev, "test-publish",HandlerComposer.Empty));
             using (var source = new CancellationTokenSource())
-            using (b.When<MessageAcked>(e => source.Cancel()))
-            using (var engine = b.Build())
             {
-                var task = engine.Start(source.Token);
+                var dev = AzureStorage.CreateConfigurationForDev();
+                WipeAzureAccount.Fast(s => s.StartsWith("test-"), dev);
+                var b = new RawEngineBuilder();
+                b.Dispatch(dev.CreateInbox("test-publish"), bytes =>
+                    {
+                        if (bytes[0] == 42)
+                            source.Cancel();
+                    });
 
-                var builder = new CqrsClientBuilder();
-                builder.Azure(c => c.AddAzureSender(dev, "test-publish"));
-                var client = builder.Build();
 
-
-                client.Sender.SendOne(new Message());
-                if (!task.Wait(5000))
+                using (var engine = b.Build())
                 {
-                    source.Cancel();
+                    var task = engine.Start(source.Token);
+
+                    dev.CreateQueueWriter("test-publish").PutMessage(new byte[] {42});
+                    if (!task.Wait(5000))
+                    {
+                        source.Cancel();
+                    }
                 }
             }
         }

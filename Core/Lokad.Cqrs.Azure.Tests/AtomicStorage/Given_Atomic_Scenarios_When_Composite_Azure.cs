@@ -8,19 +8,18 @@
 
 using System;
 using Lokad.Cqrs.Build.Engine;
-using Lokad.Cqrs.Feature.AtomicStorage;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
 
-namespace Lokad.Cqrs.Synthetic
+namespace Lokad.Cqrs.Feature.AtomicStorage
 {
     [TestFixture]
-    public sealed class Given_Basic_Scenarios_When_Composite_Azure : Given_Basic_Scenarios
+    public sealed class Given_Atomic_Scenarios_When_Composite_Azure : Given_Atomic_Scenarios
     {
-        protected override Setup ConfigureComponents(Envelope.IEnvelopeStreamer config)
+        protected override Given_Atomic_Scenarios.Setup ConfigureComponents(Envelope.IEnvelopeStreamer streamer)
         {
-            TestSpeed = 7000;
+            TestSpeed = 10000;
 
             var dev = AzureStorage.CreateConfigurationForDev();
             WipeAzureAccount.Fast(s => s.StartsWith("test-"), dev);
@@ -28,7 +27,7 @@ namespace Lokad.Cqrs.Synthetic
             {
                 Store = dev.CreateNuclear(),
                 Inbox = dev.CreateInbox("test-incoming", visibilityTimeout: TimeSpan.FromSeconds(1)),
-                Sender = dev.CreateSimpleSender(config, "test-incoming")
+                Sender = dev.CreateSimpleSender(streamer, "test-incoming")
             };
         }
     }

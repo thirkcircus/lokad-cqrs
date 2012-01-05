@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography;
+using Lokad.Cqrs.TapeStorage;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
 using NUnit.Framework;
@@ -9,12 +10,13 @@ using NUnit.Framework;
 namespace Lokad.Cqrs.Feature.TapeStorage
 {
     [TestFixture]
-    public class BlobTapeStorageTests : TapeStorageTests
+    class BlockBlobTapeStorageTests : TapeStorageTests
     {
         const string ContainerName = "blob-tape-test";
 
         readonly CloudStorageAccount _cloudStorageAccount = CloudStorageAccount.DevelopmentStorageAccount;
         ITapeStorageFactory _storageFactory;
+
 
         [Test, Explicit]
         public void Performance_tests()
@@ -68,7 +70,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
         protected override ITapeStream InitializeAndGetTapeStorage()
         {
             var config = AzureStorage.CreateConfig(_cloudStorageAccount);
-            _storageFactory = new BlobTapeStorageFactory(config, ContainerName);
+            _storageFactory = new BlockBlobTapeStorageFactory(config, ContainerName);
             _storageFactory.InitializeForWriting();
 
             const string name = "test";

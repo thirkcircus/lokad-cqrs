@@ -47,7 +47,7 @@ namespace Lokad.Cqrs.Synthetic
                     OnCommit = () =>
                         {
                             var singleton = storage.AddOrUpdateSingleton(() => 1, i => i + 1);
-                            //Trace.WriteLine("Commit kicked " + singleton);
+                            Trace.WriteLine("Commit kicked " + singleton);
                         }
                 };
 

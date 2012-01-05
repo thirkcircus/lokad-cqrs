@@ -32,30 +32,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=2.5.2.830, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.dll</HintPath>
-    </Reference>
-    <Reference Include="Autofac.Configuration">
-      <HintPath>..\packages\Autofac.2.5.2.830\lib\NET40\Autofac.Configuration.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+    <Reference Include="Microsoft.WindowsAzure.StorageClient, Version=1.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Library\Azure\Microsoft.WindowsAzure.StorageClient.dll</HintPath>
+      <HintPath>..\..\Library\Azure\Microsoft.WindowsAzure.StorageClient.dll</HintPath>
     </Reference>
     <Reference Include="nunit.framework, Version=2.5.10.11092, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\..\Library\NUnit\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="nunit.mocks">
-      <HintPath>..\packages\NUnit.2.5.10.11092\lib\nunit.mocks.dll</HintPath>
-    </Reference>
-    <Reference Include="pnunit.framework">
-      <HintPath>..\packages\NUnit.2.5.10.11092\lib\pnunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="protobuf-net, Version=1.0.0.282, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Library\ProtoBuf-net\protobuf-net.dll</HintPath>
-    </Reference>
+    <Reference Include="protobuf-net, Version=2.0.0.470, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
@@ -64,42 +49,38 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BasicClientConfigurationTests.cs" />
-    <Compile Include="Feature.AtomicStorage\Given_Atomic_Scenarios_When_Azure.cs" />
-    <Compile Include="Feature.AtomicStorage\Given_Atomic_Scenarios_When_Composite_Azure.cs" />
-    <Compile Include="Feature.AtomicStorage\When_DefaultAzureAtomicStorageStrategy_is_used.cs" />
-    <Compile Include="Feature.TapeStorage\BlobTapeStorageTests.cs" />
-    <Compile Include="Feature.TapeStorage\BlockBlobTapeStorageTests.cs" />
+    <Compile Include="AtomicStorage\Given_Atomic_Scenarios_When_Azure.cs" />
+    <Compile Include="AtomicStorage\Given_Atomic_Scenarios_When_Composite_Azure.cs" />
+    <Compile Include="AtomicStorage\When_DefaultAzureAtomicStorageStrategy_is_used.cs" />
+    <Compile Include="TapeStorage\BlobTapeStorageTests.cs" />
+    <Compile Include="TapeStorage\BlockBlobTapeStorageTests.cs" />
     <Compile Include="MiscTests.cs" />
     <Compile Include="Performance_tests_for_throughput.cs" />
     <Compile Include="Performance_tests_for_reaction.cs" />
     <Compile Include="Synthetic\Given_Basic_Scenarios_When_Azure.cs" />
-    <Compile Include="Core.Serialization\ProtobufFixture.cs" />
-    <Compile Include="Core.Envelope\Play_all_for_ProtoBuf.cs" />
-    <Compile Include="Core.Serialization\ProtoBufDataTests.cs" />
-    <Compile Include="Core.Serialization\ProtoBufNativeTests.cs" />
-    <Compile Include="Core.Serialization\ProtoBufXmlTests.cs" />
-    <Compile Include="SmokeTests.cs" />
-    <Compile Include="Feature.StreamingStorage\Play_all_for_BlobStreaming.cs" />
-    <Compile Include="Feature.StreamingStorage\HashingTests.cs" />
+    <Compile Include="Serialization\ProtobufFixture.cs" />
+    <Compile Include="Envelope\Play_all_for_ProtoBuf.cs" />
+    <Compile Include="Serialization\ProtoBufDataTests.cs" />
+    <Compile Include="Serialization\ProtoBufNativeTests.cs" />
+    <Compile Include="Serialization\ProtoBufXmlTests.cs" />
+    <Compile Include="StreamingStorage\Play_all_for_BlobStreaming.cs" />
+    <Compile Include="StreamingStorage\HashingTests.cs" />
     <Compile Include="Synthetic\Given_Basic_Scenarios_When_Composite_Azure.cs" />
     <Compile Include="Synthetic\Given_Tx_Scenarios_When_Composite_Azure.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Lokad.Cqrs.Autofac\Lokad.Cqrs.Autofac.csproj">
-      <Project>{F60E517D-CEE9-4F8B-9166-075FE6AA677A}</Project>
-      <Name>Lokad.Cqrs.Autofac</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Lokad.Cqrs.Azure\Lokad.Cqrs.Azure.csproj">
       <Project>{AEE2B47D-591D-42B5-8EDC-CC676A661F9D}</Project>
       <Name>Lokad.Cqrs.Azure</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Lokad.Cqrs.Portable.Tests\Lokad.Cqrs.Portable.Tests.csproj">
+      <Project>{96E3B247-C04C-4138-A042-7969562B4B0F}</Project>
+      <Name>Lokad.Cqrs.Portable.Tests</Name>
     </ProjectReference>
     <ProjectReference Include="..\Lokad.Cqrs.Portable\Lokad.Cqrs.Portable.csproj">
       <Project>{4E2E749C-4D6F-4EF8-8E9D-96D467306997}</Project>
       <Name>Lokad.Cqrs.Portable</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

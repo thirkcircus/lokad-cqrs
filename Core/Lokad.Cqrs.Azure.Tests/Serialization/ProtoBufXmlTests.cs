@@ -6,6 +6,7 @@
 #endregion
 
 using System.Xml.Serialization;
+using Lokad.Cqrs.Evil;
 using NUnit.Framework;
 
 namespace Lokad.Cqrs.Core.Serialization

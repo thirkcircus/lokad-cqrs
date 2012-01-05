@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Lokad.Cqrs
 {
@@ -18,13 +19,10 @@ namespace Lokad.Cqrs
             }
         }
 
-        public static IDisposable When<T>(Action<T> when) where T : class
+        public static IDisposable When<T>(Action<T> when, bool includeTracing = true) where T : class
         {
 
-            var eventsObserver = new ImmediateEventsObserver
-                {
-                    
-                };
+            var eventsObserver = new ImmediateEventsObserver();
 
             Action<ISystemEvent> onEvent = @event =>
                 {
@@ -37,7 +35,15 @@ namespace Lokad.Cqrs
                     }
                 };
             eventsObserver.Event += onEvent;
-            var old = SystemObserver.Swap(eventsObserver, new ImmediateTracingObserver());
+            var list = new List<IObserver<ISystemEvent>>
+                {
+                    eventsObserver
+                };
+            if (includeTracing)
+            {
+                list.Add(new ImmediateTracingObserver());
+            }
+            var old = SystemObserver.Swap(list.ToArray());
 
             return new Disposable(() =>
                 {

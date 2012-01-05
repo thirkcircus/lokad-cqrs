@@ -161,6 +161,7 @@ namespace Lokad.Cqrs
             var timeout = visibilityTimeout == default(TimeSpan) ? TimeSpan.FromMinutes(5) : visibilityTimeout;
 
             var queue = cfg.CreateQueueClient().GetQueueReference(name);
+
             var container = cfg.CreateBlobClient().GetBlobDirectoryReference("queues-big").GetSubdirectory(name);
 
             var poisonQueue = new Lazy<CloudQueue>(() =>
