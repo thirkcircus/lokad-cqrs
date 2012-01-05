@@ -7,6 +7,7 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading;
 using Lokad.Cqrs;
@@ -22,12 +23,33 @@ namespace Sample.Engine
 {
     class Program
     {
+        
+
         static void Main(string[] args)
         {
-            const string integrationPath = @"C:\temp\legacy.hub";
+            const string integrationPath = @"temp";
             ConfigureObserver();
 
             var config = FileStorage.CreateConfig(integrationPath, "files");
+
+            var demoMessages = new List<ISampleMessage>();
+            var currentProcess = Process.GetCurrentProcess();
+            demoMessages.Add(new InstanceStarted("Inject git rev", currentProcess.ProcessName,
+                currentProcess.Id.ToString()));
+
+
+            {
+                // wipe all folders
+                config.Reset();
+                Console.WriteLine("Starting in funny mode");
+                var security = new SecurityId(0);
+                demoMessages.Add(new CreateSecurityAggregate(security));
+                demoMessages.Add(new AddSecurityPassword(security, "Rinat Abdullin", "contact@lokad.com", "password"));
+                demoMessages.Add(new AddSecurityIdentity(security, "Rinat's Open ID", "http://abdullin.myopenid.org"));
+                demoMessages.Add(new AddSecurityKey(security, "some key"));
+            }
+
+
 
             var atomic = config.CreateNuclear(new DocumentStrategy());
             var identity = new IdentityGenerator(atomic);
@@ -76,13 +98,19 @@ namespace Sample.Engine
             using (var cts = new CancellationTokenSource())
             using (var engine = builder.Build())
             {
-                var currentProcess = Process.GetCurrentProcess();
-                sender.SendOne(new InstanceStarted("Inject git rev", currentProcess.ProcessName,
-                    currentProcess.Id.ToString()));
+
                 var task = engine.Start(cts.Token);
+
+                foreach (var sampleMessage in demoMessages)
+                {
+                    sender.SendOne(sampleMessage);
+                }
+
                 Console.WriteLine(@"Press enter to stop");
                 Console.ReadLine();
                 cts.Cancel();
+
+
 
                 if (task.Wait(5000))
                 {

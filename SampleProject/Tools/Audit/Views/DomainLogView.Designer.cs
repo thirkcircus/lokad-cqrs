@@ -127,7 +127,6 @@
             // 
             // _beginningEvents
             // 
-            this._beginningEvents.Image = global::Audit.Properties.Resources.navigate_end_16;
             this._beginningEvents.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._beginningEvents.Name = "_beginningEvents";
             this._beginningEvents.Size = new System.Drawing.Size(77, 22);
@@ -136,7 +135,6 @@
             // 
             // _nextEvents
             // 
-            this._nextEvents.Image = global::Audit.Properties.Resources.navigate_left2_16;
             this._nextEvents.ImageTransparentColor = System.Drawing.Color.Magenta;
             this._nextEvents.Name = "_nextEvents";
             this._nextEvents.Size = new System.Drawing.Size(56, 22);
@@ -152,7 +150,6 @@
             // 
             this.resendDropDownButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.modifySendMenuItem});
-            this.resendDropDownButton.Image = global::Audit.Properties.Resources.clock_reset_16;
             this.resendDropDownButton.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.resendDropDownButton.Name = "resendDropDownButton";
             this.resendDropDownButton.Size = new System.Drawing.Size(121, 22);

@@ -60,27 +60,6 @@ namespace Audit.Properties {
             }
         }
         
-        internal static System.Drawing.Bitmap clock_reset_16 {
-            get {
-                object obj = ResourceManager.GetObject("clock_reset_16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap navigate_end_16 {
-            get {
-                object obj = ResourceManager.GetObject("navigate_end_16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap navigate_left2_16 {
-            get {
-                object obj = ResourceManager.GetObject("navigate_left2_16", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
         internal static byte[] ReadMe {
             get {
                 object obj = ResourceManager.GetObject("ReadMe", resourceCulture);

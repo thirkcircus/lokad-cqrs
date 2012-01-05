@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Describe.cs" />
+    <Compile Include="DescribeSecurity.cs" />
     <Compile Include="DescribeUser.cs" />
     <Compile Include="Messages.cs" />
   </ItemGroup>

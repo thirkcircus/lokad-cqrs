@@ -128,9 +128,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Resources\clock_reset_16.png" />
-    <Content Include="Resources\navigate_end_16.png" />
-    <Content Include="Resources\navigate_left2_16.png" />
     <None Include="ReadMe.markdown" />
   </ItemGroup>
   <ItemGroup>
