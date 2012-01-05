@@ -6,10 +6,9 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
-using PowerAssert.Infrastructure.Nodes;
+using Sample.Tests.PAssert.Infrastructure.Nodes;
 
-namespace PowerAssert.Infrastructure
+namespace Sample.Tests.PAssert.Infrastructure
 {
     internal class NaturalExpressionParser
     {

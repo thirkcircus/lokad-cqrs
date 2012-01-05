@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lokad.CodeDsl
+namespace Dsl
 {
 	static class Errors
 	{

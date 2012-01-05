@@ -9,9 +9,8 @@ using System;
 using System.Collections.Concurrent;
 using System.IO;
 using System.Media;
-using Lokad.CodeDsl;
 
-namespace Hub.Dsl
+namespace Dsl
 {
     class Program
     {
@@ -19,7 +18,7 @@ namespace Hub.Dsl
 
         static void Main(string[] args)
         {
-            var info = new DirectoryInfo("..\\..\\..\\..\\Source\\Hub.Contracts");
+            var info = new DirectoryInfo("..\\..\\..\\..\\Source\\Sample.Contracts");
 
             var files = info.GetFiles("*.tt");
 
@@ -83,14 +82,14 @@ namespace Hub.Dsl
             var dsl = text;
             var generator = new TemplatedGenerator()
                 {
-                    Namespace = "Hub",
+                    Namespace = "Sample",
                     GenerateInterfaceForEntityWithModifiers = "?",
                     TemplateForInterfaceName = "public interface I{0}Aggregate",
                     TemplateForInterfaceMember = "void When({0} c);",
                     ClassNameTemplate = @"
     
 
-[DataContract(Namespace = ""Hub"")]
+[DataContract(Namespace = ""Sample"")]
 public partial class {0}",
                     MemberTemplate = "[DataMember(Order = {0})] public {1} {2} {{ get; private set; }}",
                     PrivateCtorTemplate = @"

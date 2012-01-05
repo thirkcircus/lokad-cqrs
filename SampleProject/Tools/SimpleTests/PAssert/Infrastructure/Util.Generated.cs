@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Collections.Generic;
 
-namespace PowerAssert.Infrastructure
+namespace Sample.Tests.PAssert.Infrastructure
 {
     internal class Util
     {

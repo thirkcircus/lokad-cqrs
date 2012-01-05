@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace JetBrains.Annotations
+namespace Sample.Tests.PAssert
 {
     /// <summary>
     /// Indicates that marked element should be localized or not.

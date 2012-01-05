@@ -1,6 +1,4 @@
-﻿using JetBrains.Annotations;
-
-namespace PowerAssert.Infrastructure.Nodes
+﻿namespace Sample.Tests.PAssert.Infrastructure.Nodes
 {
     internal class ArrayIndexNode : Node
     {

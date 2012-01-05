@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq.Expressions;
-using PowerAssert.Infrastructure;
-using PowerAssert.Infrastructure.Nodes;
+using Sample.Tests.PAssert.Infrastructure;
+using Sample.Tests.PAssert.Infrastructure.Nodes;
 
-namespace PowerAssert
+namespace Sample.Tests.PAssert
 {
     public static class PAssert
     {

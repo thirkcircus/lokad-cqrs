@@ -1,6 +1,6 @@
 ﻿using System.CodeDom.Compiler;
 
-namespace Lokad.CodeDsl
+namespace Dsl
 {
 	public interface IGenerateCode
 	{

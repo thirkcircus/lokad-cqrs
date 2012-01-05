@@ -10,9 +10,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
-using MessageContracts;
 
-namespace Lokad.CodeDsl
+namespace Dsl
 {
     public sealed class MessageContractAssembler
     {
@@ -161,10 +160,7 @@ namespace Lokad.CodeDsl
             return ctx;
         }
     }
-}
 
-namespace MessageContracts
-{
     public partial class MessageContractsParser
     {
         public program_return GetProgram()

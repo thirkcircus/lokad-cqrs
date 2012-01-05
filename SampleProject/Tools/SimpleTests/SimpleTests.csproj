@@ -8,7 +8,7 @@
     <ProjectGuid>{861D2282-FC25-424A-BA0C-84FFC3798C51}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SimpleTests</RootNamespace>
+    <RootNamespace>Sample.Tests</RootNamespace>
     <AssemblyName>SimpleTests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using PowerAssert.Infrastructure.Nodes;
+using Sample.Tests.PAssert.Infrastructure.Nodes;
 
-namespace PowerAssert.Infrastructure
+namespace Sample.Tests.PAssert.Infrastructure
 {
     internal class NodeFormatter
     {

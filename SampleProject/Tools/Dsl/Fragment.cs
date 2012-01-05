@@ -1,4 +1,4 @@
-﻿namespace Lokad.CodeDsl
+﻿namespace Dsl
 {
 	public sealed class Fragment
 	{

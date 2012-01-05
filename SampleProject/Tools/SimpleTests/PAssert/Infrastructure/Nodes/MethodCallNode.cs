@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 
-namespace PowerAssert.Infrastructure.Nodes
+namespace Sample.Tests.PAssert.Infrastructure.Nodes
 {
     internal class MethodCallNode : MemberAccessNode
     {

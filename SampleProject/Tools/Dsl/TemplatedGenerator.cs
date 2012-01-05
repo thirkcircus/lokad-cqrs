@@ -1,9 +1,8 @@
 ﻿using System;
 using System.CodeDom.Compiler;
-using System.Collections.Generic;
 using System.Linq;
 
-namespace Lokad.CodeDsl
+namespace Dsl
 {
 	public sealed class TemplatedGenerator : IGenerateCode
 	{

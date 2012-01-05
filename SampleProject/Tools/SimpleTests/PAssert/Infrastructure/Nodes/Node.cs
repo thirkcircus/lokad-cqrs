@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Linq;
 
-namespace PowerAssert.Infrastructure.Nodes
+namespace Sample.Tests.PAssert.Infrastructure.Nodes
 {
     internal abstract class Node
     {

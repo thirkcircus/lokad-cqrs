@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using PowerAssert;
 using System.Linq;
 
-namespace Hub
+namespace Sample.Tests
 {
     public delegate void WhenAction<in T>(T item);
     public delegate bool Expectation<in T>(T obj);
@@ -93,13 +92,13 @@ namespace Hub
             ExpectationResult result;
             try
             {
-                PAssert.IsTrue(partiallyApplied);
-                result = (new ExpectationResult { Passed = true, Text = PAssert.CreateSimpleFormatFor   (partiallyApplied), OriginalExpression = _expression });
+                PAssert.PAssert.IsTrue(partiallyApplied);
+                result = (new ExpectationResult { Passed = true, Text = PAssert.PAssert.CreateSimpleFormatFor   (partiallyApplied), OriginalExpression = _expression });
             }
             catch (Exception ex)
             {
                 
-                result =(new ExpectationResult { Passed = false, Text = PAssert.CreateSimpleFormatFor(partiallyApplied), OriginalExpression = _expression, Exception = ex });
+                result =(new ExpectationResult { Passed = false, Text = PAssert.PAssert.CreateSimpleFormatFor(partiallyApplied), OriginalExpression = _expression, Exception = ex });
             }
             yield return result;
         }
