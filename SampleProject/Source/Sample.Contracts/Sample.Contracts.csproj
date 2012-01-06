@@ -65,22 +65,22 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Sample.Abstractions\Sample.Abstractions.csproj">
-      <Project>{C6701969-6622-4D44-9783-9ECAD225DD0A}</Project>
-      <Name>Sample.Abstractions</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Messages.tt" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbstractIdentity.cs" />
+    <Compile Include="ConcreteIdentity.cs" />
     <Compile Include="Describe.cs" />
     <Compile Include="DescribeSecurity.cs" />
     <Compile Include="DescribeUser.cs" />
+    <Compile Include="Email.cs" />
+    <Compile Include="FormatUtil.cs" />
+    <Compile Include="Interfaces.cs" />
     <Compile Include="Messages.cs" />
+    <Compile Include="Source.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

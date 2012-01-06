@@ -46,10 +46,6 @@
       <Project>{4E2E749C-4D6F-4EF8-8E9D-96D467306997}</Project>
       <Name>Lokad.Cqrs.Portable</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Sample.Abstractions\Sample.Abstractions.csproj">
-      <Project>{C6701969-6622-4D44-9783-9ECAD225DD0A}</Project>
-      <Name>Sample.Abstractions</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Sample.Contracts\Sample.Contracts.csproj">
       <Project>{2A4A9A2C-5D8D-4078-B118-02A1D386A9FA}</Project>
       <Name>Sample.Contracts</Name>
