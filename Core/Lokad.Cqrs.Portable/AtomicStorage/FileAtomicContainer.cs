@@ -34,6 +34,10 @@ namespace Lokad.Cqrs.AtomicStorage
             try
             {
                 var name = GetName(key);
+
+                if (!File.Exists(name))
+                    return false;
+
                 using (var stream = File.Open(name, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
                     view = _strategy.Deserialize<TEntity>(stream);
@@ -42,6 +46,7 @@ namespace Lokad.Cqrs.AtomicStorage
             }
             catch (FileNotFoundException)
             {
+                // if file happened to be deleted between the moment of check and actual read.
                 return false;
             }
             catch (DirectoryNotFoundException)
