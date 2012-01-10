@@ -43,6 +43,7 @@
     <Compile Include="Build\CqrsEngineBuilder.cs" />
     <Compile Include="CommandHandler.cs" />
     <Compile Include="Envelope\AbstractDataSerializer.cs" />
+    <Compile Include="Envelope\Events\EnvelopeDispatched.cs" />
     <Compile Include="Evil\ContractEvil.cs" />
     <Compile Include="Dispatch\Events\DispatchRecoveryFailed.cs" />
     <Compile Include="Envelope\Events\EnvelopeDuplicateDiscarded.cs" />

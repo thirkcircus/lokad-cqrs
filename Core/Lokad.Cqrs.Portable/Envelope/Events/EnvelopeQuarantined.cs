@@ -36,18 +36,4 @@ namespace Lokad.Cqrs.Envelope.Events
             Envelope = envelope;
         }
     }
-
-
-
-    [Serializable]
-    public sealed class EnvelopeDispatched : ISystemEvent
-    {
-        public ImmutableEnvelope Envelope { get; private set; }
-        public string Dispatcher { get; private set; }
-        public EnvelopeDispatched(ImmutableEnvelope envelope, string dispatcher)
-        {
-            Envelope = envelope;
-            Dispatcher = dispatcher;
-        }
-    }
 }

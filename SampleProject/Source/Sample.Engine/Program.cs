@@ -134,12 +134,18 @@ namespace Sample.Engine
 
         static void ConfigureObserver()
         {
+            // Just for debugging, we print everything from the trace to console
             Trace.Listeners.Add(new ConsoleTraceListener());
 
-            SystemObserver.Swap(new Observer());
+            // Plug custom observer that will handle only specific system events
+            SystemObserver.Swap(new MyConsoleObserver());
+
+            // replace MyConsoleObserver with ImmediateConsoleObserver 
+            // to display all system events see the difference :)
+            // SystemObserver.Swap(new ImmediateConsoleObserver());
         }
 
-        sealed class Observer : IObserver<ISystemEvent>
+        sealed class MyConsoleObserver : IObserver<ISystemEvent>
         {
             readonly Stopwatch _watch = Stopwatch.StartNew();
 
