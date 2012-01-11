@@ -27,13 +27,13 @@ namespace Sample
         /// Unique tag (should be unique within the assembly) to distinguish
         /// between different identities, while deserializing.
         /// </summary>
-        int Tag { get; }
+        string GetTag();
     }
 
     [DataContract(Namespace = "Sample")]
     public sealed class NullId : IIdentity
     {
-        public const int TagValue = 0;
+        public const string TagValue = "";
         public static readonly IIdentity Instance = new NullId();
 
         public string GetId()
@@ -41,9 +41,9 @@ namespace Sample
             return "";
         }
 
-        public int Tag
+        public string GetTag()
         {
-            get { return 0; }
+            return "";
         }
     }
 
@@ -61,8 +61,10 @@ namespace Sample
             return Id.ToString();
         }
 
-        [DataMember(Order = 2)]
-        public abstract int Tag { get; protected set; }
+        public virtual string GetTag()
+        {
+            return GetType().ToString().ToLowerInvariant();
+        }
 
         public override bool Equals(object obj)
         {
@@ -73,7 +75,7 @@ namespace Sample
 
             if (identity != null)
             {
-                return identity.Id.Equals(Id) && identity.Tag == Tag;
+                return identity.Id.Equals(Id) && string.Equals(identity.GetTag(),GetTag());
             }
 
             return false;
@@ -88,7 +90,7 @@ namespace Sample
         {
             unchecked
             {
-                return (Id.GetHashCode() * 397) ^ (Tag.GetHashCode());
+                return (Id.GetHashCode() * 397) ^ (GetTag().GetHashCode());
             }
         }
     }
