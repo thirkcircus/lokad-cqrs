@@ -30,6 +30,11 @@ namespace Lokad.Cqrs.Build
             }
         }
 
+        public void AddDisposable(IDisposable disposable)
+        {
+            _disposables.Push(disposable);
+        }
+
         public void RunForever()
         {
             var token = new CancellationTokenSource();
