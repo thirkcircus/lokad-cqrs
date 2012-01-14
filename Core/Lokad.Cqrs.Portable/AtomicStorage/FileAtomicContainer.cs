@@ -66,6 +66,14 @@ namespace Lokad.Cqrs.AtomicStorage
             var name = GetName(key);
             try
             {
+                // This is fast and allows to have git-style subfolders in atomic strategy
+                // to avoid NTFS performance degradation (when there are more than 
+                // 10000 files per folder). Kudos to Gabriel Schenker
+                var subfolder = Path.GetDirectoryName(name);
+                if (subfolder != null && !Directory.Exists(subfolder))
+                    Directory.CreateDirectory(subfolder);
+ 
+
                 // we are locking this file.
                 using (var file = File.Open(name, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
                 {
