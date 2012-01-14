@@ -22,7 +22,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         IAtomicWriter<TKey, TEntity>
         //where TEntity : IAtomicEntity<TKey>
     {
-        readonly CloudBlobContainer _container;
+        readonly CloudBlobDirectory _container;
         readonly IAtomicStorageStrategy _strategy;
 
         public AzureAtomicWriter(IAzureStorageConfig storage, IAtomicStorageStrategy strategy)
@@ -30,13 +30,13 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             _strategy = strategy;
             var client = storage.CreateBlobClient();
             var folderForEntity = strategy.GetFolderForEntity(typeof(TEntity), typeof(TKey));
-            _container = client.GetContainerReference(folderForEntity);
+            _container = client.GetBlobDirectoryReference(folderForEntity);
         }
 
 
         public void InitializeIfNeeded()
         {
-            _container.CreateIfNotExist();
+            _container.Container.CreateIfNotExist();
         }
 
         public TEntity AddOrUpdate(TKey key, Func<TEntity> addViewFactory, Func<TEntity, TEntity> updateViewFactory,

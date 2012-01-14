@@ -46,10 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AggregateFactory.cs" />
+    <Compile Include="DemoMessages.cs" />
     <Compile Include="EnvelopeSerializer.cs" />
     <Compile Include="MessageSender.cs" />
     <Compile Include="ProjectionStrategy.cs" />
     <Compile Include="RedirectToDynamicEvent.cs" />
+    <Compile Include="SetupClassThatReplacesIoCContainerFramework.cs" />
     <Compile Include="Topology.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +66,10 @@
     <ProjectReference Include="..\Sample.Domain\Sample.Domain.csproj">
       <Project>{85F10E26-B454-4719-9ADD-A8CD147B0AE4}</Project>
       <Name>Sample.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sample.Projections\Sample.Projections.csproj">
+      <Project>{37C981DB-8D49-42B8-8854-53A2945F53A8}</Project>
+      <Name>Sample.Projections</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
