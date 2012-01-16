@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Lokad.Cqrs;
 using Lokad.Cqrs.Envelope;
 using Lokad.Cqrs.Evil;
 using ProtoBuf;

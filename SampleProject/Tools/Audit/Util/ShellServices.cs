@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Lokad.Cqrs;
 using Lokad.Cqrs.Envelope;
 using Sample;
 using ServiceStack.Text;

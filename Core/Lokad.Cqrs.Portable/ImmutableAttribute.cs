@@ -1,4 +1,4 @@
-﻿namespace Lokad.Cqrs.Envelope
+﻿namespace Lokad.Cqrs
 {
     public sealed class ImmutableAttribute
     {

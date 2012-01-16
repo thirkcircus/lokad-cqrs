@@ -6,6 +6,7 @@
 #endregion
 
 using System;
+using Lokad.Cqrs;
 using Lokad.Cqrs.Envelope;
 
 namespace Sample.Wires

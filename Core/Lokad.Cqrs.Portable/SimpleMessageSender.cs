@@ -9,9 +9,10 @@
 using System;
 using System.Linq;
 using System.Transactions;
+using Lokad.Cqrs.Envelope;
 using Lokad.Cqrs.Partition;
 
-namespace Lokad.Cqrs.Envelope
+namespace Lokad.Cqrs
 {
     public sealed class SimpleMessageSender 
     {

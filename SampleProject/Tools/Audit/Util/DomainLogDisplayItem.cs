@@ -9,6 +9,7 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Lokad.Cqrs;
 using Lokad.Cqrs.Envelope;
 using Sample;
 using ServiceStack.Text;

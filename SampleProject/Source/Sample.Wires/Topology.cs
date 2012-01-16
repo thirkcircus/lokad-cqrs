@@ -7,6 +7,7 @@
 
 using System;
 using System.Linq;
+using Lokad.Cqrs;
 using Lokad.Cqrs.Envelope;
 using Lokad.Cqrs.Partition;
 using Lokad.Cqrs.TapeStorage;

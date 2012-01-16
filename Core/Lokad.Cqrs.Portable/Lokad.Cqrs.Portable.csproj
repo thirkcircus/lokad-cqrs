@@ -90,7 +90,7 @@
     <Compile Include="TapeStorage\TapeRecord.cs" />
     <Compile Include="FileStorageConfig.cs" />
     <Compile Include="TimerService\StreamingTimerService.cs" />
-    <Compile Include="Envelope\ImmutableAttribute.cs" />
+    <Compile Include="ImmutableAttribute.cs" />
     <Compile Include="MemoryStorage.cs" />
     <Compile Include="HideObjectMembersFromIntelliSense.cs" />
     <Compile Include="ImmediateTracingObserver.cs" />
@@ -131,7 +131,7 @@
     <Compile Include="Envelope\MessageContract.cs" />
     <Compile Include="Envelope\MessageAttributes.cs" />
     <Compile Include="Envelope\EnvelopeHeaderContract.cs" />
-    <Compile Include="Envelope\SimpleMessageSender.cs" />
+    <Compile Include="SimpleMessageSender.cs" />
     <Compile Include="AtomicStorage\ExtendAtomicSingletonReader.cs" />
     <Compile Include="AtomicStorage\IAtomicReader.cs" />
     <Compile Include="AtomicStorage\IAtomicWriter.cs" />
@@ -158,14 +158,14 @@
     <Compile Include="StreamingStorage\StreamingWriteOptions.cs" />
     <Compile Include="IEngineProcess.cs" />
     <Compile Include="Envelope\IEnvelopeSerializer.cs" />
-    <Compile Include="Envelope\IEnvelopeStreamer.cs" />
+    <Compile Include="IEnvelopeStreamer.cs" />
     <Compile Include="Envelope\IDataSerializer.cs" />
     <Compile Include="Partition\IQueueWriter.cs" />
     <Compile Include="Partition\IQueueWriterFactory.cs" />
     <Compile Include="ISystemEvent.cs" />
     <Compile Include="Optional.1.cs" />
-    <Compile Include="Envelope\ImmutableEnvelope.cs" />
-    <Compile Include="Envelope\ImmutableMessage.cs" />
+    <Compile Include="ImmutableEnvelope.cs" />
+    <Compile Include="ImmutableMessage.cs" />
     <Compile Include="Envelope\EnvelopeReference.cs" />
     <Compile Include="Envelope\DataSerializerWithDataContracts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

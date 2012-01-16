@@ -9,6 +9,7 @@
 using System;
 using System.Drawing;
 using Audit.Util;
+using Lokad.Cqrs;
 using Lokad.Cqrs.Envelope;
 using Sample;
 

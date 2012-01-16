@@ -18,7 +18,7 @@ namespace Lokad.Cqrs.Synthetic
     [TestFixture]
     public sealed class Given_Basic_Scenarios_When_Composite_Azure : Given_Basic_Scenarios
     {
-        protected override Setup ConfigureComponents(Envelope.IEnvelopeStreamer config)
+        protected override Setup ConfigureComponents(IEnvelopeStreamer config)
         {
             TestSpeed = 7000;
 

@@ -17,7 +17,7 @@ namespace Lokad.Cqrs.Synthetic
     [TestFixture]
     public sealed class Given_Basic_Scenarios_When_Azure : Given_Basic_Scenarios
     {
-        protected override Given_Basic_Scenarios.Setup ConfigureComponents(Envelope.IEnvelopeStreamer config)
+        protected override Given_Basic_Scenarios.Setup ConfigureComponents(IEnvelopeStreamer config)
         {
             // Azure dev is implemented via WS on top of SQL on top of FS.
             // this can be slow. And it will be

@@ -1,4 +1,5 @@
 using System;
+using Lokad.Cqrs;
 using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.Build;
 using Lokad.Cqrs.Envelope;

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.Principal;
 using System.Text;
 using System.Threading;
+using Lokad.Cqrs;
 using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.Envelope;
 using Lokad.Cqrs.Partition;

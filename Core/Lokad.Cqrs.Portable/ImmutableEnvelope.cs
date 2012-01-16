@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace Lokad.Cqrs.Envelope
+namespace Lokad.Cqrs
 {
     /// <summary>
     /// Deserialized message representation

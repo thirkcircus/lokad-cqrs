@@ -17,7 +17,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
     [TestFixture]
     public sealed class Given_Atomic_Scenarios_When_Composite_Azure : Given_Atomic_Scenarios
     {
-        protected override Given_Atomic_Scenarios.Setup ConfigureComponents(Envelope.IEnvelopeStreamer streamer)
+        protected override Given_Atomic_Scenarios.Setup ConfigureComponents(IEnvelopeStreamer streamer)
         {
             TestSpeed = 10000;
 
