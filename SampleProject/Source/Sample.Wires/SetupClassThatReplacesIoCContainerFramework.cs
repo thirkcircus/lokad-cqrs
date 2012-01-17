@@ -41,8 +41,8 @@ namespace Sample.Wires
             var routerQueue = CreateQueueWriter(Topology.RouterQueue);
             var aggregates = new AggregateFactory(tapes, streamer, routerQueue, documents, identity);
 
-            var Sender = new SimpleMessageSender(streamer, routerQueue);
-            var flow = new MessageSender(Sender);
+            var sender = new SimpleMessageSender(streamer, routerQueue);
+            var flow = new MessageSender(sender);
 
             var builder = new CqrsEngineBuilder(streamer);
 
@@ -77,7 +77,7 @@ namespace Sample.Wires
             return new AssembledComponents
                 {
                     Builder = builder,
-                    Sender = Sender,
+                    Sender = sender,
                     Setup = this
                 };
         }
