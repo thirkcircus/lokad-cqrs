@@ -1,50 +1,428 @@
----
-layout: default
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+       <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Lokad.CQRS Sample Project, from Lokad</title>
+    <meta name="description" content="">
+       <meta name="author" content="Lokad.CQRS Team and contributors" />
+          <meta HTTP-EQUIV="CACHE-CONTROL" CONTENT="NO-CACHE">
+   <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
+   <META HTTP-EQUIV="Expires" CONTENT="-1">
+    <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
 
----
-<div id="container">
-<div class="desc">
-      <strong>Lokad.CQRS</strong> is a <strong>.NET framework</strong> and a set of guidance materials for <em>building distributed and scalable applications</em> to be run on-premises or in the cloud. This project helps to design and develop decoupled systems locally and bring them to the distributed environments later.
+    <!-- Le styles -->
+    <link href="css/bootstrap.css" rel="stylesheet" type="text/css" />
+      <link href="css/style.css" rel="stylesheet" type="text/css" />
+  </head>
+
+  <body>
+
+    <!-- Topbar
+    ================================================== -->
+    <div class="topbar" data-scrollspy="scrollspy" >
+      <div class="topbar-inner">
+        <div class="container">
+          <a class="brand" href="#">Lokad.CQRS Sample Project</a>
+          <ul class="nav">            
+            <li class="active"><a href="#about">About</a></li>
+            <li><a href="#overview">Overview</a></li>
+            <li><a href="#contracts">Contracts DSL</a></li>
+            <li><a href="#specifications">Specs</a></li>
+            <li><a href="#azure">Azure</a></li>
+            <li><a href="#Maintain">Maintain</a></li>
+          </ul>
+        </div>
+      </div>
     </div>
-    <h2>Get Lokad.CQRS v2.0</h2>
-    <p>Grab a <a href="http://nuget.org/List/Packages/Lokad.CQRS">nuget</a>:
-    <pre>PM&gt; Install-Package Lokad.CQRS</pre>
-    </p>
-    <ul>
-	    <li><a href="https://github.com/downloads/Lokad/lokad-cqrs/Lokad.CQRS-v2.0.pdf">PDF Documentation</a></li>
-	    <li><a href="https://github.com/downloads/Lokad/lokad-cqrs/Lokad.CQRS-2.0.69.0.zip">Binaries</a></li>
-    	    <li><a href="https://github.com/Lokad/lokad-cqrs-samples/archives/master">Samples</a></li>
-    </ul>
-    <h2>Participate and Contribute</h2>
-    <ul>
 
-	    <li><a href="http://groups.google.com/group/lokad">Visit Community</a></li>
-	    <li><a href="http://twitter.com/lokad"> Follow @lokad</a> and <a href="http://feeds.feedburner.com/lokad/">Subscribe to Lokad RSS</a></li>
-	    <li><a href="https://github.com/Lokad/lokad-cqrs/issues">Report Issues</a></li>
-	    <li>Contact Lokad dev team directly via <strong>contact@lokad.com</strong></li>
-    </ul>
-    <p>Clone the project with <a href="http://git-scm.com">git</a>:
-      <pre>$ git clone git://github.com/Lokad/lokad-cqrs</pre>
+
+        <!-- Masthead (blueprinty thing)
+    ================================================== -->
+    <header class="jumbotron masthead" id="brief">
+      <div class="inner">
+        <div class="container">
+          <h1>Lokad.CQRS Sample Project</h1>
+          <p class="lead">
+            Lokad.CQRS is a sample project from Lokad to share experience with CQRS/DDD and ES.<br />
+            It includes sources of components and tools that helped to save more than one day in production.<br />
+          </p>
+          <p><strong>Nerd alert:</strong> Lokad.CQRS also shows how to build scalable distributed systems that could run locally or in cloud (or both).</p>
+        </div><!-- /container -->
+      </div>
+    </header>
+
+
+        <!-- Quickstart options
+    ================================================== -->
+    <div class="quickstart">
+      <div class="container">
+        <div class="row">
+        
+          
+         <div class="span5">
+            <h6>Fork on GitHub</h6>
+            <p>Download, fork, pull, file issues, and more with the repo on Github.</p>
+            <p><a target="_blank" href="https://github.com/lokad/lokad-cqrs/" class="btn primary">Lokad.CQRS on GitHub &raquo;</a></p>
+            <p class="current-version">Or <a href="https://github.com/Lokad/lokad-cqrs/zipball/master">download as ZIP</a></p>
+          </div>
+
+          <div class="span5">
+            <h6>Browse the Bliki</h6>
+            <p>Want to read some theory behind all this code? We've got a series of articles for you:</p>
+            <p><a href="http://bliki.abdullin.com" class="btn">Go to Bliki &raquo;</a></p>
+          </div>
+
+            <div class="span5">
+                <h6>Case Studies</h6>
+        
+        <ul>
+            <li><a href="http://abdullin.com/storage/publish/2011-05-11-CQRS-and-Azure-CPH.pdf">Lokad Projects with Azure</a></li>
+            <li><a href="http://lokad.github.com/lokad-cqrs/docs/case-studies/2011-07-19-eventday-com">Event Day</a></li>
+            <li><a href="http://lokad.github.com/lokad-cqrs/docs/case-studies/2011-07-11-humanrecord">Human Record</a></li>
+        </ul>
+        <p>Would like to share a case study? <a href="mailto:contact@lokad.com">Write us!</a></p>
+
+            </div>
+          
+        </div><!-- /row -->
+      </div>
+    </div>
+
+        <div class="container">
+<section id="about">
+  <div class="page-header">
+    <h1>About Lokad.CQRS <small>Brief history</small></h1>
+  </div>
+
+  <div class="row">
+    <div class="span-one-third">
+      <h3>History</h3>
       
-      You can also download sources in either 
-<a href="http://github.com/Lokad/lokad-cqrs/zipball/master">zip</a> or
-      <a href="http://github.com/Lokad/lokad-cqrs/tarball/master">tar</a> formats.
-    </p>
-	<a name="ToC"></a>	
-	<h2>Lokad.CQRS guidance</h2>
-	<ul class="posts">
-		<li><span>Chapter 01</span> &raquo; <a href="docs/chapter-01">Introduction</a></li>
-		<li><span>Chapter 02</span> &raquo; <a href="docs/chapter-02">Project References and Cases</a></li>
-		<li><span>Chapter 03</span> &raquo; <a href="docs/chapter-03">Overview</a></li>
-		<li><span>Chapter 04</span> &raquo; <a href="docs/chapter-04">Core Development Concepts</a></li>
-		<li><span>Chapter 05</span> &raquo; <a href="docs/chapter-05">Messaging and Distributed Systems</a></li>
-		<li><span>Chapter 06</span> &raquo; <a href="docs/chapter-06">Storage Blocks</a></li>
-		<li><span>Chapter 07</span> &raquo; <a href="docs/chapter-07">Basics of Lokad.CQRS Application Engine and Client</a></li>
-		<li><span>Chapter 08</span> &raquo; <a href="docs/chapter-08">Advanced Configuration Options</a></li>    
-		<li><span>Chapter 09</span> &raquo; <a href="docs/chapter-09">What Next?</a></li>
-	</ul>
+      <p>Lokad.CQRS was started by <a href="http://www.lokad.com/developers.ashx">Lokad</a> as framework for distributed systems in Windows Azure. 
+      Since then it was used in numerous projects.</p>
+      <p>Based on practical experience and <a href="https://groups.google.com/forum/#!forum/lokad">community</a> feedback, useless things were thrown out, bugs were fixed, complex things - broken down.</p>
 
-    <div class="footer">
-      get the source code on GitHub : <a href="http://github.com/Lokad/lokad-cqrs">Lokad/lokad-cqrs</a>
     </div>
+    <div class="span-one-third">
+        <h3>What's Included</h3>
+        <p>Here's a brief overview of what is included:</p>
+        <ul>
+            <li>Messaging and persistence for intranet, cloud and in-memory.</li>
+            <li>Event Sourcing</li>
+            <li>Audit Tool with view rebuilding</li>
+            <li>Contracts DSL tool</li>
+            <li>Specifications testing with NUnit</li>
+        </ul>
+    </div>
+    <div class="span-one-third">
+  <h2>&nbsp;</h2>
+    <img src="images/lokad_cqrs_logo_header.png" alt="Alternate Text" />
+    
+    </div>
+  
+    
+
+  </div>
+</section>
+
+            <div class="row">
+                <div class="span4">
+                </div>
+                <div class="span10">
+                    
+                </div>
+            </div>
+<div class="alert-message block-message success">
+<h2>Quick Start</h2>
+<p>In order to start using the project, you need to:</p>
+<ul>
+    <li>Grab the sources</li>
+    <li>Open Lokad.CQRS.Sample.sln in Visual Studio 2010</li>
+    <li>Start Sample.Engine console project</li>
+</ul>
+
 </div>
+
+
+      <!-- Grid system
+================================================== -->
+<section id="overview">
+  <div class="page-header">
+    <h1>Project Overview <small>Not your simple CQRS sample</small></h1>
+  </div>
+
+
+  <p>  Lokad.CQRS could be used for learning about <strong>event centric development</strong> 
+  (CQRS/DDD with event sourcing and ability to deploy in cloud and on-premises). 
+  Gradually growing series of articles in bliki could provide some theoretical background.</p>
+
+  <div class="alert-message important">If you are looking for some simple CQRS sample then check out <a href="https://github.com/gregoryyoung/m-r">Simple CQRS by Greg Young &rarr;</a></div>
+
+
+
+  <p>
+You can also use Lokad.CQRS to jumpstart new projects by copying the entire SampleProject to your system and then modifying it to your needs. That's essentially how we start new projects at Lokad these days.
+</p>
+
+<blockquote><p>They say that <a href="http://opensource.endjin.com/templify/download.htm">Templify</a> can help with
+using projects as templates.</p></blockquote>
+
+
+<div class="row">
+    <div class="span-one-third">
+    <h2>Core</h2>
+    <p><a href="https://github.com/Lokad/lokad-cqrs/tree/master/Core">Core</a> projects include the most 
+    important abstractions and concepts of Lokad.CQRS</p>
+    
+    <ul>
+    <li>Lokad.CQRS.Portable - portability layer</li>
+    <li>Lokad.CQRS.Azure - extend functonality for Windows Azure</li>
+    <li>Lokad.CQRS.Http - simple embedded non-blocking HTTP server</li>
+</ul>
+<h2>Snippets</h2>
+<p>Snippets are blocks of simple code that illustrate some common concepts:</p>
+<ul>
+    <li>HttpEndpoint - running Http server</li>
+    <li>MailQuarantine - how to trap and report failing messages</li>
+    <li>SimpleTimerService - timer that could be used for sagas</li>
+    <li>PubSubRouter - how easy it is to write a basic pub/sub</li>
+</ul>
+    </div>
+
+    <div class="span-one-third">
+    <h2>Sample Project</h2>
+    <p>This sample project is a console application that brings together:</p>
+    <ul>
+    <li>Contracts - core library with message contracts and domain interfaces</li>
+    <li>Domain - Aggregates following principles of Domain-Driven Design with event sourcing</li>
+    <li>Views - Contracts for persistent read models</li>
+    <li>Projections - projections that transform events into views using specialized interfaces </li>
+
+    <li>Wires - configuration code and some cross-cutting concerns</li>
+    <li>Engine - run this console application to see domain in action</li>
+    <li></li>
+</ul>
+
+    </div>
+    <div class="span-one-third">
+    <h2>Sample Project /Azure</h2>
+    <p>Open <code>Lokad.CQRS.Sample.withAzure.sln</code> to see Azure-specific binding</p>
+    <h2>Sample Project /Tools</h2>
+    <p>Following tools are included:</p>
+    <ul>
+    <li>Dsl - Contracts Dsl</li>
+    <li>Audit - Event log viewer and view rebuilder</li>
+    <li>SimpleTesting - Framework for testing AR+ES</li>
+</ul>
+    </div>
+</div>    
+  </section>
+
+  <section id="contracts">
+    <div class="page-header">
+        <h1>Contracts DSL <small>Minimalistic approach to generating message classes</small></h1>
+    </div>
+    <p>
+        Lokad Contracts DSL is an optional console utility that you can run in the background. It tracks changes to files with special compact syntax (as mentioned in <a href="http://bliki.abdullin.com/event-centric/commands-events">commands and events</a> on bliki) and updates CS file. Changes are immediate upon saving file (and ReSharper immediately picks them). This is an improved version of Lokad Code DSL, it supports identities and can auto-generate interfaces for aggregates and aggregate state classes.   
+    </p>
+    <p>You can try this out by starting <code>SampleProject\Tools\Dsl</code> project and then changing <code>SampleProject\Domain\Sample.Contracts\Messages.tt</code>.</p>
+    <p>Current DSL code generates contracts classes that are compatible with DataContracts, ServiceStack.JSON and ProtoBuf.</p>
+    <h2>Was</h2>
+    <pre class="prettyprint linenums">AddSecurityPassword?(SecurityId id, string displayName, string login, string password)</pre>
+    <h2>Became</h2>
+    
+<pre class="prettyprint linenums">
+[DataContract(Namespace = "Sample")]
+public partial class AddSecurityPassword : ICommand&lt;SecurityId&gt;
+{
+    [DataMember(Order = 1)] public SecurityId Id { get; private set; }
+    [DataMember(Order = 2)] public string DisplayName { get; private set; }
+    [DataMember(Order = 3)] public string Login { get; private set; }
+    [DataMember(Order = 4)] public string Password { get; private set; }
+
+    AddSecurityPassword () {}
+    public AddSecurityPassword (SecurityId id, string displayName, string login, string password)
+    {
+        Id = id;
+        DisplayName = displayName;
+        Login = login;
+        Password = password;
+    }
+}
+</pre>
+    
+    
+    
+  </section>
+
+
+  <section id="maintain">
+  <div class="page-header">
+    <h1>Maintain <small>with Audit tool to view past and rebuild views</small></h1>
+  </div>
+  <p>After you have run <code>Sample.Engine</code>, try starting <code>Audit</code> and opening  with it this file <code>temp\sample-tapes\domain.tmd</code> (located in folder where the engine run). You should see something like this image.</p>
+  <div class="row">
+
+    <div class="span6">
+    
+    <p>Columns in the <strong>left panel</strong>:</p>
+    <ul>
+        <li>Name of message contract (events are always blue and commands - green)</li>
+        <li>Time message has been recorded</li>
+        <li>Session (in this case - unigue ID of aggregate that is linked to messages)</li>
+        <li>Type (color code that allows to relate same message types)</li>
+    
+    </ul>
+    <p>Obviously, you can tune colors as you need; it's all in the sources.</p>
+    <p><strong>Right panel</strong> contains deserialized representation of the message(s) selected:</p>
+    <ul>
+    <li>Transport headers</li>
+    <li>Human-readable representation (see <code>Describe</code> class)</li>
+    <li>Message contents</li>
+</ul>
+    
+    
+    </div>
+    <div class="span10">
+    <img src="images/2012-01-05_lokad-audit.png" alt="Alternate Text" />
+    </div>
+  </div>
+  
+  <p><strong>Second tab</strong> is used for automatically detecting and wiring all <a href="http://bliki.abdullin.com/event-sourcing/projections">projections</a> and then running the selected event stream through them:
+</p>
+    <div class="row">
+    <div class="span10">
+    <img src="images/2012-01-05_rebuild-views.png" alt="Alternate Text" />
+    </div>
+    </div>
+    
+  
+  <div class="alert-message info block-message">Please keep in mind, that this is a fast rip from internal code, so a few buttons and functionality might not make full sense in the file-based context (i.e. domain log synchronization).</div>
+  
+  </section>  
+  <section id="specifications">
+    <div class="page-header">
+    <h1>Specifications <small>and other ways to have fun with Event Sourcing</small></h1>
+    </div>
+
+    <div class="row">
+        <div class="span6">
+        <p>
+We abuse heavily Greg's SimpleTesting for dealing with 
+<a href="http://bliki.abdullin.com/event-sourcing/specification">specifications</a> 
+to test <a href="http://bliki.abdullin.com/event-sourcing/aggregates">aggregates</a>. 
+Source code for that is included (and for printing out them in readable format). 
+</p>
+
+<p>
+
+Just fire your NUnit (either directly or via ReSharper):</p>
+
+<p>This setup currently supports usual AR+ES testing, plus testing exceptions thrown by the domain code (domain errors), plus dealing with services and time.
+</p>
+        
+        </div>
+        <div class="span10">
+        
+<img src="images/2012-01-05_simple-testing.png" alt="Alternate Text" />        
+        </div>
+    </div>
+    
+
+
+    
+
+
+  </section>
+
+
+  <section id="azure">
+  <div class="page-header">
+    <h1>Azure <small>Build once - run natively on Windows Azure Cloud or intranet</small></h1>
+  </div>
+  <p>
+  
+  
+  One of the primary purposes of this Sample is to <strong>enable and demonstrate cross-cloud 
+  portability</strong> of projects developed using abstractions from <code>Lokad.Cqrs.Portable</code>. 
+  That's how we use it at <a href="http://www.lokad.com/forecasting-technology.ashx">Lokad</a>.
+  </p>
+
+  <p>
+  
+So to highlight this, we've added two projects: `Sample.Azure.Wires` and `Sample.Azure.Deploy`. 
+There is nothing really special, first project just wires SampleProject to run on Windows 
+Azure in a Worker Role, without touching existing domain code. Second project is the actual deployment,
+that you need to Publish. 
+
+
+
+  </p>
+  
+    <div class="row">
+            <div class="span6">
+        <p>As expected, trace output is similar to the one we get from running sample in on-premises mode (via  `Sample.Engine` console).
+</p>
+        <p>
+        
+        Obviously, this worker is wired to use native components of Windows Azure, instead of file system. These components (developed in Lokad and production-tested over the last few years in various scenarios) include:
+
+
+        </p>
+        <ul>
+    <li>BlockBlobTapeStorage (used for append-only event streams on Azure)</li>
+    <li>AzureAtomicStorage (used for storing documents, saga state and persistent read models)</li>
+    <li>BlobStreamingStorage (used for streaming large BLOBs for Big DataProcessing)</li>
+    <li>Azure Queues (for your message sending needs)</li>
+</ul>
+        
+        
+
+
+        </div>
+
+        <div class="span10">
+        <img src="images/2012-01-14_cqrs-in-azure.png" alt="Alternate Text" />
+        </div>
+    </div>
+
+
+  
+  </section>
+
+
+        </div>
+
+
+   <footer class="footer">
+      <div class="container">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>
+          Design, HTML structure and inspiration come from <a href="http://twitter.github.com/bootstrap/#overview">Twitter Bootstrap project</a><br />
+
+          This open source project by <a href="http://www.lokad.com">Lokad</a> was build by <a href="https://twitter.com/#!/abdullin">@abdullin</a> (<a href="http://abdullin.com">blog</a>) with the help from a lot of <a href="http://www.lokad.com/aboutus.ashx">awesome people</a> and cool <a href="https://groups.google.com/forum/#!forum/lokad">community</a>.<br />
+          
+          Code licensed under the <a href="http://www.opensource.org/licenses/bsd-license.php" target="_blank">New BSD License</a>. Documentation licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+        </p>
+      </div>
+    </footer>
+
+
+    <!-- Le javascript -->      
+    <script type="text/javascript" src="http://code.jquery.com/jquery-1.5.2.min.js" ></script>
+    
+    <script type="text/javascript" src="js/prettify.js"></script>
+    <script type="text/javascript">        $(function () { prettyPrint() })</script>
+    <script type="text/javascript" src="js/bootstrap-dropdown.js"></script>
+    <script type="text/javascript" src="js/bootstrap-twipsy.js"></script>
+    <script type="text/javascript" src="js/bootstrap-scrollspy.js"></script>
+    
+
+    
+
+
+  </body>
+</html>
