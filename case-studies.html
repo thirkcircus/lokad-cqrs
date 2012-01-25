@@ -1,0 +1,315 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+        <title>Lokad.CQRS Sample Project, from Lokad</title>
+        <meta name="description" content="Lokad.CQRS Case Studies" />
+        <meta name="author" content="Lokad.CQRS Team and contributors" />
+        <meta http-equiv="CACHE-CONTROL" content="NO-CACHE" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="-1" />
+        <!-- Le HTML5 shim, for IE6-8 support of HTML elements -->
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <!-- Le styles -->
+        <link href="css/bootstrap.css" rel="stylesheet" type="text/css" />
+        <link href="css/style.css" rel="stylesheet" type="text/css" />
+        <!-- Le javascript -->      
+        <script type="text/javascript" src="http://code.jquery.com/jquery-1.5.2.min.js" ></script>
+    
+        <script type="text/javascript" src="js/prettify.js"></script>
+        <script type="text/javascript">            $(function () { prettyPrint() })</script>
+        <script type="text/javascript" src="js/bootstrap-dropdown.js"></script>
+        <script type="text/javascript" src="js/bootstrap-twipsy.js"></script>
+        <script type="text/javascript" src="js/bootstrap-scrollspy.js"></script>
+    </head>
+
+  <body>
+
+    <!-- Topbar
+    ================================================== -->
+    <div class="topbar" data-scrollspy="scrollspy" >
+      <div class="topbar-inner">
+        <div class="container">
+          <a class="brand" href="#">Lokad.CQRS Case Studies</a>
+          <ul class="nav">
+            <li><a href="http://lokad.github.com/lokad-cqrs/">Home</a>    </li>
+            <li class="active"><a href="#about">About</a></li>
+            <li><a href="#lokad">Lokad</a></li>
+            <li><a href="#human-record">Human Record</a></li>
+            <li><a href="#event-day">Event Day</a></li>
+
+            
+          </ul>
+        </div>
+      </div>
+    </div>
+
+
+        <!-- Masthead (blueprinty thing)
+    ================================================== -->
+   <header class="jumbotron subhead" id="overview">
+      <div class="inner">
+        <div class="container">
+          <h1>Lokad.CQRS Case Studies</h1>
+          <p class="lead">
+            Learn about real-world projects that use Lokad.CQRS in <a href="http://www.windowsazure.com/" target="_blank">Windows Azure</a> and on-premises.
+          </p>
+          <p><a href="./index.html">&larr; Back to Lokad.CQRS home</a></p>
+        </div><!-- /container -->
+      </div>
+    </header>
+
+
+  
+
+        <div class="container">
+<!--ABOUT
+================================ -->
+<section id="human-record">
+  <div class="page-header">
+    <h1>Human Record <small>Place to buy and sell vintage images</small></h1>
+  </div>
+
+  <div class="row">
+    <div class="span4 columns">
+    <p><a href="http://www.humanrecord.com/">Human Record</a> is the marketplace for historic and vintage photos, illustrations, and fine art.</p>
+    <p><strong>Benefits of Lokad.CQRS</strong></p>
+    <ul>
+    <li><span class="label notice">Windows Azure</span></li>
+    <li><span class="label success">Small Team</span></li>
+    <li><span class="label ">Web UI</span></li>
+    <li><span class="label ">Scaling</span></li>
+    <li><span class="label warning">Cost Savings</span></li>    
+</ul>
+<p><strong>Learn More</strong></p>
+    
+    <ul>
+    <li><a href="http://www.humanrecord.com" target="_blank">Website</a></li>
+    <li><a href="http://twitter.com/Human_Record" target="_blank">Twitter</a></li>
+    <li><a href="http://www.facebook.com/humanrecordimages"  target="_blank">Facebook</a></li>
+</ul>
+    <p>This case study was kindly provided by <a href="http://www.linkedin.com/in/tihomirpetkov">Tihomir Petkov</a>, CTO and co-founder of <em>Human Record</em>. </p>
+
+
+    </div>
+    <div class="span12 columns">
+
+    
+
+    <ul class="media-grid">
+  <li>
+    <a href="#"><img class="thumbnail" src="images/2012-01-25_case-hr-2.png" alt="" /></a>
+      
+    
+  </li>
+  <li>
+    <a href="#">
+      <img class="thumbnail" src="images/2012-01-25_case-hr-1.png" alt="">
+    </a>
+  </li>
+</ul>
+<h4>What is your business about? Why have you chosen to go distributed/cloud way?</h4>
+
+    
+    <p>Human Record is the marketplace for historic and vintage photos, illustrations, 
+    and fine art. We serve the international community of historic image professionals 
+    and passionate amateurs by providing an online platform for crowdsourced content 
+    aggregation and straightforward licensing. </p>
+    <p>We decided to build Human Record in 
+    a distributed way because of two primary reasons. First, from an engineering perspective,
+     we liked the reduced complexity and easier maintenance of a system based on loosely 
+     coupled autonomous components. This type of architecture also facilitates scaling, 
+     which is especially important for any web solution facing hard to predict workloads 
+     and traffic. And second, from a business point of view, having a distributed system 
+     running in the cloud has very tangible cashflow-related benefits: no upfront infrastructure 
+     expenses, greatly reduced administration overhead, and flexible ongoing infrastructure 
+     costs that can be easily scaled to fit the current demand</p>
+    
+
+    <h4>How long have you been using Lokad.CQRS? How do you find it?</h4>
+    
+<p>We have been using Lokad.CQRS for about 11 months now and absolutely love it.
+ We started playing with the pre-v1.0 framework, and then integrated it with our 
+ development codebase when the v1.0 was released. Our platform has been live for 
+ 5 months now and Lokad.CQRS has been a crucial component in the system. We were 
+ holding back upgrading to Windows Azure SDK 1.4 until Lokad.CQRS v2.0 was released,
+  but we upgraded recently and we are now running the latest versions.</p>
+  
+   <h4>Why does Lokad.CQRS work for you? What is you favorite feature? </h4>
+  
+<p>
+Besides just working and taking away a great deal of complexity, Lokad.CQRS is an extensible
+ and lightweight framework that incorporates best practices tested in the field by Lokad. 
+ The extensibility and lightweight parts are very important to us and together with the rest 
+ of the above features, Lokad.CQRS directly saves us development effort and costly, 
+ time-consuming errors.
+</p>
+<p>
+Being open-source, Lokad.CQRS has also served us as an engineering guidance in our 
+cloud development. Important corollary of the open source code is that we can fix bugs 
+and tweak the core of the framework any time we need to, as well as contributing back 
+to the community. This also means that we are not introducing a blackbox as an important 
+system component which further reduces the complexity of debugging code related to the 
+framework.
+</p>
+<p>
+Our favorite Lokad.CQRS feature is message handling, which is crucial in distributed 
+systems. The framework takes away most of the complexity of transporting and 
+dispatching messages within a distributed system and makes communication between 
+decoupled components much easier.
+</p>
+
+
+<h4>How many people do you have working on CQRS related projects? </h4>
+<p>Currently we have 3 developers working on the platform.</p>
+<h4>What's their take on getting started with Lokad.CQRS, on documents and community?</h4>
+
+<p>
+ When starting  out with Lokad.CQRS,
+ understandably there was a bit of a learning curve. I remember there was some
+  confusion initially regarding the difference between the Lokad.Cloud and 
+  Lokad.CQRS projects, but Rinat's blog is always a helpful resource in such cases. 
+  The example projects are probably the fastest way for developers to get on track 
+  with the framework, but the ones on Google Code could be improved. For example, 
+  when we were upgrading to v2.0 not all example projects were updated to work with 
+  the latest code. I guess it's hard for you to dedicate your limited resources to 
+documentation and examples but if framework adoption is among your priorities, 
+improving the help resources would help a lot of people to get started. Rinat 
+is always very active and helpful, so kudos for having him aboard. 
+</p>
+<p>
+Our developers also shared that they like the new v2.0 documentation PDF that
+ gives a nice overview of the framework, but it's not a good substitue for the
+  more hands-on wiki-style documentation that used to be on the Google Code site.
+</p>
+
+<h4>What's next for you? What role does Lokad.CQRS play in these plans?</h4>
+
+
+<p>
+We will continue to develop our platform and expand both our userbase and portfolio.
+ This will lead us to new challenges and opportunities, but Lokad.CQRS will remain 
+ an important foundation for our further growth.
+</p>
+
+
+
+
+    
+  </div>
+  </div>
+</section>
+<section id="event-day">
+    <div class="page-header">
+        <h1>Event Day <small>Already built with Lokad.CQRS</small></h1>
+    </div>
+    <div class="row">
+        <div class="span4 columns">
+        <p>
+        <a href="http://www.eventday.com/" target="_blank">EventDay</a> is Conference Management Software, targeting in person conferences with attendance of 1000 or more.
+        </p>
+
+            <p><strong>Benefits of Lokad.CQRS</strong></p>
+    <ul>
+    <li><span class="label notice">Windows Azure</span></li>
+    <li><span class="label success">Tiny Team</span></li>
+    <li><span class="label ">Web UI</span></li>
+    <li><span class="label ">Scaling</span></li> 
+</ul>
+        <p><strong>Learn more</strong></p>
+        <ul>
+    <li><a href="http://www.eventday.com/">Website</a></li>
+    <li><a href="http://twitter.com/EventDayCom">Twitter</a></li>
+    <li><a href="http://scottcate.com/">Scott Cate</a></li>
+    <li><a href="http://scottcate.com/">Chris Martin</a></li>
+</ul>
+        </div>
+        <div class="span12 columns">
+
+        <h4>What is your business about? Why have you chosen to go distributed/cloud way?</h4>
+        <blockquote>
+            <p>We are an online event management company, that needs to scale up and down, depending on current volume.</p>
+            <small>Scott Cate</small>
+        </blockquote>
+        
+
+        <h4>How long have you been using Lokad.CQRS? How do you find it?</h4>
+        <blockquote>
+        <p>I think we started looking at Lokad around August, 2010.</p>
+        <small>Scott Cate</small>
+        </blockquote>
+
+        <h4>Why does Lokad.CQRS work for you? What is you favorite feature?</h4>
+        <blockquote>
+        <p>It's CQRS, for Azure, with a brilliant code base. Saves us time from having to reinvent the wheel.</p>
+        <small>Scott Cate</small>
+        </blockquote>
+        <blockquote>
+            <p>
+            I can't thank Lokad enough for the work you guys have put in. You have literally saved our startup thousands of man-hours!
+            </p>
+            <small>Chris Martin</small>
+        </blockquote>
+
+        <h4>How many people do you have working on CQRS related projects?</h4>
+        
+        <blockquote>
+        <p>1 or 2</p>
+        <small>Scott Cate</small>
+        </blockquote>
+        <h4> What's their take on getting started with Lokad.CQRS, on documents and community?</h4>
+        <blockquote>
+        <p>Lokad.CQRS is damn near perfect at the moment. However, I think if you included
+         the <em>DSL for generating messages</em>, that would remove a lot of friction.</p>
+            
+        <p>The most important thing for us right now, missing from Lokad.CQRS, is <em>Event Sourcing</em>. I've given it a shot with the new <em>TapeStorage</em> feature, but haven't had enough time to get it right.</p>
+
+
+        <p>The next thing I would like to see is some sort of "real-world" sample.</p>
+
+
+
+        <small>Chris Martin</small>
+        </blockquote>
+
+        <div class="alert-message block-message success">
+
+        <p>
+            All these items have been added to Lokad.CQRS since then:
+        </p>
+        <ul>
+    <li>DSL for generating messages</li>
+    <li>Event Sourcing</li>
+    <li>Sample Application that derives from real-world projects</li>
+    <li>and much more...</li>
+</ul>
+        </div>
+
+    
+
+
+</div>
+        
+    </div>
+</section>
+</div>
+
+   <footer class="footer">
+      <div class="container">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>
+          Design, HTML structure and inspiration come from <a href="http://twitter.github.com/bootstrap/#overview">Twitter Bootstrap project</a><br />
+
+          This open source project by <a href="http://www.lokad.com">Lokad</a> was build by <a href="https://twitter.com/#!/abdullin">@abdullin</a> (<a href="http://abdullin.com">blog</a>) with the help from a lot of <a href="http://www.lokad.com/aboutus.ashx">awesome people</a> and cool <a href="https://groups.google.com/forum/#!forum/lokad">community</a>.<br />
+          
+          Code licensed under the <a href="http://www.opensource.org/licenses/bsd-license.php" target="_blank">New BSD License</a>. Documentation licensed under <a href="http://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.
+        </p>
+      </div>
+    </footer>
+    
+    
+  </body>
+</html>
