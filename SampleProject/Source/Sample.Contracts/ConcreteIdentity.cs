@@ -14,24 +14,6 @@ namespace Sample
 {
     public static class IdentityConvert
     {
-        public static IIdentity FromTransportable(string value)
-        {
-            if (string.IsNullOrEmpty(value))
-                throw new InvalidOperationException();
-            var args = value.Split(new[] {'-'}, 2);
-            var id = args[1];
-            switch (args[0])
-            {
-                case NullId.TagValue:
-                    return NullId.Instance;
-                case SecurityId.TagValue:
-                    return new SecurityId(long.Parse(id));
-                default:
-                    var message = string.Format("Unknown identity: {0}", value);
-                    throw new InvalidOperationException(message);
-            }
-        }
-
         public static string ToStream(IIdentity identity)
         {
             return identity.GetTag() + "-" + identity.GetId();
