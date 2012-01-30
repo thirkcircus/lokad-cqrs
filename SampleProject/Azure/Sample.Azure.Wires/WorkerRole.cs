@@ -47,7 +47,7 @@ namespace Sample.Azure.Engine
 
             var setup = new SetupClassThatReplacesIoCContainerFramework
                 {
-                    CreateNuclear = strategy => config.CreateNuclear(strategy),
+                    CreateNuclear = strategy => config.CreateNuclear(strategy, "views"),
                     Streaming = config.CreateStreaming(),
                     Tapes = config.CreateTape(Topology.TapesContainer),
                     CreateInbox = s => config.CreateInbox(s),
