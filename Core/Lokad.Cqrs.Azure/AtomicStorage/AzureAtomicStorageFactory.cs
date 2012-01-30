@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using Lokad.Cqrs.AtomicStorage;
 using Microsoft.WindowsAzure.StorageClient;
+using System.Linq;
 
 namespace Lokad.Cqrs.Feature.AtomicStorage
 {
@@ -33,14 +34,19 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             return new AzureAtomicReader<TKey, TEntity>(_directory, _strategy);
         }
 
+        public IAtomicStorageStrategy Strategy
+        {
+            get { return _strategy; }
+        }
+
         public IEnumerable<AtomicRecord> EnumerateContents()
         {
-            var l = _directory.ListBlobs(new BlobRequestOptions() {UseFlatBlobListing = true});
+            var l = _directory.ListBlobs(new BlobRequestOptions {UseFlatBlobListing = true});
             foreach (var item in l)
             {
                 var blob = _directory.GetBlobReference(item.Uri.ToString());
                 var rel = _directory.Uri.MakeRelativeUri(item.Uri).ToString();
-                yield return new AtomicRecord(rel, blob.DownloadByteArray);
+                yield return new AtomicRecord(rel.Replace('\\','/'), blob.DownloadByteArray);
             }
         }
 
@@ -54,11 +60,11 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
 
         public void Reset()
         {
-            var blobs = _directory.ListBlobs(new BlobRequestOptions { UseFlatBlobListing = false });
+            var blobs = _directory.ListBlobs(new BlobRequestOptions { UseFlatBlobListing = true });
             var c = _directory.ServiceClient;
-            foreach (var listBlobItem in blobs)
+            foreach (var listBlobItem in blobs.AsParallel())
             {
-                c.GetBlobReference(listBlobItem.Uri.ToString()).Delete();
+                c.GetBlobReference(listBlobItem.Uri.ToString()).DeleteIfExists();
             }
         }
 

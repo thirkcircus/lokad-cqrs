@@ -36,6 +36,10 @@ namespace Lokad.Cqrs.AtomicStorage
             return new FileAtomicContainer<TKey, TEntity>(_folderPath, _strategy);
         }
 
+        public IAtomicStorageStrategy Strategy
+        {
+            get { return _strategy; }
+        }
 
 
         public IEnumerable<AtomicRecord> EnumerateContents()
@@ -47,7 +51,7 @@ namespace Lokad.Cqrs.AtomicStorage
                 foreach (var info in dir.EnumerateFiles("*", SearchOption.AllDirectories))
                 {
                     var fullName = info.FullName;
-                    var path = fullName.Remove(0, fullFolder.Length);
+                    var path = fullName.Remove(0, fullFolder.Length + 1).Replace(Path.DirectorySeparatorChar,'/');
                     yield return new AtomicRecord(path, () => File.ReadAllBytes(fullName));
                 }
             }

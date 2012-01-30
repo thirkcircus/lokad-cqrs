@@ -32,6 +32,11 @@ namespace Audit.Views
                 throw new NotImplementedException();
             }
 
+            public IAtomicStorageStrategy Strategy
+            {
+                get { throw new NotImplementedException(); }
+            }
+
             public IEnumerable<AtomicRecord> EnumerateContents()
             {
                 throw new NotImplementedException();

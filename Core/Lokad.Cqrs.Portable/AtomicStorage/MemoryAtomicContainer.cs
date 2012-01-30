@@ -19,13 +19,15 @@ namespace Lokad.Cqrs.AtomicStorage
 
         string GetName(TKey key)
         {
-            return Path.Combine(_folder, _strategy.GetNameForEntity(typeof(TEntity), key));
+            var name = _strategy.GetNameForEntity(typeof (TEntity), key);
+            return _folder[_folder.Length - 1] == '/' ? _folder + name : _folder + '/' + name;
         }
 
         public bool TryGet(TKey key, out TEntity entity)
         {
+            var name = GetName(key);
             byte[] bytes;
-            if(_store.TryGetValue(GetName(key), out bytes))
+            if(_store.TryGetValue(name, out bytes))
             {
                using (var mem = new MemoryStream(bytes))
                {

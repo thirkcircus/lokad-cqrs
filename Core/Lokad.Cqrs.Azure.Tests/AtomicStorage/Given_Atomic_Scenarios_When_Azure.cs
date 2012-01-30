@@ -7,6 +7,7 @@
 #endregion
 
 using System;
+using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.Envelope;
 using NUnit.Framework;
 
@@ -29,6 +30,16 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
                     Inbox = dev.CreateInbox("test-incoming", visibilityTimeout : TimeSpan.FromSeconds(1)),
                     Sender = dev.CreateSimpleSender(streamer, "test-incoming")
                 };
+        }
+    }
+    [TestFixture]
+    public sealed class Given_Atomic_Storage_When_Azure : Given_Atomic_Storage
+    {
+        protected override NuclearStorage Compose(IAtomicStorageStrategy strategy)
+        {
+            var dev = AzureStorage.CreateConfigurationForDev();
+            WipeAzureAccount.Fast(s => s.StartsWith("test-views"), dev);
+            return dev.CreateNuclear(strategy, "test-views");
         }
     }
 }

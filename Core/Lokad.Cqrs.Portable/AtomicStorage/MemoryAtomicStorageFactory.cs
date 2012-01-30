@@ -30,7 +30,8 @@ namespace Lokad.Cqrs.AtomicStorage
 
         public void WriteContents(IEnumerable<AtomicRecord> records)
         {
-            var pairs = records.Select(r => new KeyValuePair<string, byte[]>(r.Path, r.Read()));
+            
+            var pairs = records.Select(r => new KeyValuePair<string, byte[]>(r.Path, r.Read())).ToArray();
             _store = new ConcurrentDictionary<string, byte[]>(pairs);
         }
 
@@ -45,9 +46,15 @@ namespace Lokad.Cqrs.AtomicStorage
             return new MemoryAtomicContainer<TKey, TEntity>(_store,_strategy);
         }
 
+        public IAtomicStorageStrategy Strategy
+        {
+            get { return _strategy; }
+        }
+
         public IEnumerable<AtomicRecord> EnumerateContents()
         {
-            return _store.Select(s => new AtomicRecord(s.Key, () => s.Value));
+            // we normalize path to common symbol
+            return _store.Select(s => new AtomicRecord(s.Key.Replace('\\', '/'), () => s.Value));
         }
 
         public IEnumerable<string> Initialize()

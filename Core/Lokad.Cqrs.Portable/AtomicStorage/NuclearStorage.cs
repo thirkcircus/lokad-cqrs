@@ -6,6 +6,8 @@
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
@@ -17,6 +19,21 @@ namespace Lokad.Cqrs.AtomicStorage
     public sealed class NuclearStorage : HideObjectMembersFromIntelliSense
     {
         public readonly IAtomicStorageFactory Factory;
+
+        public void Reset()
+        {
+            Factory.Reset();
+        }
+
+        public void CopyFrom(NuclearStorage source, int degreeOfParallelism = 1)
+        {
+            if (Factory.Strategy != source.Factory.Strategy)
+                throw new InvalidOperationException("Copying is allowed only if source has same strategy instance. " +
+                                                    "Enumerate and write factory contents to override this behavior.");
+
+            Factory.WriteContents(source.Factory.EnumerateContents());
+        }
+
 
 
 

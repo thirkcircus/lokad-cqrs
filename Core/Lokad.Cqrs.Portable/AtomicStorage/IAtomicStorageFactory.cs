@@ -7,7 +7,7 @@ namespace Lokad.Cqrs.AtomicStorage
     {
         IAtomicWriter<TKey,TEntity> GetEntityWriter<TKey,TEntity>();
         IAtomicReader<TKey,TEntity> GetEntityReader<TKey,TEntity>();
-
+        IAtomicStorageStrategy Strategy { get; }
         IEnumerable<AtomicRecord> EnumerateContents();
         void WriteContents(IEnumerable<AtomicRecord> records);
         void Reset();
@@ -17,6 +17,9 @@ namespace Lokad.Cqrs.AtomicStorage
 
     public sealed class AtomicRecord
     {
+        /// <summary>
+        /// Path of the view in the subfolder, using '/' as split on all platforms
+        /// </summary>
         public readonly string Path;
         public readonly Func<byte[]> Read;
 

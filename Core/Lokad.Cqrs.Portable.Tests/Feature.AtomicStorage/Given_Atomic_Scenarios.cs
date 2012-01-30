@@ -33,6 +33,8 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         readonly IEnvelopeStreamer _streamer = EnvelopeStreamer
             .CreateDefault(typeof(AtomicMessage), typeof(NuclearMessage));
 
+       
+
 
         [Test]
         public void Then_typed_singleton_should_be_accessable_from_handler()
