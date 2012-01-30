@@ -78,7 +78,8 @@ namespace Lokad.Cqrs.AtomicStorage
 
         public void Reset()
         {
-            Directory.Delete(_folderPath, true);
+            if (Directory.Exists(_folderPath))
+                Directory.Delete(_folderPath, true);
             Directory.CreateDirectory(_folderPath);
         }
     }
