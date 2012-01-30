@@ -9,6 +9,7 @@
 using System;
 using System.Collections.Generic;
 using Lokad.Cqrs.AtomicStorage;
+using Microsoft.WindowsAzure.StorageClient;
 
 namespace Lokad.Cqrs.Feature.AtomicStorage
 {
@@ -16,7 +17,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
     {
         public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
         {
-            var writer = new AzureAtomicWriter<TKey, TEntity>(_storage, _strategy);
+            var writer = new AzureAtomicWriter<TKey, TEntity>(_directory, _strategy);
 
             var value = Tuple.Create(typeof(TKey), typeof(TEntity));
             if (_initialized.Add(value))
@@ -29,19 +30,48 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
 
         public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
         {
-            return new AzureAtomicReader<TKey, TEntity>(_storage, _strategy);
+            return new AzureAtomicReader<TKey, TEntity>(_directory, _strategy);
+        }
+
+        public IEnumerable<AtomicRecord> EnumerateContents()
+        {
+            var l = _directory.ListBlobs(new BlobRequestOptions() {UseFlatBlobListing = true});
+            foreach (var item in l)
+            {
+                var blob = _directory.GetBlobReference(item.Uri.ToString());
+                var rel = _directory.Uri.MakeRelativeUri(item.Uri).ToString();
+                yield return new AtomicRecord(rel, blob.DownloadByteArray);
+            }
+        }
+
+        public void WriteContents(IEnumerable<AtomicRecord> records)
+        {
+            foreach (var atomicRecord in records)
+            {
+                _directory.GetBlobReference(atomicRecord.Path).UploadByteArray(atomicRecord.Read());
+            }
+        }
+
+        public void Reset()
+        {
+            var blobs = _directory.ListBlobs(new BlobRequestOptions { UseFlatBlobListing = false });
+            var c = _directory.ServiceClient;
+            foreach (var listBlobItem in blobs)
+            {
+                c.GetBlobReference(listBlobItem.Uri.ToString()).Delete();
+            }
         }
 
 
         readonly IAtomicStorageStrategy _strategy;
-        readonly IAzureStorageConfig _storage;
 
         readonly HashSet<Tuple<Type, Type>> _initialized = new HashSet<Tuple<Type, Type>>();
+        private readonly CloudBlobDirectory _directory;
 
-        public AzureAtomicStorageFactory(IAtomicStorageStrategy strategy, IAzureStorageConfig storage)
+        public AzureAtomicStorageFactory(IAtomicStorageStrategy strategy, CloudBlobDirectory directory)
         {
             _strategy = strategy;
-            _storage = storage;
+            _directory = directory;
         }
     }
 }

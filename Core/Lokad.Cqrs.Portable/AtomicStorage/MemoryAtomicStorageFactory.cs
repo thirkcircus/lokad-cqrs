@@ -13,7 +13,7 @@ namespace Lokad.Cqrs.AtomicStorage
 {
     public sealed class MemoryAtomicStorageFactory : IAtomicStorageFactory
     {
-        readonly ConcurrentDictionary<string, byte[]> _store;
+        ConcurrentDictionary<string, byte[]> _store;
         readonly IAtomicStorageStrategy _strategy;
 
         public MemoryAtomicStorageFactory(ConcurrentDictionary<string,byte[]> store, IAtomicStorageStrategy strategy)
@@ -28,9 +28,26 @@ namespace Lokad.Cqrs.AtomicStorage
         }
 
 
+        public void WriteContents(IEnumerable<AtomicRecord> records)
+        {
+            var pairs = records.Select(r => new KeyValuePair<string, byte[]>(r.Path, r.Read()));
+            _store = new ConcurrentDictionary<string, byte[]>(pairs);
+        }
+
+        public void Reset()
+        {
+            _store.Clear();
+        }
+
+
         public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
         {
             return new MemoryAtomicContainer<TKey, TEntity>(_store,_strategy);
+        }
+
+        public IEnumerable<AtomicRecord> EnumerateContents()
+        {
+            return _store.Select(s => new AtomicRecord(s.Key, () => s.Value));
         }
 
         public IEnumerable<string> Initialize()

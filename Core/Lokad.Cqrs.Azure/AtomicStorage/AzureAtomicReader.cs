@@ -19,14 +19,15 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
     public sealed class AzureAtomicReader<TKey, TEntity> :
         IAtomicReader<TKey, TEntity>
     {
-        readonly IAtomicStorageStrategy _strategy;
-        readonly CloudBlobContainer _container;
+        
+        readonly CloudBlobDirectory _container;
+        private IAtomicStorageStrategy _strategy;
 
-        public AzureAtomicReader(IAzureStorageConfig storage, IAtomicStorageStrategy strategy)
+        public AzureAtomicReader(CloudBlobDirectory storage, IAtomicStorageStrategy strategy)
         {
             _strategy = strategy;
             var folder = strategy.GetFolderForEntity(typeof(TEntity), typeof(TKey));
-            _container = storage.CreateBlobClient().GetContainerReference(folder);
+            _container = storage.GetSubdirectory(folder);
         }
 
         CloudBlob GetBlobReference(TKey key)

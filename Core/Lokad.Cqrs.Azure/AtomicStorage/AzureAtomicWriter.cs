@@ -25,12 +25,11 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         readonly CloudBlobDirectory _container;
         readonly IAtomicStorageStrategy _strategy;
 
-        public AzureAtomicWriter(IAzureStorageConfig storage, IAtomicStorageStrategy strategy)
+        public AzureAtomicWriter(CloudBlobDirectory directory, IAtomicStorageStrategy strategy)
         {
             _strategy = strategy;
-            var client = storage.CreateBlobClient();
             var folderForEntity = strategy.GetFolderForEntity(typeof(TEntity), typeof(TKey));
-            _container = client.GetBlobDirectoryReference(folderForEntity);
+            _container = directory.GetSubdirectory(folderForEntity);
         }
 
 

@@ -31,6 +31,21 @@ namespace Audit.Views
             {
                 throw new NotImplementedException();
             }
+
+            public IEnumerable<AtomicRecord> EnumerateContents()
+            {
+                throw new NotImplementedException();
+            }
+
+            public void WriteContents(IEnumerable<AtomicRecord> records)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void Reset()
+            {
+                throw new NotImplementedException();
+            }
         }
 
         public static IEnumerable<ViewMapInfo> GetActiveViewMaps()

@@ -7,21 +7,25 @@ namespace Lokad.Cqrs.AtomicStorage
     public sealed class MemoryAtomicContainer<TKey,TEntity> : IAtomicReader<TKey,TEntity>, IAtomicWriter<TKey,TEntity>
     {
         readonly IAtomicStorageStrategy _strategy;
-        readonly string _entityPrefix;
+        readonly string _folder;
         readonly ConcurrentDictionary<string, byte[]> _store;
 
         public MemoryAtomicContainer(ConcurrentDictionary<string, byte[]> store, IAtomicStorageStrategy strategy)
         {
             _store = store;
             _strategy = strategy;
-            _entityPrefix = _strategy.GetFolderForEntity(typeof(TEntity),typeof(TKey)) + ":";
+            _folder = _strategy.GetFolderForEntity(typeof(TEntity),typeof(TKey));
+        }
+
+        string GetName(TKey key)
+        {
+            return Path.Combine(_folder, _strategy.GetNameForEntity(typeof(TEntity), key));
         }
 
         public bool TryGet(TKey key, out TEntity entity)
         {
-            var name = _entityPrefix + _strategy.GetNameForEntity(typeof(TEntity), key);
             byte[] bytes;
-            if(_store.TryGetValue(name, out bytes))
+            if(_store.TryGetValue(GetName(key), out bytes))
             {
                using (var mem = new MemoryStream(bytes))
                {
@@ -36,9 +40,8 @@ namespace Lokad.Cqrs.AtomicStorage
 
         public TEntity AddOrUpdate(TKey key, Func<TEntity> addFactory, Func<TEntity, TEntity> update, AddOrUpdateHint hint)
         {
-            var id = _entityPrefix + _strategy.GetNameForEntity(typeof (TEntity), key);
             var result = default(TEntity);
-            _store.AddOrUpdate(id, s =>
+            _store.AddOrUpdate(GetName(key), s =>
                 {
                     result = addFactory();
                     using (var memory = new MemoryStream())
@@ -66,9 +69,8 @@ namespace Lokad.Cqrs.AtomicStorage
 
         public bool TryDelete(TKey key)
         {
-            var id = _entityPrefix + _strategy.GetNameForEntity(typeof(TEntity), key);
             byte[] bytes;
-            return _store.TryRemove(id, out bytes);
+            return _store.TryRemove(GetName(key), out bytes);
         }
     }
 }

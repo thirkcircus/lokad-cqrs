@@ -20,26 +20,25 @@ namespace Lokad.Cqrs
 {
     public static class FileStorage
     {
-        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IAtomicStorageStrategy strategy)
+        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IAtomicStorageStrategy strategy, string path = "views")
         {
-            var factory = new FileAtomicStorageFactory(config.FullPath, strategy);
-            
+            var factory = new FileAtomicStorageFactory(config.SubFolder(path).FullPath, strategy);
             return new NuclearStorage(factory);
         }
 
 
-        public static NuclearStorage CreateNuclear(this FileStorageConfig self, Action<DefaultAtomicStorageStrategyBuilder> config)
+        public static NuclearStorage CreateNuclear(this FileStorageConfig self, Action<DefaultAtomicStorageStrategyBuilder> config, string path = "views")
         {
             var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
             config(strategyBuilder);
             var strategy = strategyBuilder.Build();
-            return CreateNuclear(self, strategy);
+            return CreateNuclear(self, strategy, path);
         }
 
-        public static NuclearStorage CreateNuclear(this FileStorageConfig config)
+        public static NuclearStorage CreateNuclear(this FileStorageConfig config, string path = "views")
         {
-            return CreateNuclear(config, builder => { });
-        }
+            return CreateNuclear(config, builder => { }, path);
+        }   
 
 
         public static IStreamingRoot CreateStreaming(this FileStorageConfig config)

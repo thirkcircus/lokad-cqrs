@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
@@ -15,7 +17,7 @@ namespace Lokad.Cqrs.AtomicStorage
             _strategy = strategy;
         }
 
-
+       
         readonly HashSet<Tuple<Type, Type>> _initialized = new HashSet<Tuple<Type, Type>>();
 
 
@@ -32,6 +34,43 @@ namespace Lokad.Cqrs.AtomicStorage
         public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
         {
             return new FileAtomicContainer<TKey, TEntity>(_folderPath, _strategy);
+        }
+
+
+
+        public IEnumerable<AtomicRecord> EnumerateContents()
+        {
+            var dir = new DirectoryInfo(_folderPath);
+            if (dir.Exists)
+            {
+                var fullFolder = dir.FullName;
+                foreach (var info in dir.EnumerateFiles("*", SearchOption.AllDirectories))
+                {
+                    var fullName = info.FullName;
+                    var path = fullName.Remove(0, fullFolder.Length);
+                    yield return new AtomicRecord(path, () => File.ReadAllBytes(fullName));
+                }
+            }
+        }
+
+        public void WriteContents(IEnumerable<AtomicRecord> records)
+        {
+            foreach (var pair in records)
+            {
+                var combine = Path.Combine(_folderPath, pair.Path);
+                var path = Path.GetDirectoryName(combine) ?? "";
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+                File.WriteAllBytes(combine, pair.Read());
+            }
+        }
+
+        public void Reset()
+        {
+            Directory.Delete(_folderPath, true);
+            Directory.CreateDirectory(_folderPath);
         }
     }
 }

@@ -38,9 +38,9 @@ namespace Lokad.Cqrs
         /// </summary>
         /// <param name="storageConfig">The storage config.</param>
         /// <returns>new instance of the nuclear storage</returns>
-        public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig)
+        public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig, string folder = "views")
         {
-            return CreateNuclear(storageConfig, b => { });
+            return CreateNuclear(storageConfig, b => { }, folder);
         }
 
         /// <summary> Creates the simplified nuclear storage wrapper around Atomic storage. </summary>
@@ -48,9 +48,10 @@ namespace Lokad.Cqrs
         /// <param name="strategy">The atomic storage strategy.</param>
         /// <returns></returns>
         public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig,
-            IAtomicStorageStrategy strategy)
+            IAtomicStorageStrategy strategy, string folder)
         {
-            var factory = new AzureAtomicStorageFactory(strategy, storageConfig);
+            var dir = storageConfig.CreateBlobClient().GetBlobDirectoryReference(folder);
+            var factory = new AzureAtomicStorageFactory(strategy, dir);
             return new NuclearStorage(factory);
         }
 
@@ -59,12 +60,12 @@ namespace Lokad.Cqrs
         /// <param name="configStrategy">The config strategy.</param>
         /// <returns></returns>
         public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig,
-            Action<DefaultAtomicStorageStrategyBuilder> configStrategy)
+            Action<DefaultAtomicStorageStrategyBuilder> configStrategy, string folder = "views")
         {
             var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
             configStrategy(strategyBuilder);
             var strategy = strategyBuilder.Build();
-            return CreateNuclear(storageConfig, strategy);
+            return CreateNuclear(storageConfig, strategy, folder);
         }
 
         /// <summary> Creates the storage access configuration. </summary>
