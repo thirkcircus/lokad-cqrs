@@ -29,6 +29,11 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             return writer;
         }
 
+        public override string ToString()
+        {
+            return _directory.Uri.AbsoluteUri;
+        }
+
         public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
         {
             return new AzureAtomicReader<TKey, TEntity>(_directory, _strategy);

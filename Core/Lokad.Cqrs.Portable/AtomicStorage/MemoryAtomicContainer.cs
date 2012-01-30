@@ -10,6 +10,11 @@ namespace Lokad.Cqrs.AtomicStorage
         readonly string _folder;
         readonly ConcurrentDictionary<string, byte[]> _store;
 
+        public override string ToString()
+        {
+            return "memory://" + _store.GetHashCode() + "/" + _folder;
+        }
+
         public MemoryAtomicContainer(ConcurrentDictionary<string, byte[]> store, IAtomicStorageStrategy strategy)
         {
             _store = store;

@@ -17,6 +17,11 @@ namespace Lokad.Cqrs.AtomicStorage
             _strategy = strategy;
         }
 
+        public override string ToString()
+        {
+            return new Uri(Path.GetFullPath(_folderPath)).AbsolutePath;
+        }
+
        
         readonly HashSet<Tuple<Type, Type>> _initialized = new HashSet<Tuple<Type, Type>>();
 
