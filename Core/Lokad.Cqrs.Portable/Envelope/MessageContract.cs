@@ -13,10 +13,14 @@ namespace Lokad.Cqrs.Envelope
     [DataContract(Namespace = "Lokad.Cqrs.v2", Name = "Message"), Serializable]
     public sealed class MessageContract
     {
-        [DataMember(Order = 1)] public readonly string ContractName;
-        [DataMember(Order = 2)] public readonly long ContentSize;
-        [DataMember(Order = 3)] public readonly long ContentPosition;
-        [DataMember(Order = 4)] public readonly MessageAttributeContract[] Attributes;
+        [DataMember(Order = 1)]
+        public string ContractName { get; private set; }
+        [DataMember(Order = 2)]
+        public long ContentSize { get; private set; }
+        [DataMember(Order = 3)]
+        public long ContentPosition { get; private set; }
+        [DataMember(Order = 4)]
+        public MessageAttributeContract[] Attributes { get; private set; }
 
         MessageContract()
         {

@@ -1,4 +1,11 @@
-﻿using System;
+﻿#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2011, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
+using System;
 using Lokad.Cqrs.Envelope;
 using NUnit.Framework;
 
@@ -28,18 +35,22 @@ namespace Lokad.Cqrs.Core.Envelope.Scenarios
         [Test]
         public void Envelope_attributes_should_be_present()
         {
-            var time = DateTime.UtcNow;
+            var time = RoundToMs(DateTime.UtcNow);
             var builder = new EnvelopeBuilder("my-id");
             builder.AddString("Custom", "1");
-            
+
 
             var envelope = RoundtripViaSerializer(builder);
 
             Assert.AreEqual("1", envelope.GetAttribute("Custom"));
-            Assert.GreaterOrEqual(envelope.CreatedOnUtc, time, "start time");
-            var now = DateTime.UtcNow;
-            Assert.LessOrEqual(envelope.CreatedOnUtc, now, "now");
-            
+            Assert.GreaterOrEqual(RoundToMs(envelope.CreatedOnUtc), time, "start time");
+            var now = RoundToMs((DateTime.UtcNow));
+            Assert.LessOrEqual(RoundToMs(envelope.CreatedOnUtc), now, "now");
+        }
+
+        public static DateTime RoundToMs(DateTime dateTime)
+        {
+            return new DateTime((dateTime.Ticks / TimeSpan.TicksPerMillisecond) * TimeSpan.TicksPerMillisecond);
         }
 
         [Test]
@@ -51,7 +62,7 @@ namespace Lokad.Cqrs.Core.Envelope.Scenarios
             var envelope = RoundtripViaSerializer(builder);
 
             Assert.AreEqual(1, envelope.Items.Length);
-            Assert.AreEqual("42", ((MyMessage)envelope.Items[0].Content).Value);
+            Assert.AreEqual("42", ((MyMessage) envelope.Items[0].Content).Value);
         }
 
         [Test]
@@ -61,7 +72,7 @@ namespace Lokad.Cqrs.Core.Envelope.Scenarios
 
             for (int i = 0; i < 5; i++)
             {
-                var content = new string('*',i);
+                var content = new string('*', i);
                 var added = builder.AddItem(new MyMessage(content));
 
                 added.AddAttribute("hum", i.ToString());
@@ -74,21 +85,21 @@ namespace Lokad.Cqrs.Core.Envelope.Scenarios
             for (int i = 0; i < 5; i++)
             {
                 var messageItem = envelope.Items[i];
-                Assert.AreEqual(new string('*', i), ((MyMessage)messageItem.Content).Value);
-                Assert.AreEqual(i.ToString(), messageItem.GetAttribute("hum", "")); 
+                Assert.AreEqual(new string('*', i), ((MyMessage) messageItem.Content).Value);
+                Assert.AreEqual(i.ToString(), messageItem.GetAttribute("hum", ""));
             }
         }
 
         [Serializable]
-        sealed class MyMessage 
+        sealed class MyMessage
         {
-            
             public readonly string Value;
 
             public MyMessage(string value)
             {
                 Value = value;
             }
+
             public override string ToString()
             {
                 return Value;

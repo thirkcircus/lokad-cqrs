@@ -44,6 +44,7 @@
     <Reference Include="System.Transactions" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core.Envelope\Scenarios\EnvelopeSerializerWithServiceStackJSON.cs" />
     <Compile Include="Feature.AtomicStorage\Given_Atomic_Storage.cs" />
     <Compile Include="Feature.AtomicStorage\Given_Atomic_Storage_With_Files.cs" />
     <Compile Include="Feature.AtomicStorage\Give_Atomic_Storage_With_Memory.cs" />

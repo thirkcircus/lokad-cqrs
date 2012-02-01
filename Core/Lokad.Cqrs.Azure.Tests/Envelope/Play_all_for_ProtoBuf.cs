@@ -21,9 +21,9 @@ namespace Lokad.Cqrs.Core.Envelope
 
         public sealed class EnvelopeSerializerWithProtoBuf : IEnvelopeSerializer
         {
-            public void SerializeEnvelope(Stream stream, EnvelopeContract contract)
+            public void SerializeEnvelope(Stream stream, EnvelopeContract c)
             {
-                Serializer.Serialize(stream, contract);
+                Serializer.Serialize(stream, c);
             }
 
             public EnvelopeContract DeserializeEnvelope(Stream stream)

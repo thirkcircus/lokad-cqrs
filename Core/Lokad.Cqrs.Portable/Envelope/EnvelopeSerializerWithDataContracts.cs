@@ -20,12 +20,12 @@ namespace Lokad.Cqrs.Envelope
             _serializer = new DataContractSerializer(typeof (EnvelopeContract));
         }
 
-        public void SerializeEnvelope(Stream stream, EnvelopeContract contract)
+        public void SerializeEnvelope(Stream stream, EnvelopeContract c)
         {
             //using (var compressed = destination.Compress(true))
             using (var writer = XmlDictionaryWriter.CreateBinaryWriter(stream, null, null, false))
             {
-                _serializer.WriteObject(writer, contract);
+                _serializer.WriteObject(writer, c);
             }
         }
 

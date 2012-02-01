@@ -13,13 +13,25 @@ namespace Lokad.Cqrs.Envelope
     [DataContract(Namespace = "Lokad.Cqrs.v2", Name = "Envelope"), Serializable]
     public sealed class EnvelopeContract
     {
-        [DataMember(Order = 1)] public readonly string EnvelopeId;
-        [DataMember(Order = 2)] public readonly EnvelopeAttributeContract[] EnvelopeAttributes;
-        [DataMember(Order = 3)] public readonly MessageContract[] Messages;
-        [DataMember(Order = 4)] public readonly DateTime DeliverOnUtc;
-        [DataMember(Order = 5)] public readonly DateTime CreatedOnUtc;
+        [DataMember(Order = 1)]
+        public string EnvelopeId { get; private set; }
 
-        public EnvelopeContract(string envelopeId, EnvelopeAttributeContract[] envelopeAttributes, MessageContract[] messages,
+        [DataMember(Order = 2)]
+        public EnvelopeAttributeContract[] EnvelopeAttributes { get; private set; }
+
+        [DataMember(Order = 3)]
+        public MessageContract[] Messages { get; private set; }
+
+        [DataMember(Order = 4)]
+        public DateTime DeliverOnUtc { get; set; }
+
+        [DataMember(Order = 5)]
+        public DateTime CreatedOnUtc { get; set; }
+
+        
+
+        public EnvelopeContract(string envelopeId, EnvelopeAttributeContract[] envelopeAttributes,
+            MessageContract[] messages,
             DateTime deliverOnUtc, DateTime createdOnUtc)
         {
             EnvelopeId = envelopeId;

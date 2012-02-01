@@ -21,4 +21,15 @@ namespace Lokad.Cqrs.Core.Envelope
             return _streamer.ReadAsEnvelopeData(bytes);
         }
     }
+
+    [TestFixture]
+    public sealed class Play_all_for_ServiceStackJSON : When_envelope_is_serialized
+    {
+        readonly IEnvelopeStreamer _streamer = BuildStreamer(new EnvelopeSerializerWithServiceStackJSON());
+        protected override ImmutableEnvelope RoundtripViaSerializer(EnvelopeBuilder builder)
+        {
+            var bytes = _streamer.SaveEnvelopeData(builder.Build());
+            return _streamer.ReadAsEnvelopeData(bytes);
+        }
+    }
 }

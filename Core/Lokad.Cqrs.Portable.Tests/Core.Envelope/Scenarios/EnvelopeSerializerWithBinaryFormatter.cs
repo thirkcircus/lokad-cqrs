@@ -6,9 +6,9 @@ namespace Lokad.Cqrs.Core.Envelope.Scenarios
 {
     class EnvelopeSerializerWithBinaryFormatter : IEnvelopeSerializer
     {
-        public void SerializeEnvelope(Stream stream, EnvelopeContract contract)
+        public void SerializeEnvelope(Stream stream, EnvelopeContract c)
         {
-            Formatter.Serialize(stream, contract);
+            Formatter.Serialize(stream, c);
         }
 
 
@@ -18,8 +18,5 @@ namespace Lokad.Cqrs.Core.Envelope.Scenarios
         }
 
         static readonly BinaryFormatter Formatter = new BinaryFormatter();
-
-
-        
     }
 }

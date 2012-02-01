@@ -11,7 +11,7 @@ namespace Lokad.Cqrs.Envelope
 {
     public interface IEnvelopeSerializer
     {
-        void SerializeEnvelope(Stream stream, EnvelopeContract contract);
+        void SerializeEnvelope(Stream stream, EnvelopeContract c);
         EnvelopeContract DeserializeEnvelope(Stream stream);
     }
 }

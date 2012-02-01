@@ -29,9 +29,9 @@ namespace Sample.Wires
 
         sealed class EnvelopeSerializer : IEnvelopeSerializer
         {
-            public void SerializeEnvelope(Stream stream, EnvelopeContract contract)
+            public void SerializeEnvelope(Stream stream, EnvelopeContract c)
             {
-                Serializer.Serialize(stream, contract);
+                Serializer.Serialize(stream, c);
             }
 
             public EnvelopeContract DeserializeEnvelope(Stream stream)
