@@ -27,7 +27,6 @@ namespace Lokad.Cqrs.Feature.TapeStorage
                 throw new ArgumentException("All letters in a container name must be lowercase.");
 
             _cloudBlobClient = config.CreateBlobClient();
-            
             _containerName = containerName;
         }
 

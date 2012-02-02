@@ -80,7 +80,7 @@
     <Compile Include="TapeStorage\FileTapeStorageFactory.cs" />
     <Compile Include="TapeStorage\ITapeStream.cs" />
     <Compile Include="TapeStorage\ITapeStorageFactory.cs" />
-    <Compile Include="MemoryAccount.cs" />
+    <Compile Include="MemoryStorageConfig.cs" />
     <Compile Include="Partition\MemoryQueueWriterFactory.cs" />
     <Compile Include="TapeStorage\TapeStreamSerializer.cs" />
     <Compile Include="FileStorage.cs" />

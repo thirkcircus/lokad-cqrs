@@ -33,7 +33,7 @@ namespace Lokad.Cqrs.Synthetic
                     Storage = dev.CreateNuclear(builder =>
                         {
                             builder.FolderForSingleton("test-single");
-                        })
+                        }, "nuclear")
                 };
         }
     }

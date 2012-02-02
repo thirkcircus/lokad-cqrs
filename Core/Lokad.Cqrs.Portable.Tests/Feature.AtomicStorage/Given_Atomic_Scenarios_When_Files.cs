@@ -40,7 +40,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         {
             return new Setup
                 {
-                    Store = _config.CreateNuclear(),
+                    Store = _config.CreateNuclear("nuclear"),
                     Inbox = _config.CreateInbox("dev"),
                     Sender = _config.CreateSimpleSender(streamer, "dev")
 

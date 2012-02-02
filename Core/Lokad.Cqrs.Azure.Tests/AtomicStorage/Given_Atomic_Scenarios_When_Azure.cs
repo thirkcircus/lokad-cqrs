@@ -26,7 +26,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             WipeAzureAccount.Fast(s => s.StartsWith("test-"), dev);
             return new Setup
                 {
-                    Store = dev.CreateNuclear(),
+                    Store = dev.CreateNuclear("nuclear"),
                     Inbox = dev.CreateInbox("test-incoming", visibilityTimeout : TimeSpan.FromSeconds(1)),
                     Sender = dev.CreateSimpleSender(streamer, "test-incoming")
                 };

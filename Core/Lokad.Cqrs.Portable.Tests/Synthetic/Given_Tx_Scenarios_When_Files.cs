@@ -41,7 +41,7 @@ namespace Lokad.Cqrs.Synthetic
                 {
                     Inbox = _config.CreateInbox("in"),
                     Sender = _config.CreateSimpleSender(streamer, "in"),
-                    Storage = _config.CreateNuclear()
+                    Storage = _config.CreateNuclear("nuclear")
                 };
         }
     }

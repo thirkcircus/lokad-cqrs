@@ -58,7 +58,7 @@ namespace Lokad.Cqrs
             var streamer = EnvelopeStreamer.CreateDefault(typeof(CreateCustomer), typeof(CustomerCreated));
             
             var builder = new CqrsEngineBuilder(streamer);
-            var account = new MemoryAccount();
+            var account = new MemoryStorageConfig();
 
             var nuclear = account.CreateNuclear();
             var inbox = account.CreateInbox("input");

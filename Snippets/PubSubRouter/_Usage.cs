@@ -40,7 +40,7 @@ namespace Snippets.PubSubRouter
             //  inbox -> [PubSubRouter] <
             //                            -> sub 2
             //
-            var store = new MemoryAccount();
+            var store = new MemoryStorageConfig();
             var nuclear = store.CreateNuclear();
 
             var router = new PubSubRouter(nuclear, store.CreateWriteQueueFactory(), streamer);

@@ -20,7 +20,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
 
         protected override Setup ConfigureComponents(IEnvelopeStreamer streamer)
         {
-            var _config = new MemoryAccount();
+            var _config = new MemoryStorageConfig();
             return new Setup
             {
                 Store = _config.CreateNuclear(),

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 
 namespace Lokad.Cqrs
 {
-    public sealed class MemoryAccount : HideObjectMembersFromIntelliSense
+    public sealed class MemoryStorageConfig : HideObjectMembersFromIntelliSense
     {
         public readonly ConcurrentDictionary<string, BlockingCollection<byte[]>> Queues =
             new ConcurrentDictionary<string, BlockingCollection<byte[]>>();

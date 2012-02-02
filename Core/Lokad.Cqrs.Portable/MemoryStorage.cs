@@ -29,9 +29,14 @@ namespace Lokad.Cqrs
         /// <returns>
         /// new instance of the nuclear storage
         /// </returns>
-        public static NuclearStorage CreateNuclear(this MemoryAccount dictionary)
+        public static NuclearStorage CreateNuclear(this MemoryStorageConfig dictionary)
         {
             return CreateNuclear(dictionary, b => { });
+        }
+
+        public static MemoryStorageConfig CreateConfig()
+        {
+            return new MemoryStorageConfig();
         }
 
   
@@ -42,7 +47,7 @@ namespace Lokad.Cqrs
         /// <param name="dictionary">The dictionary.</param>
         /// <param name="configStrategy">The config strategy.</param>
         /// <returns></returns>
-        public static NuclearStorage CreateNuclear(this MemoryAccount dictionary,
+        public static NuclearStorage CreateNuclear(this MemoryStorageConfig dictionary,
             Action<DefaultAtomicStorageStrategyBuilder> configStrategy)
         {
             var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
@@ -59,22 +64,16 @@ namespace Lokad.Cqrs
         /// <param name="dictionary">The dictionary.</param>
         /// <param name="strategy">The atomic storage strategy.</param>
         /// <returns></returns>
-        public static NuclearStorage CreateNuclear(this MemoryAccount dictionary, IAtomicStorageStrategy strategy)
+        public static NuclearStorage CreateNuclear(this MemoryStorageConfig dictionary, IAtomicStorageStrategy strategy)
         {
             var factory = new MemoryAtomicStorageFactory(dictionary.Data, strategy);
             factory.Initialize();
             return new NuclearStorage(factory);
         }
 
-
-
-
-
-
-
-        public static MemoryQueueWriterFactory CreateWriteQueueFactory(this MemoryAccount account)
+        public static MemoryQueueWriterFactory CreateWriteQueueFactory(this MemoryStorageConfig storageConfig)
         {
-            return new MemoryQueueWriterFactory(account);
+            return new MemoryQueueWriterFactory(storageConfig);
         }
 
         /// <summary>
@@ -82,31 +81,39 @@ namespace Lokad.Cqrs
         /// </summary>
         /// <param name="dictionary">The dictionary.</param>
         /// <returns></returns>
-        public static MemoryTapeStorageFactory CreateTape(this MemoryAccount account, string container = "tapes")
+        public static MemoryTapeStorageFactory CreateTape(this MemoryStorageConfig storageConfig, string container)
         {
-            var factory = new MemoryTapeStorageFactory(account.Tapes, container);
+            var factory = new MemoryTapeStorageFactory(storageConfig.Tapes, container);
             factory.InitializeForWriting();
             return factory;
         }
 
-        public static MemoryPartitionInbox CreateInbox(this MemoryAccount account,  params string[] queueNames)
+
+        public static MemoryTapeStorageFactory CreateTape(this MemoryStorageConfig storageConfig)
+        {
+            var factory = new MemoryTapeStorageFactory(storageConfig.Tapes, null);
+            factory.InitializeForWriting();
+            return factory;
+        }
+
+        public static MemoryPartitionInbox CreateInbox(this MemoryStorageConfig storageConfig,  params string[] queueNames)
         {
             var queues = queueNames
-                .Select(n => account.Queues.GetOrAdd(n, s => new BlockingCollection<byte[]>()))
+                .Select(n => storageConfig.Queues.GetOrAdd(n, s => new BlockingCollection<byte[]>()))
                 .ToArray();
 
             return new MemoryPartitionInbox(queues, queueNames);
         }
 
-        public static IQueueWriter CreateQueueWriter(this MemoryAccount account, string queueName)
+        public static IQueueWriter CreateQueueWriter(this MemoryStorageConfig storageConfig, string queueName)
         {
-            var collection = account.Queues.GetOrAdd(queueName, s => new BlockingCollection<byte[]>());
+            var collection = storageConfig.Queues.GetOrAdd(queueName, s => new BlockingCollection<byte[]>());
             return new MemoryQueueWriter(collection, queueName);
         }
 
-        public static SimpleMessageSender CreateSimpleSender(this MemoryAccount account, IEnvelopeStreamer streamer, string queueName, Func<string> idGenerator = null)
+        public static SimpleMessageSender CreateSimpleSender(this MemoryStorageConfig storageConfig, IEnvelopeStreamer streamer, string queueName, Func<string> idGenerator = null)
         {
-            var queueWriter = new[]{ CreateQueueWriter(account, queueName)};
+            var queueWriter = new[]{ CreateQueueWriter(storageConfig, queueName)};
             return new SimpleMessageSender(streamer, queueWriter, idGenerator);
         }
     }

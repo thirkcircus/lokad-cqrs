@@ -38,7 +38,7 @@ namespace Lokad.Cqrs
         /// </summary>
         /// <param name="storageConfig">The storage config.</param>
         /// <returns>new instance of the nuclear storage</returns>
-        public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig, string folder = "views")
+        public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig, string folder)
         {
             return CreateNuclear(storageConfig, b => { }, folder);
         }
@@ -60,7 +60,7 @@ namespace Lokad.Cqrs
         /// <param name="configStrategy">The config strategy.</param>
         /// <returns></returns>
         public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig,
-            Action<DefaultAtomicStorageStrategyBuilder> configStrategy, string folder = "views")
+            Action<DefaultAtomicStorageStrategyBuilder> configStrategy, string folder)
         {
             var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
             configStrategy(strategyBuilder);
@@ -143,7 +143,7 @@ namespace Lokad.Cqrs
         /// <param name="containerName">Name of the container.</param>
         /// <param name="initializeForWriting">if set to <c>true</c>, then storage is initialized for writing as needed.</param>
         /// <returns></returns>
-        public static BlobTapeStorageFactory CreateTape(this IAzureStorageConfig config, string containerName = "tapes")
+        public static BlobTapeStorageFactory CreateTape(this IAzureStorageConfig config, string containerName)
         {
             var factory = new BlobTapeStorageFactory(config, containerName);
             factory.InitializeForWriting();

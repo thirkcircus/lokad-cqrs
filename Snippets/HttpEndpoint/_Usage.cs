@@ -48,7 +48,7 @@ namespace Snippets.HttpEndpoint
             var messages = new[] { typeof(MouseMoved), typeof(MouseClick) };
             var serializer = new MyJsonSerializer(messages);
             var streamer = new EnvelopeStreamer(serializer);
-            var store = new MemoryAccount();
+            var store = new MemoryStorageConfig();
             var atomic = store.CreateNuclear().Factory;
 
             // let's configure our custom Http server to 

@@ -39,7 +39,7 @@ namespace Lokad.Cqrs.Synthetic
         {
             return new Setup
                 {
-                    Store = _config.CreateNuclear(),
+                    Store = _config.CreateNuclear("nuclear"),
                     Sender = _config.CreateSimpleSender(config, "my-queue"),
                     Inbox = _config.CreateInbox("my-queue")
                 };

@@ -23,7 +23,7 @@ namespace Lokad.Cqrs
         [Test]
         public void Memory_lambda()
         {
-            var config = new MemoryAccount();
+            var config = new MemoryStorageConfig();
             var writer = config.CreateQueueWriter("test");
             var inbox = config.CreateInbox("test");
 

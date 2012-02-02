@@ -19,7 +19,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
 
             AssertContents(setup);
 
-            var mem = new MemoryAccount().CreateNuclear(strategy);
+            var mem = new MemoryStorageConfig().CreateNuclear(strategy);
             mem.CopyFrom(setup);
 
             AssertContents(mem);

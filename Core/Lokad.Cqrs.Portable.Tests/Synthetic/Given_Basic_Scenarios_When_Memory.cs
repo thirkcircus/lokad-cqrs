@@ -19,7 +19,7 @@ namespace Lokad.Cqrs.Synthetic
     {
         protected override Setup ConfigureComponents(IEnvelopeStreamer config)
         {
-            var acc = new MemoryAccount();
+            var acc = new MemoryStorageConfig();
             return new Setup
                 {
                     Store = acc.CreateNuclear(),

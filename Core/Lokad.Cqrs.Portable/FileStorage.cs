@@ -20,25 +20,34 @@ namespace Lokad.Cqrs
 {
     public static class FileStorage
     {
-        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IAtomicStorageStrategy strategy, string path = "views")
+        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IAtomicStorageStrategy strategy)
         {
-            var factory = new FileAtomicStorageFactory(config.SubFolder(path).FullPath, strategy);
+            var factory = new FileAtomicStorageFactory(config.FullPath, strategy);
             return new NuclearStorage(factory);
         }
 
+        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IAtomicStorageStrategy strategy, string subfolder)
+        {
+            return CreateNuclear(config.SubFolder(subfolder), strategy);
+        }
 
-        public static NuclearStorage CreateNuclear(this FileStorageConfig self, Action<DefaultAtomicStorageStrategyBuilder> config, string path = "views")
+        public static NuclearStorage CreateNuclear(this FileStorageConfig self, Action<DefaultAtomicStorageStrategyBuilder> config, string path)
+        {
+            return self.SubFolder(path).CreateNuclear(config);
+        }
+
+        public static NuclearStorage CreateNuclear(this FileStorageConfig self, Action<DefaultAtomicStorageStrategyBuilder> config)
         {
             var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
             config(strategyBuilder);
             var strategy = strategyBuilder.Build();
-            return CreateNuclear(self, strategy, path);
+            return CreateNuclear(self, strategy);
         }
 
-        public static NuclearStorage CreateNuclear(this FileStorageConfig config, string path = "views")
+        public static NuclearStorage CreateNuclear(this FileStorageConfig config, string path)
         {
             return CreateNuclear(config, builder => { }, path);
-        }   
+        }
 
 
         public static IStreamingRoot CreateStreaming(this FileStorageConfig config)
@@ -50,17 +59,21 @@ namespace Lokad.Cqrs
         }
         public static IStreamingContainer CreateStreaming(this FileStorageConfig config, string subfolder)
         {
-            return config.CreateStreaming(subfolder).Create();
+            return config.CreateStreaming().GetContainer(subfolder).Create();
         }
         
-        public static FileTapeStorageFactory CreateTape(this FileStorageConfig config, string subfolder = "tapes") 
+        public static FileTapeStorageFactory CreateTape(this FileStorageConfig config, string subfolder)
         {
-            var path = Path.Combine(config.FullPath, subfolder);
-            var factory = new FileTapeStorageFactory(path);
+            return CreateTape(config.SubFolder(subfolder));
+
+        }
+
+        public static FileTapeStorageFactory CreateTape(this FileStorageConfig config)
+        {
+            var factory = new FileTapeStorageFactory(config.FullPath);
             factory.InitializeForWriting();
             return factory;
         }
-
 
         public static FileStorageConfig CreateConfig(string fullPath, string optionalName = null, bool reset = false)
         {

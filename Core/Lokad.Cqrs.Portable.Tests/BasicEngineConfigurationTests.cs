@@ -50,7 +50,7 @@ namespace Lokad.Cqrs
         [Test]
         public void PartitionWithRouter()
         {
-            var config = new MemoryAccount();
+            var config = new MemoryStorageConfig();
             var raw = new RawEngineBuilder();
 
             var inWriter = config.CreateQueueWriter("in");
@@ -69,7 +69,7 @@ namespace Lokad.Cqrs
         [Test]
         public void Direct()
         {
-            var config = new MemoryAccount();
+            var config = new MemoryStorageConfig();
             var raw = new RawEngineBuilder();
             var doWriter = config.CreateQueueWriter("do");
 
@@ -89,7 +89,7 @@ namespace Lokad.Cqrs
         [Test]
         public void RouterChain()
         {
-            var config = new MemoryAccount();
+            var config = new MemoryStorageConfig();
             var raw = new RawEngineBuilder();
             var doWriter = config.CreateQueueWriter("do");
 

@@ -8,10 +8,10 @@ namespace Lokad.Cqrs.TapeStorage
         readonly ConcurrentDictionary<string, List<byte[]>> _storage;
         readonly string _prefix;
 
-        public MemoryTapeStorageFactory(ConcurrentDictionary<string, List<byte[]>> storage, string prefix)
+        public MemoryTapeStorageFactory(ConcurrentDictionary<string, List<byte[]>> storage, string folder)
         {
             _storage = storage;
-            _prefix = prefix;
+            _prefix = string.IsNullOrEmpty(folder) ? "" : folder + "/";
         }
 
         public void InitializeForWriting()
@@ -19,7 +19,7 @@ namespace Lokad.Cqrs.TapeStorage
         }
         public ITapeStream GetOrCreateStream(string name)
         {
-            return new MemoryTapeStream(_storage, _prefix + ":" + name);
+            return new MemoryTapeStream(_storage, _prefix + name);
         }
     }
 }

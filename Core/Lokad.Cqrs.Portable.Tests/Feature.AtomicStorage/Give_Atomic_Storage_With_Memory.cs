@@ -8,7 +8,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
     {
         protected override NuclearStorage Compose(IAtomicStorageStrategy strategy)
         {
-            return new MemoryAccount().CreateNuclear(strategy);
+            return new MemoryStorageConfig().CreateNuclear(strategy);
         }
     }
 }

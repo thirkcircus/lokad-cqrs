@@ -13,7 +13,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         public void Test()
         {
             
-            var nuclearStorage = FileStorage.CreateConfig(GetType().Name).CreateNuclear();
+            var nuclearStorage = FileStorage.CreateConfig(GetType().Name).CreateNuclear("nuclear");
 
             var writer = nuclearStorage.Factory.GetEntityWriter<unit,Dunno>();
             writer.UpdateEnforcingNew(unit.it, dunno => dunno.Count += 1);

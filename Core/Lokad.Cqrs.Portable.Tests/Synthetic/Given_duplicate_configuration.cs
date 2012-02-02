@@ -33,7 +33,7 @@ namespace Lokad.Cqrs.Synthetic
 
             var builder = new CqrsEngineBuilder(streamer);
 
-            var cfg = new MemoryAccount();
+            var cfg = new MemoryStorageConfig();
             var sender = cfg.CreateSimpleSender(streamer, "in");
             builder.Handle(cfg.CreateInbox("in"), envelope => Console.WriteLine("Got message"));
 

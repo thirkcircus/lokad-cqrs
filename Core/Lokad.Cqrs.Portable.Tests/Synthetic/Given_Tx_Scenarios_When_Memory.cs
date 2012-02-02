@@ -16,7 +16,7 @@ namespace Lokad.Cqrs.Synthetic
     {
         protected override Setup ComposeComponents(IEnvelopeStreamer streamer)
         {
-            var config = new MemoryAccount();
+            var config = new MemoryStorageConfig();
             return new Setup
             {
                 Inbox = config.CreateInbox("in"),
