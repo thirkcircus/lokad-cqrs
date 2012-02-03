@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace Lokad.Cqrs.Feature.TapeStorage
@@ -52,9 +53,9 @@ namespace Lokad.Cqrs.Feature.TapeStorage
 
             using (var file = OpenForRead())
             {
-                if (!TapeStreamSerializer.SkipRecords(afterVersion, file))
+                if (!TapeStreamSerializer.TryToReachVersionFromHere(afterVersion, file))
                     yield break;
-
+                var ver = afterVersion;
                 for (var i = 0; i < maxCount; i++)
                 {
                     if (file.Position == file.Length)
@@ -62,7 +63,18 @@ namespace Lokad.Cqrs.Feature.TapeStorage
 
                     var record = TapeStreamSerializer.ReadRecord(file);
 
-                    yield return record;
+                    if (record.Version > ver)
+                    {
+                        yield return record;
+                        ver = record.Version;
+                    }
+                    else
+                    {
+                        // stream duplication? Yikes. Be a man
+                        Debug.WriteLine("Version {0} comes after {1}. Stream is messed up. Seek...", record.Version, ver);
+                        if (!TapeStreamSerializer.TryToReachVersionFromHere(ver, file))
+                            yield break;
+                    }
                 }
             }
         }

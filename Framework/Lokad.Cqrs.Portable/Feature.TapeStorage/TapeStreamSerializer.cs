@@ -23,6 +23,29 @@ namespace Lokad.Cqrs.Feature.TapeStorage
         static readonly byte[] ReadableFooterStart = Encoding.UTF8.GetBytes("\r\n/* footer ");
         static readonly byte[] ReadableFooterEnd = Encoding.UTF8.GetBytes(" */\r\n");
 
+        public static bool TryToReachVersionFromHere(long version, Stream file)
+        {
+            if (version == 0)
+                return true;
+            while(true)
+            {
+                if (file.Position == file.Length)
+                    return false;
+
+                file.Seek(ReadableHeaderStart.Length, SeekOrigin.Current);
+                var dataLength = ReadReadableInt64(file);
+                var skip = ReadableHeaderEnd.Length + dataLength +
+                    ReadableFooterStart.Length + 16;
+
+                file.Seek(skip, SeekOrigin.Current);
+                var ver = ReadReadableInt64(file);
+
+                file.Seek(28 + ReadableFooterEnd.Length, SeekOrigin.Current);
+                if (ver >= version)
+                    return true;
+            }
+            
+        }
         public static bool SkipRecords(long count, Stream file)
         {
             for (var i = 0; i < count; i++)
