@@ -8,11 +8,10 @@
 
 using System;
 using System.Collections.Generic;
-using Lokad.Cqrs.AtomicStorage;
 using Microsoft.WindowsAzure.StorageClient;
 using System.Linq;
 
-namespace Lokad.Cqrs.Feature.AtomicStorage
+namespace Lokad.Cqrs.AtomicStorage
 {
     public sealed class AzureAtomicStorageFactory : IAtomicStorageFactory
     {

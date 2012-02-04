@@ -12,7 +12,6 @@ using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.Build;
 using Lokad.Cqrs.Envelope;
 using Lokad.Cqrs.Evil;
-using Lokad.Cqrs.Feature.AtomicStorage;
 using Lokad.Cqrs.Feature.AzurePartition;
 using Lokad.Cqrs.Feature.AzurePartition.Inbox;
 using Lokad.Cqrs.Feature.AzurePartition.Sender;

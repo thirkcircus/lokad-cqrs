@@ -9,6 +9,7 @@ namespace Lokad.Cqrs.AtomicStorage
         readonly IAtomicStorageStrategy _strategy;
         readonly string _folder;
         readonly ConcurrentDictionary<string, byte[]> _store;
+        readonly string _root;
 
         public override string ToString()
         {
