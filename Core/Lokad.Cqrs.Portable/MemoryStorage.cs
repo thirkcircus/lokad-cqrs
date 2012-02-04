@@ -66,9 +66,22 @@ namespace Lokad.Cqrs
         /// <returns></returns>
         public static NuclearStorage CreateNuclear(this MemoryStorageConfig dictionary, IAtomicStorageStrategy strategy)
         {
-            var factory = new MemoryAtomicStorageFactory(dictionary.Data, strategy);
-            factory.Initialize();
-            return new NuclearStorage(factory);
+            var container = new MemoryAtomicContainer(dictionary.Data, strategy);
+            container.Initialize();
+            return new NuclearStorage(container);
+        }
+
+        /// <summary>
+        /// Creates the simplified nuclear storage wrapper around Atomic storage, using the provided subfolder.
+        /// </summary>
+        /// <param name="dictionary">The dictionary.</param>
+        /// <param name="strategy">The atomic storage strategy.</param>
+        /// <returns></returns>
+        public static NuclearStorage CreateNuclear(this MemoryStorageConfig dictionary, IAtomicStorageStrategy strategy, string subFolder)
+        {
+            var container = new MemoryAtomicContainer(dictionary.Data, strategy, subFolder);
+            container.Initialize();
+            return new NuclearStorage(container);
         }
 
         public static MemoryQueueWriterFactory CreateWriteQueueFactory(this MemoryStorageConfig storageConfig)

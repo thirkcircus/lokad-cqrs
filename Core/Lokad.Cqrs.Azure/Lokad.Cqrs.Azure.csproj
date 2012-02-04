@@ -65,7 +65,7 @@
     <Compile Include="Build\CqrsEngineRole.cs" />
     <Compile Include="AtomicStorage\AzureAtomicWriter.cs" />
     <Compile Include="AtomicStorage\AzureAtomicReader.cs" />
-    <Compile Include="AtomicStorage\AzureAtomicStorageFactory.cs" />
+    <Compile Include="AtomicStorage\AzureAtomicContainer.cs" />
     <Compile Include="AzureStorageConfigurationBuilder.cs" />
     <Compile Include="Partition\AzurePartitionInbox.cs" />
     <Compile Include="Partition\StatelessAzureQueueReader.cs" />

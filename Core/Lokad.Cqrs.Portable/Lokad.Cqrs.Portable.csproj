@@ -62,8 +62,8 @@
     <Compile Include="AtomicStorage\AtomicStorageSerializerWithDelegates.cs" />
     <Compile Include="AtomicStorage\DefaultAtomicStorageStrategy.cs" />
     <Compile Include="AtomicStorage\DefaultAtomicStorageStrategyBuilder.cs" />
+    <Compile Include="AtomicStorage\FileAtomicReaderWriter.cs" />
     <Compile Include="AtomicStorage\FileAtomicContainer.cs" />
-    <Compile Include="AtomicStorage\FileAtomicStorageFactory.cs" />
     <Compile Include="AtomicStorage\IAtomicStorageSerializer.cs" />
     <Compile Include="AtomicStorage\IAtomicStorageStrategy.cs" />
     <Compile Include="Partition\FilePartitionInbox.cs" />
@@ -98,10 +98,10 @@
     <Compile Include="AtomicStorage\ExtendAtomicEntityWriter.cs" />
     <Compile Include="AtomicStorage\ExtendAtomicEntityReader.cs" />
     <Compile Include="AtomicStorage\NuclearStorageExtensions.cs" />
-    <Compile Include="AtomicStorage\IAtomicStorageFactory.cs" />
+    <Compile Include="AtomicStorage\IAtomicContainer.cs" />
     <Compile Include="AtomicStorage\NuclearStorage.cs" />
+    <Compile Include="AtomicStorage\MemoryAtomicReaderWriter.cs" />
     <Compile Include="AtomicStorage\MemoryAtomicContainer.cs" />
-    <Compile Include="AtomicStorage\MemoryAtomicStorageFactory.cs" />
     <Compile Include="Envelope\Events\EnvelopeQuarantined.cs" />
     <Compile Include="Envelope\MemoryQuarantine.cs" />
     <Compile Include="Dispatch\Events\MessageAcked.cs" />

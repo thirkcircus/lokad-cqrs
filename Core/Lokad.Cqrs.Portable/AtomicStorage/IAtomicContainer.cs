@@ -3,10 +3,10 @@ using System.Collections.Generic;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
-    public interface IAtomicStorageFactory 
+    public interface IAtomicContainer 
     {
-        IAtomicWriter<TKey,TEntity> GetEntityWriter<TKey,TEntity>(string optionalSubfolder = null);
-        IAtomicReader<TKey,TEntity> GetEntityReader<TKey,TEntity>(string optionalSubfolder = null);
+        IAtomicWriter<TKey,TEntity> GetEntityWriter<TKey,TEntity>();
+        IAtomicReader<TKey,TEntity> GetEntityReader<TKey,TEntity>();
         IAtomicStorageStrategy Strategy { get; }
         IEnumerable<AtomicRecord> EnumerateContents();
         void WriteContents(IEnumerable<AtomicRecord> records);

@@ -1,89 +1,67 @@
-﻿using System;
+﻿#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2011, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
 using System.Collections.Concurrent;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
-    public sealed class MemoryAtomicContainer<TKey,TEntity> : IAtomicReader<TKey,TEntity>, IAtomicWriter<TKey,TEntity>
+    public sealed class MemoryAtomicContainer : IAtomicContainer
     {
+        ConcurrentDictionary<string, byte[]> _store;
         readonly IAtomicStorageStrategy _strategy;
-        readonly string _folder;
-        readonly ConcurrentDictionary<string, byte[]> _store;
-        readonly string _root;
+        readonly string _optionalFolder;
 
-        public override string ToString()
-        {
-            return "memory://" + _store.GetHashCode() + "/" + _folder;
-        }
-
-        public MemoryAtomicContainer(ConcurrentDictionary<string, byte[]> store, IAtomicStorageStrategy strategy, string optionalSubfolder)
+        public MemoryAtomicContainer(ConcurrentDictionary<string,byte[]> store, IAtomicStorageStrategy strategy, string optionalFolder = null)
         {
             _store = store;
             _strategy = strategy;
-
-            _folder =  _strategy.GetFolderForEntity(typeof(TEntity),typeof(TKey));
-            if (!string.IsNullOrEmpty(optionalSubfolder))
-            {
-                _folder = optionalSubfolder + '/' + _folder;
-            }
+            _optionalFolder = optionalFolder;
         }
 
-        string GetName(TKey key)
+        public IAtomicWriter<TKey,TEntity> GetEntityWriter<TKey,TEntity>()
         {
-            var name = _strategy.GetNameForEntity(typeof (TEntity), key);
-            return _folder[_folder.Length - 1] == '/' ? _folder + name : _folder + '/' + name;
-        }
-
-        public bool TryGet(TKey key, out TEntity entity)
-        {
-            var name = GetName(key);
-            byte[] bytes;
-            if(_store.TryGetValue(name, out bytes))
-            {
-               using (var mem = new MemoryStream(bytes))
-               {
-                   entity = _strategy.Deserialize<TEntity>(mem);
-                   return true;
-               }
-            }
-            entity = default(TEntity);
-            return false;
+            return new MemoryAtomicReaderWriter<TKey, TEntity>(_store,_strategy, _optionalFolder);
         }
 
 
-        public TEntity AddOrUpdate(TKey key, Func<TEntity> addFactory, Func<TEntity, TEntity> update, AddOrUpdateHint hint)
+        public void WriteContents(IEnumerable<AtomicRecord> records)
         {
-            var result = default(TEntity);
-            _store.AddOrUpdate(GetName(key), s =>
-                {
-                    result = addFactory();
-                    using (var memory = new MemoryStream())
-                    {
-                        _strategy.Serialize(result, memory);
-                        return memory.ToArray();
-                    }
-                }, (s2, bytes) =>
-                    {
-                        TEntity entity;
-                        using (var memory = new MemoryStream(bytes))
-                        {
-                            entity = _strategy.Deserialize<TEntity>(memory);
-                        }
-                        result = update(entity);
-                        using (var memory = new MemoryStream())
-                        {
-                            _strategy.Serialize(result, memory);
-                            return memory.ToArray();
-                        }
-                    });
-            return result;
+            
+            var pairs = records.Select(r => new KeyValuePair<string, byte[]>(r.Path, r.Read())).ToArray();
+            _store = new ConcurrentDictionary<string, byte[]>(pairs);
         }
-     
 
-        public bool TryDelete(TKey key)
+        public void Reset()
         {
-            byte[] bytes;
-            return _store.TryRemove(GetName(key), out bytes);
+            _store.Clear();
+        }
+
+
+        public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
+        {
+            return new MemoryAtomicReaderWriter<TKey, TEntity>(_store,_strategy, _optionalFolder);
+        }
+
+        public IAtomicStorageStrategy Strategy
+        {
+            get { return _strategy; }
+        }
+
+        public IEnumerable<AtomicRecord> EnumerateContents()
+        {
+            // we normalize path to common symbol
+            return _store.Select(s => new AtomicRecord(s.Key.Replace('\\', '/'), () => s.Value));
+        }
+
+        public IEnumerable<string> Initialize()
+        {
+            return Enumerable.Empty<string>();
         }
     }
 }

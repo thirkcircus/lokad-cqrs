@@ -1,25 +1,22 @@
-﻿#region (c) 2010-2011 Lokad CQRS - New BSD License 
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad SAS 2010-2011 (http://www.lokad.com)
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
 // This code is released as Open Source under the terms of the New BSD Licence
-// Homepage: http://lokad.github.com/lokad-cqrs/
 
 #endregion
 
 using System;
 using System.Collections.Generic;
-using Microsoft.WindowsAzure.StorageClient;
 using System.Linq;
+using Microsoft.WindowsAzure.StorageClient;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
-    public sealed class AzureAtomicStorageFactory : IAtomicStorageFactory
+    public sealed class AzureAtomicContainer : IAtomicContainer
     {
-        public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>(string optionalSubfolder = null)
+        public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
         {
-            var realDir = string.IsNullOrEmpty(optionalSubfolder)
-                ? _directory : _directory.GetSubdirectory(optionalSubfolder);
-            var writer = new AzureAtomicWriter<TKey, TEntity>(realDir, _strategy);
+            var writer = new AzureAtomicWriter<TKey, TEntity>(_directory, _strategy);
 
             var value = Tuple.Create(typeof(TKey), typeof(TEntity));
             if (_initialized.Add(value))
@@ -35,14 +32,9 @@ namespace Lokad.Cqrs.AtomicStorage
             return _directory.Uri.AbsoluteUri;
         }
 
-        public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>(string optionalSubfolder = null)
+        public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
         {
-            var dir = _directory;
-            if (!string.IsNullOrEmpty(optionalSubfolder))
-            {
-                dir = _directory.GetSubdirectory(optionalSubfolder);
-            }
-            return new AzureAtomicReader<TKey, TEntity>(dir, _strategy);
+            return new AzureAtomicReader<TKey, TEntity>(_directory, _strategy);
         }
 
         public IAtomicStorageStrategy Strategy
@@ -57,7 +49,7 @@ namespace Lokad.Cqrs.AtomicStorage
             {
                 var blob = _directory.GetBlobReference(item.Uri.ToString());
                 var rel = _directory.Uri.MakeRelativeUri(item.Uri).ToString();
-                yield return new AtomicRecord(rel.Replace('\\','/'), blob.DownloadByteArray);
+                yield return new AtomicRecord(rel.Replace('\\', '/'), blob.DownloadByteArray);
             }
         }
 
@@ -71,7 +63,7 @@ namespace Lokad.Cqrs.AtomicStorage
 
         public void Reset()
         {
-            var blobs = _directory.ListBlobs(new BlobRequestOptions { UseFlatBlobListing = true });
+            var blobs = _directory.ListBlobs(new BlobRequestOptions {UseFlatBlobListing = true});
             var c = _directory.ServiceClient;
             foreach (var listBlobItem in blobs.AsParallel())
             {
@@ -83,9 +75,9 @@ namespace Lokad.Cqrs.AtomicStorage
         readonly IAtomicStorageStrategy _strategy;
 
         readonly HashSet<Tuple<Type, Type>> _initialized = new HashSet<Tuple<Type, Type>>();
-        private readonly CloudBlobDirectory _directory;
+        readonly CloudBlobDirectory _directory;
 
-        public AzureAtomicStorageFactory(IAtomicStorageStrategy strategy, CloudBlobDirectory directory)
+        public AzureAtomicContainer(IAtomicStorageStrategy strategy, CloudBlobDirectory directory)
         {
             _strategy = strategy;
             _directory = directory;

@@ -1,132 +1,85 @@
-﻿#region (c) 2010-2011 Lokad CQRS - New BSD License 
-
-// Copyright (c) Lokad SAS 2010-2011 (http://www.lokad.com)
-// This code is released as Open Source under the terms of the New BSD Licence
-// Homepage: http://lokad.github.com/lokad-cqrs/
-
-#endregion
-
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
-    public sealed class FileAtomicContainer<TKey, TEntity> : IAtomicReader<TKey, TEntity>,
-                                                             IAtomicWriter<TKey, TEntity>
+    public sealed class FileAtomicContainer : IAtomicContainer
     {
+        readonly string _folderPath;
         readonly IAtomicStorageStrategy _strategy;
-        readonly string _folder;
 
-        public FileAtomicContainer(string directoryPath, IAtomicStorageStrategy strategy)
+        public FileAtomicContainer(string folderPath, IAtomicStorageStrategy strategy)
         {
+            _folderPath = folderPath;
             _strategy = strategy;
-            _folder = Path.Combine(directoryPath, strategy.GetFolderForEntity(typeof(TEntity), typeof(TKey)));
         }
 
-        public void InitIfNeeded()
+        public override string ToString()
         {
-            Directory.CreateDirectory(_folder);
+            return new Uri(Path.GetFullPath(_folderPath)).AbsolutePath;
         }
 
-        public bool TryGet(TKey key, out TEntity view)
+       
+        readonly HashSet<Tuple<Type, Type>> _initialized = new HashSet<Tuple<Type, Type>>();
+
+
+        public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
         {
-            view = default(TEntity);
-            try
+            var container = new FileAtomicReaderWriter<TKey, TEntity>(_folderPath, _strategy);
+            if (_initialized.Add(Tuple.Create(typeof(TKey),typeof(TEntity))))
             {
-                var name = GetName(key);
+                container.InitIfNeeded();
+            }
+            return container;
+        }
 
-                if (!File.Exists(name))
-                    return false;
+        public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
+        {
+            return new FileAtomicReaderWriter<TKey, TEntity>(_folderPath, _strategy);
+        }
 
-                using (var stream = File.Open(name, FileMode.Open, FileAccess.Read, FileShare.Read))
+        public IAtomicStorageStrategy Strategy
+        {
+            get { return _strategy; }
+        }
+
+
+        public IEnumerable<AtomicRecord> EnumerateContents()
+        {
+            var dir = new DirectoryInfo(_folderPath);
+            if (dir.Exists)
+            {
+                var fullFolder = dir.FullName;
+                foreach (var info in dir.EnumerateFiles("*", SearchOption.AllDirectories))
                 {
-                    view = _strategy.Deserialize<TEntity>(stream);
-                    return true;
+                    var fullName = info.FullName;
+                    var path = fullName.Remove(0, fullFolder.Length + 1).Replace(Path.DirectorySeparatorChar,'/');
+                    yield return new AtomicRecord(path, () => File.ReadAllBytes(fullName));
                 }
             }
-            catch (FileNotFoundException)
-            {
-                // if file happened to be deleted between the moment of check and actual read.
-                return false;
-            }
-            catch (DirectoryNotFoundException)
-            {
-                return false;
-            }
         }
 
-        string GetName(TKey key)
+        public void WriteContents(IEnumerable<AtomicRecord> records)
         {
-            return Path.Combine(_folder, _strategy.GetNameForEntity(typeof(TEntity),key));
-        }
-
-        public TEntity AddOrUpdate(TKey key, Func<TEntity> addFactory, Func<TEntity, TEntity> update,
-            AddOrUpdateHint hint)
-        {
-            var name = GetName(key);
-
-            try
+            foreach (var pair in records)
             {
-                // This is fast and allows to have git-style subfolders in atomic strategy
-                // to avoid NTFS performance degradation (when there are more than 
-                // 10000 files per folder). Kudos to Gabriel Schenker for pointing this out
-                var subfolder = Path.GetDirectoryName(name);
-                if (subfolder != null && !Directory.Exists(subfolder))
-                    Directory.CreateDirectory(subfolder);
- 
-
-                // we are locking this file.
-                using (var file = File.Open(name, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
+                var combine = Path.Combine(_folderPath, pair.Path);
+                var path = Path.GetDirectoryName(combine) ?? "";
+                if (!Directory.Exists(path))
                 {
-                    TEntity result;
-                    if (file.Length == 0)
-                    {
-                        result = addFactory();
-                    }
-                    else
-                    {
-                        using (var mem = new MemoryStream())
-                        {
-                            file.CopyTo(mem);
-                            mem.Seek(0, SeekOrigin.Begin);
-                            var entity = _strategy.Deserialize<TEntity>(mem);
-                            result = update(entity);
-                        }
-                    }
-
-                    // some serializers have nasty habbit of closing the
-                    // underling stream
-                    using (var mem = new MemoryStream())
-                    {
-                        _strategy.Serialize(result, mem);
-                        var data = mem.ToArray();
-                        file.Seek(0, SeekOrigin.Begin);
-                        file.Write(data, 0, data.Length);
-                        // truncate this file
-                        file.SetLength(data.Length);
-                    }
-
-                    return result;
+                    Directory.CreateDirectory(path);
                 }
-            }
-            catch (DirectoryNotFoundException)
-            {
-                var s = string.Format(
-                    "Container '{0}' does not exist.",
-                    _folder);
-                throw new InvalidOperationException(s);
+                File.WriteAllBytes(combine, pair.Read());
             }
         }
 
-        public bool TryDelete(TKey key)
+        public void Reset()
         {
-            var name = GetName(key);
-            if (File.Exists(name))
-            {
-                File.Delete(name);
-                return true;
-            }
-            return false;
+            if (Directory.Exists(_folderPath))
+                Directory.Delete(_folderPath, true);
+            Directory.CreateDirectory(_folderPath);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Lokad.Cqrs
     {
         public static NuclearStorage CreateNuclear(this FileStorageConfig config, IAtomicStorageStrategy strategy)
         {
-            var factory = new FileAtomicStorageFactory(config.FullPath, strategy);
+            var factory = new FileAtomicContainer(config.FullPath, strategy);
             return new NuclearStorage(factory);
         }
 

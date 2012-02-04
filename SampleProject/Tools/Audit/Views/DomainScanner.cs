@@ -17,17 +17,17 @@ namespace Audit.Views
 {
     public static class DomainScanner
     {
-        sealed class AtomicDetector : IAtomicStorageFactory
+        sealed class AtomicDetector : IAtomicContainer
         {
             public readonly List<Tuple<Type, Type>> List = new List<Tuple<Type, Type>>();
 
-            public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>(string optionalSubfolder)
+            public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
             {
                 List.Add(Tuple.Create(typeof(TKey), typeof(TEntity)));
                 return null;
             }
 
-            public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>(string optionalSubfolder)
+            public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
             {
                 throw new NotImplementedException();
             }

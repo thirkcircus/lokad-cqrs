@@ -50,7 +50,7 @@ namespace Lokad.Cqrs
             IAtomicStorageStrategy strategy, string folder)
         {
             var dir = storageConfig.CreateBlobClient().GetBlobDirectoryReference(folder);
-            var factory = new AzureAtomicStorageFactory(strategy, dir);
+            var factory = new AzureAtomicContainer(strategy, dir);
             return new NuclearStorage(factory);
         }
 

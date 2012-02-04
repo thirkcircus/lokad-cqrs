@@ -18,7 +18,7 @@ namespace Lokad.Cqrs.AtomicStorage
     /// </summary>
     public sealed class NuclearStorage : HideObjectMembersFromIntelliSense
     {
-        public readonly IAtomicStorageFactory Factory;
+        public readonly IAtomicContainer Factory;
 
         public void Reset()
         {
@@ -37,7 +37,7 @@ namespace Lokad.Cqrs.AtomicStorage
 
 
 
-        public NuclearStorage(IAtomicStorageFactory factory)
+        public NuclearStorage(IAtomicContainer factory)
         {
             Factory = factory;
         }
