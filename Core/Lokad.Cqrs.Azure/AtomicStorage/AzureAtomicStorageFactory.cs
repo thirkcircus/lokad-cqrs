@@ -15,9 +15,11 @@ namespace Lokad.Cqrs.AtomicStorage
 {
     public sealed class AzureAtomicStorageFactory : IAtomicStorageFactory
     {
-        public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
+        public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>(string optionalSubfolder = null)
         {
-            var writer = new AzureAtomicWriter<TKey, TEntity>(_directory, _strategy);
+            var realDir = string.IsNullOrEmpty(optionalSubfolder)
+                ? _directory : _directory.GetSubdirectory(optionalSubfolder);
+            var writer = new AzureAtomicWriter<TKey, TEntity>(realDir, _strategy);
 
             var value = Tuple.Create(typeof(TKey), typeof(TEntity));
             if (_initialized.Add(value))
@@ -33,9 +35,14 @@ namespace Lokad.Cqrs.AtomicStorage
             return _directory.Uri.AbsoluteUri;
         }
 
-        public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
+        public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>(string optionalSubfolder = null)
         {
-            return new AzureAtomicReader<TKey, TEntity>(_directory, _strategy);
+            var dir = _directory;
+            if (!string.IsNullOrEmpty(optionalSubfolder))
+            {
+                dir = _directory.GetSubdirectory(optionalSubfolder);
+            }
+            return new AzureAtomicReader<TKey, TEntity>(dir, _strategy);
         }
 
         public IAtomicStorageStrategy Strategy

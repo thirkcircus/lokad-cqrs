@@ -21,13 +21,13 @@ namespace Audit.Views
         {
             public readonly List<Tuple<Type, Type>> List = new List<Tuple<Type, Type>>();
 
-            public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
+            public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>(string optionalSubfolder)
             {
                 List.Add(Tuple.Create(typeof(TKey), typeof(TEntity)));
                 return null;
             }
 
-            public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
+            public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>(string optionalSubfolder)
             {
                 throw new NotImplementedException();
             }

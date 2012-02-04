@@ -5,8 +5,8 @@ namespace Lokad.Cqrs.AtomicStorage
 {
     public interface IAtomicStorageFactory 
     {
-        IAtomicWriter<TKey,TEntity> GetEntityWriter<TKey,TEntity>();
-        IAtomicReader<TKey,TEntity> GetEntityReader<TKey,TEntity>();
+        IAtomicWriter<TKey,TEntity> GetEntityWriter<TKey,TEntity>(string optionalSubfolder = null);
+        IAtomicReader<TKey,TEntity> GetEntityReader<TKey,TEntity>(string optionalSubfolder = null);
         IAtomicStorageStrategy Strategy { get; }
         IEnumerable<AtomicRecord> EnumerateContents();
         void WriteContents(IEnumerable<AtomicRecord> records);

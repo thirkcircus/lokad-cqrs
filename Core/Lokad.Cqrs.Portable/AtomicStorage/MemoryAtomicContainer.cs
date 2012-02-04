@@ -16,11 +16,16 @@ namespace Lokad.Cqrs.AtomicStorage
             return "memory://" + _store.GetHashCode() + "/" + _folder;
         }
 
-        public MemoryAtomicContainer(ConcurrentDictionary<string, byte[]> store, IAtomicStorageStrategy strategy)
+        public MemoryAtomicContainer(ConcurrentDictionary<string, byte[]> store, IAtomicStorageStrategy strategy, string optionalSubfolder)
         {
             _store = store;
             _strategy = strategy;
-            _folder = _strategy.GetFolderForEntity(typeof(TEntity),typeof(TKey));
+
+            _folder =  _strategy.GetFolderForEntity(typeof(TEntity),typeof(TKey));
+            if (!string.IsNullOrEmpty(optionalSubfolder))
+            {
+                _folder = optionalSubfolder + '/' + _folder;
+            }
         }
 
         string GetName(TKey key)

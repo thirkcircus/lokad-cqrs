@@ -22,9 +22,9 @@ namespace Lokad.Cqrs.AtomicStorage
             _strategy = strategy;
         }
 
-        public IAtomicWriter<TKey,TEntity> GetEntityWriter<TKey,TEntity>()
+        public IAtomicWriter<TKey,TEntity> GetEntityWriter<TKey,TEntity>(string optionalSubfolder = null)
         {
-            return new MemoryAtomicContainer<TKey, TEntity>(_store,_strategy);
+            return new MemoryAtomicContainer<TKey, TEntity>(_store,_strategy, optionalSubfolder);
         }
 
 
@@ -41,9 +41,9 @@ namespace Lokad.Cqrs.AtomicStorage
         }
 
 
-        public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
+        public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>(string optionalSubfolder = null)
         {
-            return new MemoryAtomicContainer<TKey, TEntity>(_store,_strategy);
+            return new MemoryAtomicContainer<TKey, TEntity>(_store,_strategy, optionalSubfolder);
         }
 
         public IAtomicStorageStrategy Strategy

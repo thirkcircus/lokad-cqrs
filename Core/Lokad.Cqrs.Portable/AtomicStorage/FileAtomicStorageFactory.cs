@@ -26,9 +26,16 @@ namespace Lokad.Cqrs.AtomicStorage
         readonly HashSet<Tuple<Type, Type>> _initialized = new HashSet<Tuple<Type, Type>>();
 
 
-        public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
+        public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>(string optionalSubfolder = null)
         {
-            var container = new FileAtomicContainer<TKey, TEntity>(_folderPath, _strategy);
+            var folder = _folderPath;
+            if (!string.IsNullOrEmpty(optionalSubfolder))
+            {
+                folder = Path.Combine(optionalSubfolder, folder);
+            }
+
+
+            var container = new FileAtomicContainer<TKey, TEntity>(folder, _strategy);
             if (_initialized.Add(Tuple.Create(typeof(TKey),typeof(TEntity))))
             {
                 container.InitIfNeeded();
@@ -36,9 +43,14 @@ namespace Lokad.Cqrs.AtomicStorage
             return container;
         }
 
-        public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
+        public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>(string optionalSubfolder = null)
         {
-            return new FileAtomicContainer<TKey, TEntity>(_folderPath, _strategy);
+            var folder = _folderPath;
+            if (!string.IsNullOrEmpty(optionalSubfolder))
+            {
+                folder = Path.Combine(optionalSubfolder, folder);
+            }
+            return new FileAtomicContainer<TKey, TEntity>(folder, _strategy);
         }
 
         public IAtomicStorageStrategy Strategy
