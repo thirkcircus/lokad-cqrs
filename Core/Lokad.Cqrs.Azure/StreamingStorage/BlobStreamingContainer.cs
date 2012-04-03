@@ -79,7 +79,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
                 switch (e.ErrorCode)
                 {
                     case StorageErrorCode.ContainerNotFound:
-                        throw StreamingErrors.ContainerNotFound(this, e);
+                        throw StreamErrors.ContainerNotFound(this, e);
                     default:
                         throw;
                 }

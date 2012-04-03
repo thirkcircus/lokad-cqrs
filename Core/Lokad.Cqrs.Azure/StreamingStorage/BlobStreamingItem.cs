@@ -7,6 +7,7 @@
 
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Net;
 using Lokad.Cqrs.StreamingStorage;
 using Microsoft.WindowsAzure.StorageClient;
@@ -37,36 +38,46 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
         /// <param name="writer">The writer.</param>
         /// <param name="condition">The condition.</param>
         /// <param name="writeOptions">The write options.</param>
-        public long Write(Action<Stream> writer, StreamingCondition condition, StreamingWriteOptions writeOptions)
+        public long Write(Action<Stream> writer)
         {
             try
             {
-                var mapped = Map(condition);
-
-                return BlobStorageUtil.Write(mapped, _blob, writer, writeOptions);
-            }
-            catch (StorageServerException ex)
-            {
-                switch (ex.ErrorCode)
+                long position;
+                using (var stream = _blob.OpenWrite())
                 {
-                    case StorageErrorCode.ServiceIntegrityCheckFailed:
-                        throw StreamingErrors.IntegrityFailure(this, ex);
-                    default:
-                        throw;
+                    using (var compress = new GZipStream(stream, CompressionMode.Compress, true))
+                    {
+                        writer(compress);
+                    }
+                    position = stream.Position;
                 }
+                return position;
             }
             catch (StorageClientException ex)
             {
                 switch (ex.ErrorCode)
                 {
-                    case StorageErrorCode.ConditionFailed:
-                        throw StreamingErrors.ConditionFailed(this, condition, ex);
+
                     case StorageErrorCode.ContainerNotFound:
-                        throw StreamingErrors.ContainerNotFound(this, ex);
+                        throw StreamErrors.ContainerNotFound(this, ex);
                     default:
                         throw;
                 }
             }
+        }
+
+        public bool Exists()
+        {
+            try
+            {
+                _blob.FetchAttributes();
+                return true;
+            }
+            catch(StorageClientException ex)
+            {
+                return false;
+            }
+            
         }
 
         /// <summary>
@@ -77,40 +88,30 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
         /// <exception cref="StreamingItemNotFoundException">if the item does not exist.</exception>
         /// <exception cref="StreamContainerNotFoundException">if the container for the item does not exist</exception>
         /// <exception cref="StreamingItemIntegrityException">when integrity check fails</exception>
-        public void ReadInto(ReaderDelegate reader, StreamingCondition condition)
+        public void ReadInto(Action<Stream> reader)
         {
             try
             {
-                var mapped = Map(condition);
-                BlobStorageUtil.Read(mapped, _blob, reader);
+                using (var stream = _blob.OpenRead())
+                {
+                    using (var decompress = new GZipStream(stream, CompressionMode.Decompress, true))
+                    {
+                        reader(decompress);
+                    }
+
+                }
             }
-            catch (StreamingItemIntegrityException e)
-            {
-                throw StreamingErrors.IntegrityFailure(this, e);
-            }
+            
             catch (StorageClientException e)
             {
                 switch (e.ErrorCode)
                 {
                     case StorageErrorCode.ContainerNotFound:
-                        throw StreamingErrors.ContainerNotFound(this, e);
+                        throw StreamErrors.ContainerNotFound(this, e);
                     case StorageErrorCode.ResourceNotFound:
                     case StorageErrorCode.BlobNotFound:
-                        throw StreamingErrors.ItemNotFound(this, e);
-                    case StorageErrorCode.ConditionFailed:
-                        throw StreamingErrors.ConditionFailed(this, condition, e);
-                    case StorageErrorCode.ServiceIntegrityCheckFailed:
-                        throw StreamingErrors.IntegrityFailure(this, e);
-                    case StorageErrorCode.BadRequest:
-                        switch (e.StatusCode)
-                        {
-                                // for some reason Azure Storage happens to get here as well
-                            case HttpStatusCode.PreconditionFailed:
-                            case HttpStatusCode.NotModified:
-                                throw StreamingErrors.ConditionFailed(this, condition, e);
-                            default:
-                                throw;
-                        }
+                        throw StreamErrors.ItemNotFound(this, e);
+
                     default:
                         throw;
                 }
@@ -121,19 +122,18 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
         /// Removes the item, ensuring that the specified condition is met.
         /// </summary>
         /// <param name="condition">The condition.</param>
-        public void Delete(StreamingCondition condition)
+        public void Delete()
         {
             try
             {
-                var options = Map(condition);
-                _blob.Delete(options);
+                _blob.Delete();
             }
             catch (StorageClientException ex)
             {
                 switch (ex.ErrorCode)
                 {
                     case StorageErrorCode.ContainerNotFound:
-                        throw StreamingErrors.ContainerNotFound(this, ex);
+                        throw StreamErrors.ContainerNotFound(this, ex);
                     case StorageErrorCode.BlobNotFound:
                     case StorageErrorCode.ConditionFailed:
                         return;
@@ -143,71 +143,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
             }
         }
 
-        public Optional<StreamingItemInfo> GetInfo(StreamingCondition condition)
-        {
-            try
-            {
-                _blob.FetchAttributes(Map(condition));
-                return BlobStorageUtil.MapFetchedAttrbitues(_blob);
-            }
-            catch (StorageClientException e)
-            {
-                switch (e.ErrorCode)
-                {
-                    case StorageErrorCode.ContainerNotFound:
-                    case StorageErrorCode.ResourceNotFound:
-                    case StorageErrorCode.BlobNotFound:
-                    case StorageErrorCode.ConditionFailed:
-                        return Optional<StreamingItemInfo>.Empty;
-                    case StorageErrorCode.BadRequest:
-                        switch (e.StatusCode)
-                        {
-                            case HttpStatusCode.PreconditionFailed:
-                                return Optional<StreamingItemInfo>.Empty;
-                            default:
-                                throw;
-                        }
-                }
-                throw;
-            }
-        }
 
-        public void CopyFrom(IStreamItem sourceItem,
-            StreamingCondition condition,
-            StreamingCondition copySourceCondition,
-            StreamingWriteOptions writeOptions)
-        {
-            var item = sourceItem as BlobStreamingItem;
-
-            if (item != null)
-            {
-                try
-                {
-                    _blob.CopyFromBlob(item._blob, Map(condition, copySourceCondition));
-                }
-                catch (StorageClientException e)
-                {
-                    switch (e.ErrorCode)
-                    {
-                        case StorageErrorCode.BlobNotFound:
-                            throw StreamingErrors.ItemNotFound(this, e);
-                        default:
-                            throw;
-                    }
-                }
-            }
-            else
-            {
-                // based on the default write block size of BLOB
-                const int bufferSize = 0x400000;
-                Write(
-                    targetStream =>
-                        sourceItem.ReadInto(
-                        (props, stream) => stream.CopyTo(targetStream, bufferSize),
-                            copySourceCondition), condition,
-                    writeOptions);
-            }
-        }
 
         /// <summary>
         /// Gets the full path of the current item.
@@ -226,38 +162,6 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
         {
             get { return _blob; }
         }
-
-        static BlobRequestOptions Map(StreamingCondition condition,
-            StreamingCondition copySourceAccessCondition = default(StreamingCondition))
-        {
-            if ((condition.Type == StreamingConditionType.None) &&
-                (copySourceAccessCondition.Type == StreamingConditionType.None))
-                return null;
-
-            return new BlobRequestOptions
-                {
-                    AccessCondition = MapCondition(condition),
-                    CopySourceAccessCondition = MapCondition(copySourceAccessCondition)
-                };
-        }
-
-        static AccessCondition MapCondition(StreamingCondition condition)
-        {
-            switch (condition.Type)
-            {
-                case StreamingConditionType.None:
-                    return AccessCondition.None;
-                case StreamingConditionType.IfMatch:
-                    var x = ExposeException(condition.ETag, "'ETag' should be present");
-                    return AccessCondition.IfMatch(x);
-                case StreamingConditionType.IfNoneMatch:
-                    var etag = ExposeException(condition.ETag, "'ETag' should be present");
-                    return AccessCondition.IfNoneMatch(etag);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
-        }
-
 
  
         static T ExposeException<T>(Optional<T> optional, string message)

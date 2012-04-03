@@ -90,7 +90,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
             return version;
         }
 
-        public bool TryAppend(byte[] buffer, TapeAppendCondition appendCondition = new TapeAppendCondition())
+        public long TryAppend(byte[] buffer, TapeAppendCondition appendCondition = new TapeAppendCondition())
         {
             if (buffer == null)
                 throw new ArgumentNullException("buffer");
@@ -145,7 +145,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
             }
 
             if (!appendCondition.Satisfy(version))
-                return false;
+                return 0;
 
             if (version > long.MaxValue - 1)
                 throw new IndexOutOfRangeException("Version is more than long.MaxValue.");
@@ -189,7 +189,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
                 blockNames.Add(blockId);
                 blob.PutBlockList(blockNames);
 
-                return true;
+                return version+1;
             }
         }
 

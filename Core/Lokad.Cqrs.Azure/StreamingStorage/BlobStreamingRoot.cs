@@ -13,7 +13,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
     /// <summary>
     /// Windows Azure implementation of storage 
     /// </summary>
-    public sealed class BlobStreamingRoot : IStreamingRoot
+    public sealed class BlobStreamingRoot : IStreamRoot
     {
         readonly CloudBlobClient _client;
 

@@ -14,7 +14,7 @@ namespace Lokad.Cqrs.AtomicStorage
 {
     public sealed class AzureAtomicContainer : IDocumentStore
     {
-        public IDocumentWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
+        public IDocumentWriter<TKey, TEntity> GetWriter<TKey, TEntity>()
         {
             var writer = new AzureAtomicWriter<TKey, TEntity>(_directory, _strategy);
 
@@ -32,7 +32,7 @@ namespace Lokad.Cqrs.AtomicStorage
             return _directory.Uri.AbsoluteUri;
         }
 
-        public IDocumentReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
+        public IDocumentReader<TKey, TEntity> GetReader<TKey, TEntity>()
         {
             return new AzureAtomicReader<TKey, TEntity>(_directory, _strategy);
         }
@@ -42,34 +42,50 @@ namespace Lokad.Cqrs.AtomicStorage
             get { return _strategy; }
         }
 
-        public IEnumerable<AtomicRecord> EnumerateContents()
-        {
-            var l = _directory.ListBlobs(new BlobRequestOptions {UseFlatBlobListing = true});
-            foreach (var item in l)
-            {
-                var blob = _directory.GetBlobReference(item.Uri.ToString());
-                var rel = _directory.Uri.MakeRelativeUri(item.Uri).ToString();
-                yield return new AtomicRecord(rel.Replace('\\', '/'), blob.DownloadByteArray);
-            }
-        }
+        
 
-        public void WriteContents(IEnumerable<AtomicRecord> records)
+        public void Reset(string bucket)
         {
-            foreach (var atomicRecord in records)
-            {
-                _directory.GetBlobReference(atomicRecord.Path).UploadByteArray(atomicRecord.Read());
-            }
-        }
-
-        public void Reset()
-        {
-            var blobs = _directory.ListBlobs(new BlobRequestOptions {UseFlatBlobListing = true});
+            var blobs =  _directory.GetSubdirectory(bucket).ListBlobs(new BlobRequestOptions { UseFlatBlobListing = true });
             var c = _directory.ServiceClient;
             foreach (var listBlobItem in blobs.AsParallel())
             {
                 c.GetBlobReference(listBlobItem.Uri.ToString()).DeleteIfExists();
             }
         }
+
+        public void ResetAll()
+        {
+            var blobs = _directory.ListBlobs(new BlobRequestOptions { UseFlatBlobListing = true });
+            var c = _directory.ServiceClient;
+            foreach (var listBlobItem in blobs.AsParallel())
+            {
+                c.GetBlobReference(listBlobItem.Uri.ToString()).DeleteIfExists();
+            }
+        }
+
+        public IEnumerable<DocumentRecord> EnumerateContents(string bucket)
+        {
+            var subdir = _directory.GetSubdirectory(bucket);
+            var l = subdir.ListBlobs(new BlobRequestOptions {UseFlatBlobListing = true});
+            foreach (var item in l)
+            {
+                var blob = subdir.GetBlobReference(item.Uri.ToString());
+                var rel = subdir.Uri.MakeRelativeUri(item.Uri).ToString();
+                yield return new DocumentRecord(rel.Replace('\\', '/'), blob.DownloadByteArray);
+            }
+        }
+
+        public void WriteContents(string bucket, IEnumerable<DocumentRecord> records)
+        {
+            var cloudBlobDirectory = _directory.GetSubdirectory(bucket);
+            foreach (var atomicRecord in records)
+            {
+                cloudBlobDirectory.GetBlobReference(atomicRecord.Key).UploadByteArray(atomicRecord.Read());
+            }
+        }
+
+        
 
 
         readonly IDocumentStrategy _strategy;

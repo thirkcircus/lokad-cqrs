@@ -25,13 +25,13 @@ namespace Lokad.Cqrs.AtomicStorage
         public AzureAtomicReader(CloudBlobDirectory storage, IDocumentStrategy strategy)
         {
             _strategy = strategy;
-            var folder = strategy.GetFolderForEntity(typeof(TEntity), typeof(TKey));
+            var folder = strategy.GetEntityBucket<TEntity>();
             _container = storage.GetSubdirectory(folder);
         }
 
         CloudBlob GetBlobReference(TKey key)
         {
-            return _container.GetBlobReference(_strategy.GetNameForEntity(typeof(TEntity), key));
+            return _container.GetBlobReference(_strategy.GetEntityLocation(typeof(TEntity), key));
         }
 
         public bool TryGet(TKey key, out TEntity entity)

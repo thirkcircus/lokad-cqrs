@@ -106,7 +106,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
             }
         }
 
-        public bool TryAppend(byte[] buffer, TapeAppendCondition condition)
+        public long TryAppend(byte[] buffer, TapeAppendCondition condition)
         {
             if (buffer == null)
                 throw new ArgumentNullException("buffer");
@@ -243,19 +243,18 @@ namespace Lokad.Cqrs.Feature.TapeStorage
             }
         }
 
-        static bool TryAppendInternal(Writers writers, byte[] buffer, TapeAppendCondition condition)
+        static long TryAppendInternal(Writers writers, byte[] buffer, TapeAppendCondition condition)
         {
             var version = writers.IndexWriter.BaseStream.Position / sizeof(long);
 
             if (!condition.Satisfy(version))
-                return false;
+                return 0;
 
             if (version > long.MaxValue - 1)
                 throw new IndexOutOfRangeException("Version is more than long.MaxValue.");
 
             Append(writers, new[] { buffer }, version + 1);
-
-            return true;
+            return version + 1;
         }
 
         static void Append(Writers writers, ICollection<byte[]> buffers, long versionToStartFrom)

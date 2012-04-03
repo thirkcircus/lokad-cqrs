@@ -31,17 +31,6 @@ namespace Lokad.Cqrs
     /// </summary>
     public static class AzureStorage
     {
-        /// <summary>
-        /// Creates the simplified nuclear storage wrapper around Atomic storage, using the default storage
-        /// strategy.
-        /// </summary>
-        /// <param name="storageConfig">The storage config.</param>
-        /// <returns>new instance of the nuclear storage</returns>
-        public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig, string folder)
-        {
-            return CreateNuclear(storageConfig, b => { }, folder);
-        }
-
         /// <summary> Creates the simplified nuclear storage wrapper around Atomic storage. </summary>
         /// <param name="storageConfig">The storage config.</param>
         /// <param name="strategy">The atomic storage strategy.</param>
@@ -54,18 +43,6 @@ namespace Lokad.Cqrs
             return new NuclearStorage(factory);
         }
 
-        /// <summary> Creates the simplified nuclear storage wrapper around Atomic storage. </summary>
-        /// <param name="storageConfig">The storage config.</param>
-        /// <param name="configStrategy">The config strategy.</param>
-        /// <returns></returns>
-        public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig,
-            Action<DefaultAtomicStorageStrategyBuilder> configStrategy, string folder)
-        {
-            var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
-            configStrategy(strategyBuilder);
-            var strategy = strategyBuilder.Build();
-            return CreateNuclear(storageConfig, strategy, folder);
-        }
 
         /// <summary> Creates the storage access configuration. </summary>
         /// <param name="cloudStorageAccount">The cloud storage account.</param>
@@ -124,7 +101,7 @@ namespace Lokad.Cqrs
         /// </summary>
         /// <param name="config">The config.</param>
         /// <returns></returns>
-        public static IStreamingRoot CreateStreaming(this IAzureStorageConfig config)
+        public static IStreamRoot CreateStreaming(this IAzureStorageConfig config)
         {
             return new BlobStreamingRoot(config.CreateBlobClient());
         }

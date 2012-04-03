@@ -27,7 +27,7 @@ namespace Lokad.Cqrs.AtomicStorage
         public AzureAtomicWriter(CloudBlobDirectory directory, IDocumentStrategy strategy)
         {
             _strategy = strategy;
-            var folderForEntity = strategy.GetFolderForEntity(typeof(TEntity), typeof(TKey));
+            var folderForEntity = strategy.GetEntityBucket<TEntity>();
             _container = directory.GetSubdirectory(folderForEntity);
         }
 
@@ -100,7 +100,7 @@ namespace Lokad.Cqrs.AtomicStorage
 
         CloudBlob GetBlobReference(TKey key)
         {
-            return _container.GetBlobReference(_strategy.GetNameForEntity(typeof(TEntity), key));
+            return _container.GetBlobReference(_strategy.GetEntityLocation(typeof(TEntity), key));
         }
     }
 }
