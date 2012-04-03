@@ -16,35 +16,28 @@ namespace Sample.Wires
 {
     public static class Topology
     {
-        public const string TimerQueue = "sample-queue-timer";
         public const string EventsQueue = "sample-queue-events";
         public const string EntityQueue = "sample-queue-entity";
         public const string DomainLogName = "domain.tmd";
         public const string ServiceQueue = "sample-queue-service";
         public const string RouterQueue = "sample-queue-router";
 
-        public const string FutureMessagesContainer = "sample-future";
         public const string TapesContainer = "sample-tapes";
 
         public static Action<ImmutableEnvelope> Route(Func<string, IQueueWriter> factory, IEnvelopeStreamer serializer,
             ITapeContainer tapes)
         {
             var events = factory(EventsQueue);
-            var timerQueue = factory(TimerQueue);
             var entityQueue = factory(EntityQueue);
             var services = factory(ServiceQueue);
             var log = tapes.GetOrCreateStream(DomainLogName);
             return envelope =>
                 {
                     var data = serializer.SaveEnvelopeData(envelope);
-                    if (!log.TryAppend(data))
+                    if (log.TryAppend(data)==0)
                         throw new InvalidOperationException("Failed to record domain log");
 
-                    if (envelope.DeliverOnUtc > Current.UtcNow)
-                    {
-                        timerQueue.PutMessage(data);
-                        return;
-                    }
+                    
                     if (envelope.Items.All(i => i.Content is ICommand<IIdentity>))
                     {
                         entityQueue.PutMessage(data);

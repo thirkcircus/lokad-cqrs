@@ -2,11 +2,9 @@ using System;
 using Lokad.Cqrs;
 using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.Build;
-using Lokad.Cqrs.Envelope;
 using Lokad.Cqrs.Partition;
 using Lokad.Cqrs.StreamingStorage;
 using Lokad.Cqrs.TapeStorage;
-using Lokad.Cqrs.TimerService;
 using Sample.Processes;
 using Sample.Projections;
 
@@ -14,7 +12,7 @@ namespace Sample.Wires
 {
     public sealed class SetupClassThatReplacesIoCContainerFramework
     {
-        public IStreamingRoot Streaming;
+        public IStreamRoot Streaming;
         public ITapeContainer Tapes;
         public Func<string, IQueueWriter> CreateQueueWriter;
         public Func<string, IPartitionInbox> CreateInbox;
@@ -57,7 +55,7 @@ namespace Sample.Wires
 
             // UI projections
             var projectionStore = CreateNuclear(new ProjectionStrategy());
-            foreach (var projection in BootstrapProjections.BuildProjectionsWithWhenConvention(projectionStore.Factory))
+            foreach (var projection in BootstrapProjections.BuildProjectionsWithWhenConvention(projectionStore.Container))
             {
                 functions.WireToWhen(projection);
             }
@@ -69,11 +67,6 @@ namespace Sample.Wires
 
             builder.Handle(CreateInbox(Topology.EventsQueue), aem => CallHandlers(functions, aem));
 
-
-            var timer = new StreamingTimerService(CreateQueueWriter(Topology.RouterQueue),
-                streaming.GetContainer(Topology.FutureMessagesContainer), streamer);
-            builder.Handle(CreateInbox(Topology.TimerQueue), timer.PutMessage);
-            builder.AddProcess(timer);
             return new AssembledComponents
                 {
                     Builder = builder,

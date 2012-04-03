@@ -152,7 +152,7 @@ namespace Sample.Wires
                 Thread.CurrentThread.ManagedThreadId,
                 then.Version);
 
-            if (!stream.TryAppend(data, TapeAppendCondition.VersionIs(then.Version)))
+            if (0==stream.TryAppend(data, TapeAppendCondition.VersionIs(then.Version)))
             {
                 throw new InvalidOperationException("Failed to update the stream - it has been changed concurrently");
             }

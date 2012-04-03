@@ -8,23 +8,25 @@ namespace Sample.Wires
 {
     public sealed class ProjectionStrategy : IDocumentStrategy
     {
-        public string GetFolderForEntity(Type entityType, Type keyType)
+        public string GetEntityBucket<T>()
         {
-            if (keyType == typeof(unit))
+            var type = typeof(T);
+            if (type == typeof(unit))
             {
                 return "sample-ui";
             }
-            return "sample-ui/" + entityType.Name.ToLowerInvariant();
+            return "sample-ui/" + type.Name.ToLowerInvariant();
         }
 
-        public string GetNameForEntity(Type entity, object key)
+        public string GetEntityLocation(Type entity, object key)
         {
             if (key is unit)
                 return entity.Name.ToLowerInvariant() + ".txt";
             if (key is IIdentity)
-                return IdentityConvert.ToStream((IIdentity) key) + ".txt";
+                return IdentityConvert.ToStream((IIdentity)key) + ".txt";
             return key.ToString().ToLowerInvariant() + ".txt";
         }
+
 
         public void Serialize<TEntity>(TEntity entity, Stream stream)
         {
@@ -39,16 +41,17 @@ namespace Sample.Wires
 
     public sealed class DocumentStrategy : IDocumentStrategy
     {
-        public string GetFolderForEntity(Type entityType, Type keyType)
+        public string GetEntityBucket<T>()
         {
-            if (keyType == typeof(unit))
+            var type = typeof(T);
+            if (type == typeof(unit))
             {
                 return "sample-data";
             }
-            return "sample-data/" + entityType.Name.ToLowerInvariant();
+            return "sample-data/" + type.Name.ToLowerInvariant();
         }
 
-        public string GetNameForEntity(Type entity, object key)
+        public string GetEntityLocation(Type entity, object key)
         {
             if (key is unit)
                 return entity.Name.ToLowerInvariant() + ".txt";
