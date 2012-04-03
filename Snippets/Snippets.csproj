@@ -48,6 +48,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="HttpEndpoint\scripts\graph.js" />
+    <Compile Include="HttpEndpoint\JsonDocuments.cs" />
     <Compile Include="HttpEndpoint\Util\HeatMap.cs" />
     <Compile Include="HttpEndpoint\HeatMapGenerateTask.cs" />
     <Compile Include="HttpEndpoint\HeatMapRequestHandler.cs" />
@@ -61,13 +62,13 @@
     <Compile Include="HttpEndpoint\View\HeatMapView.cs" />
     <Compile Include="HttpEndpoint\View\PointsView.cs" />
     <Compile Include="MailQuarantine\SmtpHandlerCore.cs" />
+    <Compile Include="PubSubRouter\JsonDocuments.cs" />
     <Compile Include="PubSubRouter\PubSubRouter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PubSubRouter\_Usage.cs" />
     <Compile Include="PubSubRouter\RouteTable.cs" />
     <Compile Include="MailQuarantine\MailQuarantine.cs" />
     <Compile Include="HttpEndpoint\_Usage.cs" />
-    <Compile Include="SimpleTimerService\SimpleTimerService_Usage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="HttpEndpoint\ReadMe.markdown" />

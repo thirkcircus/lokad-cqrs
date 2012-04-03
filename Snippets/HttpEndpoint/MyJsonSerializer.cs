@@ -26,5 +26,7 @@ namespace Snippets.HttpEndpoint
                 stream => JsonSerializer.DeserializeFromStream(type,stream),
                 (o, stream) => JsonSerializer.SerializeToStream(o, type, stream));
         }
+
+   
     }
 }

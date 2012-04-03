@@ -27,7 +27,7 @@ namespace Snippets.MailQuarantine
         readonly IStreamContainer _container;
         readonly MemoryQuarantine _quarantine = new MemoryQuarantine();
 
-        public MailQuarantine(SmtpHandlerCore core, IStreamingRoot root)
+        public MailQuarantine(SmtpHandlerCore core, IStreamRoot root)
         {
             _core = core;
             _container = root.GetContainer("sample-errors").Create();
@@ -59,7 +59,7 @@ namespace Snippets.MailQuarantine
                 {
                     data = item.ReadText();
                 }
-                catch (StreamingItemNotFoundException) { }
+                catch (StreamItemNotFoundException) { }
 
                 var builder = new StringBuilder(data);
                 if (builder.Length == 0)

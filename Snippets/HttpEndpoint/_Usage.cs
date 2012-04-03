@@ -49,7 +49,7 @@ namespace Snippets.HttpEndpoint
             var serializer = new MyJsonSerializer(messages);
             var streamer = new EnvelopeStreamer(serializer);
             var store = new MemoryStorageConfig();
-            var atomic = store.CreateNuclear().Factory;
+            var atomic = store.CreateNuclear(new JsonDocuments()).Container;
 
             // let's configure our custom Http server to 
             // 1. serve resources
@@ -58,10 +58,10 @@ namespace Snippets.HttpEndpoint
             var environment = new HttpEnvironment { Port = 8082 };
             var builder = new CqrsEngineBuilder(streamer);
 
-            builder.AddProcess(new Listener(environment,
+            builder.AddTask(new Listener(environment,
                  new EmbeddedResourceHttpRequestHandler(typeof(MouseMoved).Assembly, "Snippets.HttpEndpoint"),
                  new MouseStatsRequestHandler(stats),
-                 new HeatMapRequestHandler(atomic.GetEntityReader<unit, HeatMapView>()),
+                 new HeatMapRequestHandler(atomic.GetReader<unit, HeatMapView>()),
                  new MouseEventsRequestHandler(store.CreateQueueWriter("inbox"), serializer, streamer)));
 
             builder.Handle(store.CreateInbox("inbox"), envelope =>
@@ -72,12 +72,12 @@ namespace Snippets.HttpEndpoint
                     }
                     else if (envelope.Items.Any(i => i.Content is MouseClick))
                     {
-                        MouseClickHandler(envelope, atomic.GetEntityWriter<unit, PointsView>());
+                        MouseClickHandler(envelope, atomic.GetWriter<unit, PointsView>());
                     }
                 });
 
 
-            builder.AddProcess(new HeatMapGenerateTask(atomic.GetEntityReader<unit, PointsView>(), atomic.GetEntityWriter<unit, HeatMapView>()));
+            builder.AddTask(new HeatMapGenerateTask(atomic.GetReader<unit, PointsView>(), atomic.GetWriter<unit, HeatMapView>()));
    
 
          

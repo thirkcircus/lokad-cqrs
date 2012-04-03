@@ -41,7 +41,7 @@ namespace Snippets.PubSubRouter
             //                            -> sub 2
             //
             var store = new MemoryStorageConfig();
-            var nuclear = store.CreateNuclear();
+            var nuclear = store.CreateNuclear(new JsonDocuments());
 
             var router = new PubSubRouter(nuclear, store.CreateWriteQueueFactory(), streamer);
             router.Init();
@@ -91,4 +91,6 @@ namespace Snippets.PubSubRouter
         [DataContract]
         public sealed class OtherHappened : IPS_SampleEvent {}
     }
+
+    
 }
