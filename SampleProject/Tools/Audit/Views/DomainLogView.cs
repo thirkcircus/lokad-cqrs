@@ -54,9 +54,6 @@ namespace Audit.Views
 
             _detailsLabel.BackColor = CommonColors.Solarized.Base2;
             _detailsLabel.ForeColor = CommonColors.Solarized.Base01;
-
-            var control = new RepopulateView(serializer, eventStore, _services) {Dock = DockStyle.Fill};
-            viewsTab.Controls.Add(control);
         }
 
         public void Log(string text, params object[] args)

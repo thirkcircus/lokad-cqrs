@@ -61,7 +61,6 @@
   <ItemGroup>
     <Compile Include="Util\NodeExtensions.cs" />
     <Compile Include="Util\DomainQueryManager.cs" />
-    <Compile Include="Views\DomainScanner.cs" />
     <Compile Include="Views\ModifyMessage.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -86,14 +85,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="Util\LocalEventStore.cs" />
     <Compile Include="Util\ShellServices.cs" />
-    <Compile Include="Views\RepopulateView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Views\RepopulateView.Designer.cs">
-      <DependentUpon>RepopulateView.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ViewMapInfo.cs" />
-    <Compile Include="Views\ViewsNode.cs" />
     <EmbeddedResource Include="Views\DomainLogView.resx">
       <DependentUpon>DomainLogView.cs</DependentUpon>
     </EmbeddedResource>
@@ -113,9 +104,6 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="Views\RepopulateView.resx">
-      <DependentUpon>RepopulateView.cs</DependentUpon>
-    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
