@@ -1,5 +1,7 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace Lokad.Cqrs.TapeStorage
@@ -77,6 +79,12 @@ namespace Lokad.Cqrs.TapeStorage
 
         public IEnumerable<TapeRecord> ReadRecords(long afterVersion, int maxCount)
         {
+            if (afterVersion < 0)
+                throw new ArgumentOutOfRangeException("afterVersion", "Must be zero or greater.");
+
+            if (maxCount <= 0)
+                throw new ArgumentOutOfRangeException("maxCount", "Must be more than zero.");
+
             IList<TapeRecord> bytes;
             if (_dictionary.TryGetValue(_name, out bytes))
             {
@@ -99,6 +107,12 @@ namespace Lokad.Cqrs.TapeStorage
 
         public long TryAppend(byte[] buffer, TapeAppendCondition appendCondition = new TapeAppendCondition())
         {
+            if (buffer == null)
+                throw new ArgumentNullException("buffer");
+
+            if (buffer.Length == 0)
+                throw new ArgumentException("Buffer must contain at least one byte.");
+
             try
             {
                 var result = _dictionary.AddOrUpdate(_name, s =>

@@ -10,30 +10,28 @@ namespace Lokad.Cqrs.Feature.TapeStorage
     {
         // ReSharper disable InconsistentNaming
 
-        readonly ConcurrentDictionary<string, List<byte[]>> _storage = new ConcurrentDictionary<string, List<byte[]>>();
-        MemoryTapeContainer _storageFactory;
+        
+        MemoryTapeContainer _storageFactory = new MemoryTapeContainer();
 
         protected override void PrepareEnvironment()
         {
+            _storageFactory = new MemoryTapeContainer();
         }
 
         protected override ITapeStream InitializeAndGetTapeStorage()
         {
-            _storageFactory = new MemoryTapeContainer();
-            
-
             const string name = "Memory";
             return _storageFactory.GetOrCreateStream(name);
         }
 
         protected override void FreeResources()
         {
-            _storageFactory = null;
+            //_storageFactory = null;
         }
 
         protected override void TearDownEnvironment()
         {
-            _storage.Clear();
+            _storageFactory = null;
         }
     }
 }

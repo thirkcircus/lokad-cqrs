@@ -38,6 +38,7 @@ namespace Lokad.Cqrs.Core.Envelope.Scenarios
             var dateTime = DateTime.UtcNow;
             var time = RoundToMs(dateTime);
             var builder = new EnvelopeBuilder("my-id");
+            builder.OverrideCreatedOnUtc(time);
             builder.AddString("Custom", "1");
 
 
