@@ -20,10 +20,10 @@ namespace Sample.Projections
     {
         public static IEnumerable<object> BuildProjectionsWithWhenConvention(IDocumentStore factory)
         {
-            yield return new AccountLoginsProjection(factory.GetEntityWriter<SecurityId, AccountLoginsView>());
-            yield return new LoginViewProjection(factory.GetEntityWriter<UserId, LoginView>());
-            yield return new LoginsIndexProjection(factory.GetEntityWriter<unit, LoginsIndexView>());
-            yield return new SecurityProjection(factory.GetEntityWriter<SecurityId, SecurityView>());
+            yield return new AccountLoginsProjection(factory.GetWriter<SecurityId, AccountLoginsView>());
+            yield return new LoginViewProjection(factory.GetWriter<UserId, LoginView>());
+            yield return new LoginsIndexProjection(factory.GetWriter<unit, LoginsIndexView>());
+            yield return new SecurityProjection(factory.GetWriter<SecurityId, SecurityView>());
         }
     }
 }
