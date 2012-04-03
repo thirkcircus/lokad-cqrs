@@ -14,7 +14,7 @@ namespace Sample.Wires
     {
         static Type[] LoadMessageContracts()
         {
-            var messages = new[] { typeof(UserCreated), typeof(SampleEntityVector) }
+            var messages = new[] { typeof(UserCreated) }
                 .SelectMany(t => t.Assembly.GetExportedTypes())
                 .Where(t => typeof(ISampleMessage).IsAssignableFrom(t))
                 .Where(t => !t.IsAbstract)

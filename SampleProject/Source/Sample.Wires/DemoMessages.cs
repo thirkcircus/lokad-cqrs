@@ -13,4 +13,15 @@ namespace Sample.Engine
             yield return (new AddSecurityIdentity(security, "Rinat's Open ID", "http://abdullin.myopenid.org"));
         } 
     }
+    public static class ExtendArrayEvil
+    {
+        public static void ForEach<T>(this IEnumerable<T> self, Action<T> action)
+        {
+            foreach (var variable in self)
+            {
+                action(variable);
+            }
+        }
+    }
+
 }

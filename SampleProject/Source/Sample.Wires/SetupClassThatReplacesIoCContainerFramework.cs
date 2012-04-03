@@ -6,7 +6,7 @@ using Lokad.Cqrs.Build;
 using Lokad.Cqrs.Partition;
 using Lokad.Cqrs.StreamingStorage;
 using Lokad.Cqrs.TapeStorage;
-
+using Sample.Engine;
 using Sample.Projections;
 
 namespace Sample.Wires
@@ -31,34 +31,31 @@ namespace Sample.Wires
 
         public AssembledComponents AssembleComponents()
         {
+            // set up all the variables
             var nuclear = CreateNuclear(new DocumentStrategy());
             var docs = nuclear.Container;
             var routerQueue = CreateQueueWriter(Topology.RouterQueue);
 
-            var command = new RedirectToCommand();
+            var commands = new RedirectToCommand();
+            var events = new RedirectToDynamicEvent();
 
             var eventStore = new TapeStreamEventStore(Tapes, Streamer, routerQueue);
-            DomainBoundedContext.ApplicationServices(docs,  eventStore).ForEach(command.WireToWhen);
-
-            
             var sender = new SimpleMessageSender(Streamer, routerQueue);
             var flow = new MessageSender(sender);
-
             var builder = new CqrsEngineBuilder(Streamer);
 
+            // route queue infrastructure together
+            builder.Handle(CreateInbox(Topology.RouterQueue), Topology.Route(CreateQueueWriter, Streamer, Tapes), "router");
+            builder.Handle(CreateInbox(Topology.EntityQueue), em => CallHandlers(commands, em));
+            builder.Handle(CreateInbox(Topology.EventsQueue), aem => CallHandlers(events, aem));
 
-            builder.Handle(CreateInbox(Topology.RouterQueue),Topology.Route(CreateQueueWriter, Streamer, Tapes), "router");
-            builder.Handle(CreateInbox(Topology.EntityQueue), em => CallHandlers(command, em));
 
-            var functions = new RedirectToDynamicEvent();
-            // documents
-            //functions.WireToWhen(new RegistrationUniquenessProjection(atomic.Factory.GetEntityWriter<unit, RegistrationUniquenessDocument>()));
+            // message wiring magic
+            DomainBoundedContext.ApplicationServices(docs, eventStore).ForEach(commands.WireToWhen);
+            DomainBoundedContext.Receptors(flow).ForEach(events.WireToWhen);
+            DomainBoundedContext.Projections(docs).ForEach(events.WireToWhen);
 
-            
-            ClientBoundedContext.Projections(docs).ForEach(functions.WireToWhen);
-            DomainBoundedContext.Receptors(flow).ForEach(functions.WireToWhen);
-
-            builder.Handle(CreateInbox(Topology.EventsQueue), aem => CallHandlers(functions, aem));
+            ClientBoundedContext.Projections(docs).ForEach(events.WireToWhen);
 
             return new AssembledComponents
                 {
@@ -84,18 +81,6 @@ namespace Sample.Wires
         {
             var content = aem.Items[0].Content;
             serviceCommands.Invoke(content);
-        }
-
-    }
-
-    public static class ExtendArrayEvil
-    {
-        public static void ForEach<T>(this IEnumerable<T> self, Action<T> action)
-        {
-            foreach (var variable in self)
-            {
-                action(variable);
-            }
         }
     }
 }
