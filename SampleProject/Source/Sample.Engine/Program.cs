@@ -19,16 +19,12 @@ namespace Sample.Engine
 
             var startupMessages = new List<ISampleMessage>();
             var proc = Process.GetCurrentProcess();
-            startupMessages.Add(new InstanceStarted("Inject git rev", proc.ProcessName,
-                proc.Id.ToString()));
-
-
+            startupMessages.Add(new InstanceStarted("Inject git rev", proc.ProcessName, proc.Id.ToString()));
             {
                 Console.WriteLine("Starting in funny mode by wiping store and sending a few messages");
                 config.Reset();
                 startupMessages.AddRange(DemoMessages.Create());
             }
-
 
             var setup = new SetupClassThatReplacesIoCContainerFramework
                 {
@@ -41,23 +37,17 @@ namespace Sample.Engine
 
             var components = setup.AssembleComponents();
 
-
             using (var cts = new CancellationTokenSource())
             using (var engine = components.Builder.Build())
             {
                 var task = engine.Start(cts.Token);
 
-                foreach (var sampleMessage in startupMessages)
-                {
-                    components.Sender.SendOne(sampleMessage);
-                }
+                startupMessages.ForEach(components.Sender.SendOne);
 
                 Console.WriteLine(@"Press enter to stop");
                 Console.ReadLine();
                 cts.Cancel();
-
-
-                if (task.Wait(5000))
+                if (!task.Wait(5000))
                 {
                     Console.WriteLine(@"Terminating");
                 }
