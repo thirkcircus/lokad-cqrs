@@ -35,7 +35,8 @@ namespace Lokad.Cqrs.Core.Envelope.Scenarios
         [Test]
         public void Envelope_attributes_should_be_present()
         {
-            var time = RoundToMs(DateTime.UtcNow);
+            var dateTime = DateTime.UtcNow;
+            var time = RoundToMs(dateTime);
             var builder = new EnvelopeBuilder("my-id");
             builder.AddString("Custom", "1");
 
@@ -44,7 +45,7 @@ namespace Lokad.Cqrs.Core.Envelope.Scenarios
 
             Assert.AreEqual("1", envelope.GetAttribute("Custom"));
             Assert.GreaterOrEqual(RoundToMs(envelope.CreatedOnUtc), time, "start time");
-            var now = RoundToMs((DateTime.UtcNow));
+            var now = RoundToMs(dateTime);
             Assert.LessOrEqual(RoundToMs(envelope.CreatedOnUtc), now, "now");
         }
 
