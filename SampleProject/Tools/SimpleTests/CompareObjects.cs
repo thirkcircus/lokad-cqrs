@@ -1,10 +1,17 @@
+#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
 #region Includes
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Text;
 
 #endregion
 
@@ -27,6 +34,7 @@ using System.Collections;
 // * Ninja Database Pro
 
 #region License
+
 //Microsoft Public License (Ms-PL)
 
 //This license governs use of the accompanying software. If you use the software, you accept this license. If you do not accept the license, do not use the software.
@@ -58,22 +66,22 @@ using System.Collections;
 //(D) If you distribute any portion of the software in source code form, you may do so only under this license by including a complete copy of this license with your distribution. If you distribute any portion of the software in compiled or object code form, you may only do so under a license that complies with this license.
 
 //(E) The software is licensed "as-is." You bear the risk of using it. The contributors give no express warranties, guarantees or conditions. You may have additional consumer rights under your local laws which this license cannot change. To the extent permitted under your local laws, the contributors exclude the implied warranties of merchantability, fitness for a particular purpose and non-infringement.
+
 #endregion
 
-namespace Sample.Tests
+namespace Sample
 {
     /// <summary>
     /// Class that allows comparison of two objects of the same type to each other.  Supports classes, lists, arrays, dictionaries, child comparison and more.
     /// </summary>
     public class CompareObjects
     {
-
         public static string FindDifferences(object expected, object actual)
         {
             var compare = new CompareObjects
-            {
-                MaxDifferences = 10
-            };
+                {
+                    MaxDifferences = 10
+                };
 
 
             if (compare.Compare(expected, actual))
@@ -85,23 +93,23 @@ namespace Sample.Tests
                 .Replace("object2", "actual");
         }
 
-
         #region Class Variables
 
         /// <summary>
         /// Keep track of parent objects in the object hiearchy
         /// </summary>
-        private readonly List<object> _parents = new List<object>();
+        readonly List<object> _parents = new List<object>();
 
         /// <summary>
         /// Reflection Cache for property info
         /// </summary>
-        private readonly Dictionary<Type, PropertyInfo[]> _propertyCache = new Dictionary<Type, PropertyInfo[]>();
+        readonly Dictionary<Type, PropertyInfo[]> _propertyCache = new Dictionary<Type, PropertyInfo[]>();
 
         /// <summary>
         /// Reflection Cache for field info
         /// </summary>
-        private readonly Dictionary<Type, FieldInfo[]> _fieldCache = new Dictionary<Type, FieldInfo[]>();
+        readonly Dictionary<Type, FieldInfo[]> _fieldCache = new Dictionary<Type, FieldInfo[]>();
+
         #endregion
 
         #region Properties
@@ -240,6 +248,7 @@ namespace Sample.Tests
         #endregion
 
         #region Public Methods
+
         /// <summary>
         /// Compare two objects of the same type to each other.
         /// </summary>
@@ -284,7 +293,7 @@ namespace Sample.Tests
         /// <param name="object1"></param>
         /// <param name="object2"></param>
         /// <param name="breadCrumb">Where we are in the object hiearchy</param>
-        private void Compare(object object1, object object2, string breadCrumb)
+        void Compare(object object1, object object2, string breadCrumb)
         {
             //If both null return true
             if (object1 == null && object2 == null)
@@ -293,13 +302,15 @@ namespace Sample.Tests
             //Check if one of them is null
             if (object1 == null)
             {
-                Differences.Add(string.Format("object1{0} == null && object2{0} != null ((null),{1})", breadCrumb, cStr(object2)));
+                Differences.Add(string.Format("object1{0} == null && object2{0} != null ((null),{1})", breadCrumb,
+                    cStr(object2)));
                 return;
             }
 
             if (object2 == null)
             {
-                Differences.Add(string.Format("object1{0} != null && object2{0} == null ({1},(null))", breadCrumb, cStr(object1)));
+                Differences.Add(string.Format("object1{0} != null && object2{0} == null ({1},(null))", breadCrumb,
+                    cStr(object1)));
                 return;
             }
 
@@ -309,7 +320,8 @@ namespace Sample.Tests
             //Objects must be the same type
             if (t1 != t2)
             {
-                Differences.Add(string.Format("Different Types:  object1{0}.GetType() != object2{0}.GetType()", breadCrumb));
+                Differences.Add(string.Format("Different Types:  object1{0}.GetType() != object2{0}.GetType()",
+                    breadCrumb));
                 return;
             }
 
@@ -349,16 +361,14 @@ namespace Sample.Tests
             {
                 throw new NotImplementedException("Cannot compare object of type " + t1.Name);
             }
-
         }
-
 
 
         /// <summary>
         /// Check if any type has attributes that should be bypassed
         /// </summary>
         /// <returns></returns>
-        private bool IgnoredByAttribute(Type type)
+        bool IgnoredByAttribute(Type type)
         {
             foreach (Type attributeType in AttributesToIgnore)
             {
@@ -370,29 +380,27 @@ namespace Sample.Tests
         }
 
 
-
-
-        private bool IsTimespan(Type t)
+        bool IsTimespan(Type t)
         {
             return t == typeof(TimeSpan);
         }
 
-        private bool IsPointer(Type t)
+        bool IsPointer(Type t)
         {
             return t == typeof(IntPtr) || t == typeof(UIntPtr);
         }
 
-        private bool IsEnum(Type t)
+        bool IsEnum(Type t)
         {
             return t.IsEnum;
         }
 
-        private bool IsStruct(Type t)
+        bool IsStruct(Type t)
         {
             return t.IsValueType && !IsSimpleType(t);
         }
 
-        private bool IsSimpleType(Type t)
+        bool IsSimpleType(Type t)
         {
             if (t.IsGenericType && t.GetGenericTypeDefinition().Equals(typeof(Nullable<>)))
             {
@@ -401,52 +409,51 @@ namespace Sample.Tests
 
             return t.IsPrimitive
                 || t == typeof(DateTime)
-                || t == typeof(decimal)
-                || t == typeof(string)
-                || t == typeof(Guid);
-
+                    || t == typeof(decimal)
+                        || t == typeof(string)
+                            || t == typeof(Guid);
         }
 
-        private bool ValidStructSubType(Type t)
+        bool ValidStructSubType(Type t)
         {
             return IsSimpleType(t)
                 || IsEnum(t)
-                || IsArray(t)
-                || IsClass(t)
-                || IsIDictionary(t)
-                || IsTimespan(t)
-                || IsIList(t);
+                    || IsArray(t)
+                        || IsClass(t)
+                            || IsIDictionary(t)
+                                || IsTimespan(t)
+                                    || IsIList(t);
         }
 
-        private bool IsArray(Type t)
+        bool IsArray(Type t)
         {
             return t.IsArray;
         }
 
-        private bool IsClass(Type t)
+        bool IsClass(Type t)
         {
             return t.IsClass;
         }
 
-        private bool IsIDictionary(Type t)
+        bool IsIDictionary(Type t)
         {
             return t.GetInterface("System.Collections.IDictionary", true) != null;
         }
 
-        
-        private bool IsIList(Type t)
+
+        bool IsIList(Type t)
         {
             return t.GetInterface("System.Collections.IList", true) != null;
         }
 
-        private bool IsChildType(Type t)
+        bool IsChildType(Type t)
         {
             return !IsSimpleType(t)
                 && (IsClass(t)
                     || IsArray(t)
-                    || IsIDictionary(t)
-                    || IsIList(t)
-                    || IsStruct(t));
+                        || IsIDictionary(t)
+                            || IsIList(t)
+                                || IsStruct(t));
         }
 
         /// <summary>
@@ -455,9 +462,9 @@ namespace Sample.Tests
         /// <param name="object1"></param>
         /// <param name="object2"></param>
         /// <param name="breadCrumb"></param>
-        private void CompareTimespan(object object1, object object2, string breadCrumb)
+        void CompareTimespan(object object1, object object2, string breadCrumb)
         {
-            if (((TimeSpan)object1).Ticks != ((TimeSpan)object2).Ticks)
+            if (((TimeSpan) object1).Ticks != ((TimeSpan) object2).Ticks)
             {
                 Differences.Add(string.Format("object1{0}.Ticks != object2{0}.Ticks", breadCrumb));
             }
@@ -469,11 +476,13 @@ namespace Sample.Tests
         /// <param name="object1"></param>
         /// <param name="object2"></param>
         /// <param name="breadCrumb"></param>
-        private void ComparePointer(object object1, object object2, string breadCrumb)
+        void ComparePointer(object object1, object object2, string breadCrumb)
         {
             if (
-                (object1.GetType() == typeof(IntPtr) && object2.GetType() == typeof(IntPtr) && ((IntPtr)object1) != ((IntPtr)object2)) ||
-                (object1.GetType() == typeof(UIntPtr) && object2.GetType() == typeof(UIntPtr) && ((UIntPtr)object1) != ((UIntPtr)object2))
+                (object1.GetType() == typeof(IntPtr) && object2.GetType() == typeof(IntPtr) &&
+                    ((IntPtr) object1) != ((IntPtr) object2)) ||
+                        (object1.GetType() == typeof(UIntPtr) && object2.GetType() == typeof(UIntPtr) &&
+                            ((UIntPtr) object1) != ((UIntPtr) object2))
                 )
             {
                 Differences.Add(string.Format("object1{0} != object2{0}", breadCrumb));
@@ -486,7 +495,7 @@ namespace Sample.Tests
         /// <param name="object1"></param>
         /// <param name="object2"></param>
         /// <param name="breadCrumb"></param>
-        private void CompareEnum(object object1, object object2, string breadCrumb)
+        void CompareEnum(object object1, object object2, string breadCrumb)
         {
             if (object1.ToString() != object2.ToString())
             {
@@ -501,12 +510,12 @@ namespace Sample.Tests
         /// <param name="object1"></param>
         /// <param name="object2"></param>
         /// <param name="breadCrumb"></param>
-        private void CompareSimpleType(object object1, object object2, string breadCrumb)
+        void CompareSimpleType(object object1, object object2, string breadCrumb)
         {
             if (object2 == null) //This should never happen, null check happens one level up
                 throw new ArgumentNullException("object2");
 
-            IComparable valOne = object1 as IComparable;
+            var valOne = object1 as IComparable;
 
             if (valOne == null) //This should never happen, null check happens one level up
                 throw new ArgumentNullException("object1");
@@ -518,14 +527,13 @@ namespace Sample.Tests
         }
 
 
-
         /// <summary>
         /// Compare a struct
         /// </summary>
         /// <param name="object1"></param>
         /// <param name="object2"></param>
         /// <param name="breadCrumb"></param>
-        private void CompareStruct(object object1, object object2, string breadCrumb)
+        void CompareStruct(object object1, object object2, string breadCrumb)
         {
             try
             {
@@ -568,7 +576,7 @@ namespace Sample.Tests
         /// <param name="object1"></param>
         /// <param name="object2"></param>
         /// <param name="breadCrumb"></param>
-        private void CompareClass(object object1, object object2, string breadCrumb)
+        void CompareClass(object object1, object object2, string breadCrumb)
         {
             try
             {
@@ -604,7 +612,7 @@ namespace Sample.Tests
         /// <param name="object1"></param>
         /// <param name="object2"></param>
         /// <param name="breadCrumb"></param>
-        private void PerformCompareFields(Type t1,
+        void PerformCompareFields(Type t1,
             object object1,
             object object2,
             string breadCrumb)
@@ -624,8 +632,10 @@ namespace Sample.Tests
                 object objectValue1 = item.GetValue(object1);
                 object objectValue2 = item.GetValue(object2);
 
-                bool object1IsParent = objectValue1 != null && (objectValue1 == object1 || _parents.Contains(objectValue1));
-                bool object2IsParent = objectValue2 != null && (objectValue2 == object2 || _parents.Contains(objectValue2));
+                bool object1IsParent = objectValue1 != null &&
+                    (objectValue1 == object1 || _parents.Contains(objectValue1));
+                bool object2IsParent = objectValue2 != null &&
+                    (objectValue2 == object2 || _parents.Contains(objectValue2));
 
                 //Skip fields that point to the parent
                 if (IsClass(item.FieldType)
@@ -643,7 +653,7 @@ namespace Sample.Tests
             }
         }
 
-        private IEnumerable<FieldInfo> GetFieldInfo(Type type)
+        IEnumerable<FieldInfo> GetFieldInfo(Type type)
         {
             if (Caching && _fieldCache.ContainsKey(type))
                 return _fieldCache[type];
@@ -653,7 +663,9 @@ namespace Sample.Tests
             if (ComparePrivateFields && !CompareStaticFields)
                 currentFields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             else if (ComparePrivateFields && CompareStaticFields)
-                currentFields = type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+                currentFields =
+                    type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic |
+                        BindingFlags.Static);
             else
                 currentFields = type.GetFields(); //Default is public instance and static
 
@@ -671,7 +683,7 @@ namespace Sample.Tests
         /// <param name="object1"></param>
         /// <param name="object2"></param>
         /// <param name="breadCrumb"></param>
-        private void PerformCompareProperties(Type t1,
+        void PerformCompareProperties(Type t1,
             object object1,
             object object2,
             string breadCrumb)
@@ -709,8 +721,10 @@ namespace Sample.Tests
                     continue;
                 }
 
-                bool object1IsParent = objectValue1 != null && (objectValue1 == object1 || _parents.Contains(objectValue1));
-                bool object2IsParent = objectValue2 != null && (objectValue2 == object2 || _parents.Contains(objectValue2));
+                bool object1IsParent = objectValue1 != null &&
+                    (objectValue1 == object1 || _parents.Contains(objectValue1));
+                bool object2IsParent = objectValue2 != null &&
+                    (objectValue2 == object2 || _parents.Contains(objectValue2));
 
                 //Skip properties where both point to the corresponding parent
                 if ((IsClass(info.PropertyType) || IsStruct(info.PropertyType)) && (object1IsParent && object2IsParent))
@@ -727,7 +741,7 @@ namespace Sample.Tests
             }
         }
 
-        private IEnumerable<PropertyInfo> GetPropertyInfo(Type type)
+        IEnumerable<PropertyInfo> GetPropertyInfo(Type type)
         {
             if (Caching && _propertyCache.ContainsKey(type))
                 return _propertyCache[type];
@@ -735,9 +749,12 @@ namespace Sample.Tests
             PropertyInfo[] currentProperties;
 
             if (ComparePrivateProperties && !CompareStaticProperties)
-                currentProperties = type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                currentProperties =
+                    type.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             else if (ComparePrivateProperties && CompareStaticProperties)
-                currentProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static);
+                currentProperties =
+                    type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic |
+                        BindingFlags.Static);
             else if (!CompareStaticProperties)
                 currentProperties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             else
@@ -749,7 +766,7 @@ namespace Sample.Tests
             return currentProperties;
         }
 
-        private bool IsValidIndexer(PropertyInfo info, string breadCrumb)
+        bool IsValidIndexer(PropertyInfo info, string breadCrumb)
         {
             ParameterInfo[] indexers = info.GetIndexParameters();
 
@@ -775,23 +792,27 @@ namespace Sample.Tests
 
             if (info.ReflectedType.GetProperty("Count").PropertyType != typeof(Int32))
             {
-                throw new Exception("Indexer must have a corresponding Count property that is an integer for object " + breadCrumb);
+                throw new Exception("Indexer must have a corresponding Count property that is an integer for object " +
+                    breadCrumb);
             }
 
             return true;
         }
-        private void CompareIndexer(PropertyInfo info, object object1, object object2, string breadCrumb)
+
+        void CompareIndexer(PropertyInfo info, object object1, object object2, string breadCrumb)
         {
             string currentCrumb;
-            int indexerCount1 = (int)info.ReflectedType.GetProperty("Count").GetGetMethod().Invoke(object1, new object[] { });
-            int indexerCount2 = (int)info.ReflectedType.GetProperty("Count").GetGetMethod().Invoke(object2, new object[] { });
+            int indexerCount1 =
+                (int) info.ReflectedType.GetProperty("Count").GetGetMethod().Invoke(object1, new object[] {});
+            int indexerCount2 =
+                (int) info.ReflectedType.GetProperty("Count").GetGetMethod().Invoke(object2, new object[] {});
 
             //Indexers must be the same length
             if (indexerCount1 != indexerCount2)
             {
                 currentCrumb = AddBreadCrumb(breadCrumb, info.Name, string.Empty, -1);
                 Differences.Add(string.Format("object1{0}.Count != object2{0}.Count ({1},{2})", currentCrumb,
-                                              indexerCount1, indexerCount2));
+                    indexerCount1, indexerCount2));
 
                 if (Differences.Count >= MaxDifferences)
                     return;
@@ -801,8 +822,8 @@ namespace Sample.Tests
             for (int i = 0; i < indexerCount1; i++)
             {
                 currentCrumb = AddBreadCrumb(breadCrumb, info.Name, string.Empty, i);
-                object objectValue1 = info.GetValue(object1, new object[] { i });
-                object objectValue2 = info.GetValue(object2, new object[] { i });
+                object objectValue1 = info.GetValue(object1, new object[] {i});
+                object objectValue2 = info.GetValue(object2, new object[] {i});
                 Compare(objectValue1, objectValue2, currentCrumb);
 
                 if (Differences.Count >= MaxDifferences)
@@ -816,7 +837,7 @@ namespace Sample.Tests
         /// <param name="object1"></param>
         /// <param name="object2"></param>
         /// <param name="breadCrumb"></param>
-        private void CompareIDictionary(object object1, object object2, string breadCrumb)
+        void CompareIDictionary(object object1, object object2, string breadCrumb)
         {
             IDictionary iDict1 = object1 as IDictionary;
             IDictionary iDict2 = object2 as IDictionary;
@@ -836,7 +857,7 @@ namespace Sample.Tests
                 if (iDict1.Count != iDict2.Count)
                 {
                     Differences.Add(string.Format("object1{0}.Count != object2{0}.Count ({1},{2})", breadCrumb,
-                                                  iDict1.Count, iDict2.Count));
+                        iDict1.Count, iDict2.Count));
 
                     if (Differences.Count >= MaxDifferences)
                         return;
@@ -874,7 +895,7 @@ namespace Sample.Tests
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        private string cStr(object obj)
+        string cStr(object obj)
         {
             try
             {
@@ -899,7 +920,7 @@ namespace Sample.Tests
         /// <param name="object1"></param>
         /// <param name="object2"></param>
         /// <param name="breadCrumb"></param>
-        private void CompareIList(object object1, object object2, string breadCrumb)
+        void CompareIList(object object1, object object2, string breadCrumb)
         {
             IList ilist1 = object1 as IList;
             IList ilist2 = object2 as IList;
@@ -919,7 +940,7 @@ namespace Sample.Tests
                 if (ilist1.Count != ilist2.Count)
                 {
                     Differences.Add(string.Format("object1{0}.Count != object2{0}.Count ({1},{2})", breadCrumb,
-                                                  ilist1.Count, ilist2.Count));
+                        ilist1.Count, ilist2.Count));
 
                     if (Differences.Count >= MaxDifferences)
                         return;
@@ -949,7 +970,6 @@ namespace Sample.Tests
         }
 
 
-
         /// <summary>
         /// Add a breadcrumb to an existing breadcrumb
         /// </summary>
@@ -958,7 +978,7 @@ namespace Sample.Tests
         /// <param name="extra"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        private string AddBreadCrumb(string existing, string name, string extra, string index)
+        string AddBreadCrumb(string existing, string name, string extra, string index)
         {
             bool useIndex = !String.IsNullOrEmpty(index);
             bool useName = name.Length > 0;
@@ -991,12 +1011,11 @@ namespace Sample.Tests
         /// <param name="extra"></param>
         /// <param name="index"></param>
         /// <returns></returns>
-        private string AddBreadCrumb(string existing, string name, string extra, int index)
+        string AddBreadCrumb(string existing, string name, string extra, int index)
         {
             return AddBreadCrumb(existing, name, extra, index >= 0 ? index.ToString() : null);
         }
 
         #endregion
-
     }
 }

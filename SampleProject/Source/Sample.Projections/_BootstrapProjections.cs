@@ -16,9 +16,9 @@ using Sample.Security;
 
 namespace Sample.Projections
 {
-    public static class BootstrapProjections
+    public static class ClientBoundedContext
     {
-        public static IEnumerable<object> BuildProjectionsWithWhenConvention(IDocumentStore factory)
+        public static IEnumerable<object> Projections(IDocumentStore factory)
         {
             yield return new AccountLoginsProjection(factory.GetWriter<SecurityId, AccountLoginsView>());
             yield return new LoginViewProjection(factory.GetWriter<UserId, LoginView>());

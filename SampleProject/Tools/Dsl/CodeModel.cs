@@ -1,30 +1,39 @@
-﻿using System.Collections.Generic;
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
+using System.Collections.Generic;
 using System.Collections.Specialized;
 
 namespace Lokad.CodeDsl
 {
-	public sealed class Context
-	{
-		public IDictionary<string,Fragment> Fragments = new Dictionary<string, Fragment>();
-		public IList<Message> Contracts = new List<Message>();
+    public sealed class Context
+    {
+        public IDictionary<string, Fragment> Fragments = new Dictionary<string, Fragment>();
+        public IList<Message> Contracts = new List<Message>();
         //public IDictionary<string,string> Modifiers = new Dictionary<string, string>();
 
         public Stack<Entity> Entities { get; set; }
 
-        public Entity CurrentEntity { get { return Entities.Peek(); } }
+        public Entity CurrentEntity
+        {
+            get { return Entities.Peek(); }
+        }
 
-	    public Context()
-	    {
+        public Context()
+        {
             Entities = new Stack<Entity>();
-	        var entity = new Entity("default");
+            var entity = new Entity("default");
             entity.Modifiers.Add("?", "ICommand");
             entity.Modifiers.Add("!", "IEvent");
 
 
-
-	        Entities.Push(entity);
-	    }
-	}
+            Entities.Push(entity);
+        }
+    }
 
     public sealed class Entity
     {
@@ -92,6 +101,4 @@ namespace Lokad.CodeDsl
             Interface = @interface;
         }
     }
-
-
 }

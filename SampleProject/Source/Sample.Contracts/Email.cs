@@ -1,3 +1,10 @@
+#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
 using System.Runtime.Serialization;
 
 namespace Sample
@@ -7,10 +14,12 @@ namespace Sample
     {
         [DataMember(Order = 1)]
         public string OptionalName { get; private set; }
+
         [DataMember(Order = 2)]
         public string Address { get; private set; }
 
-        Email() { }
+        Email() {}
+
         public Email(string address, string optionalName = null)
         {
             OptionalName = optionalName;
@@ -29,14 +38,15 @@ namespace Sample
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != typeof(Email)) return false;
-            return Equals((Email)obj);
+            return Equals((Email) obj);
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return ((OptionalName != null ? OptionalName.GetHashCode() : 0) * 397) ^ (Address != null ? Address.GetHashCode() : 0);
+                return ((OptionalName != null ? OptionalName.GetHashCode() : 0) * 397) ^
+                    (Address != null ? Address.GetHashCode() : 0);
             }
         }
 

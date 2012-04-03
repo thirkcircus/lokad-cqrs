@@ -1,17 +1,25 @@
-﻿using System;
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
+using System;
 using System.Collections;
 using System.Linq;
 
-namespace Sample.Tests.PAssert.Infrastructure.Nodes
+namespace Sample.PAssert.Infrastructure.Nodes
 {
-    internal abstract class Node
+    abstract class Node
     {
         internal abstract void Walk(NodeWalker walker, int depth);
+
         internal delegate void NodeWalker(string text, string value = null, int depth = 0);
 
         public override bool Equals(object obj)
         {
-            if(obj.GetType() != GetType())
+            if (obj.GetType() != GetType())
             {
                 return false;
             }
@@ -26,15 +34,17 @@ namespace Sample.Tests.PAssert.Infrastructure.Nodes
 
         static bool ObjectsOrEnumerablesEqual(object mine, object theirs)
         {
-            if(mine == theirs)
+            if (mine == theirs)
             {
                 return true;
             }
-            if(mine == null || theirs == null)
+            if (mine == null || theirs == null)
             {
                 return false;
             }
-            return mine is IEnumerable ? ((IEnumerable) mine).Cast<object>().SequenceEqual(((IEnumerable) theirs).Cast<object>()) : mine.Equals(theirs);
+            return mine is IEnumerable
+                ? ((IEnumerable) mine).Cast<object>().SequenceEqual(((IEnumerable) theirs).Cast<object>())
+                : mine.Equals(theirs);
         }
 
         public override int GetHashCode()

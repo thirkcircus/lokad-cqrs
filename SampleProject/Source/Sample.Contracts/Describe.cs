@@ -1,3 +1,10 @@
+#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,14 +19,14 @@ namespace Sample
 
         static Dictionary<Type, MethodInfo> ToDictionary()
         {
-            var classes = typeof (Describe).Assembly.GetTypes()
+            var classes = typeof(Describe).Assembly.GetTypes()
                 .Where(t => t.Name.StartsWith("Describ"));
 
 
             return classes.SelectMany(c => c.GetMethods(BindingFlags.Static | BindingFlags.NonPublic)
                 .Where(m => m.Name == "When")
                 .Where(m => m.GetParameters().Length == 1))
-                .ToDictionary(m => m.GetParameters().First().ParameterType, m => m); 
+                .ToDictionary(m => m.GetParameters().First().ParameterType, m => m);
         }
 
 
@@ -33,7 +40,7 @@ namespace Sample
             }
             try
             {
-                return (string)info.Invoke(null, new[] { e });
+                return (string) info.Invoke(null, new[] {e});
             }
             catch (TargetInvocationException ex)
             {
@@ -44,14 +51,14 @@ namespace Sample
         static string PrintAdjusted(string adj, string text)
         {
             bool first = true;
-             var builder = new StringBuilder();
-            foreach (var s in text.Split(new[] { Environment.NewLine }, StringSplitOptions.None))
+            var builder = new StringBuilder();
+            foreach (var s in text.Split(new[] {Environment.NewLine}, StringSplitOptions.None))
             {
                 builder.Append(first ? adj : new string(' ', adj.Length));
                 builder.AppendLine(s);
                 first = false;
             }
-             return builder.ToString().TrimEnd();
+            return builder.ToString().TrimEnd();
         }
 
         public static bool TryDescribe(object e, out string description)
@@ -66,7 +73,7 @@ namespace Sample
             }
             try
             {
-                description = (string)info.Invoke(null, new[] { e });
+                description = (string) info.Invoke(null, new[] {e});
                 return true;
             }
             catch (TargetInvocationException ex)

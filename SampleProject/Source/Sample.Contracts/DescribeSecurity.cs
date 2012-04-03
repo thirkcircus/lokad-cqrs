@@ -1,3 +1,10 @@
+#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
 namespace Sample
 {
     static class DescribeSecurity
@@ -6,6 +13,7 @@ namespace Sample
         {
             return "Create security group";
         }
+
         static string When(SecurityAggregateCreated e)
         {
             return "Security group created";
@@ -15,26 +23,20 @@ namespace Sample
         {
             return string.Format("Add login '{0}': {1}/{2}", e.DisplayName, e.Login, e.Password);
         }
+
         static string When(SecurityPasswordAdded e)
         {
             return string.Format("Added login '{0}' as {1} with encrypted pass and salt", e.DisplayName, e.UserId.Id);
         }
-        static string When(AddSecurityKey e)
-        {
-            return string.Format("Add security key '{0}'",e.DisplayName);
-        }
-        static string When(SecurityKeyAdded e)
-        {
-            return string.Format("Added key '{0}' as {1}", e.DisplayName, e.UserId.Id);
-        }
+
         static string When(AddSecurityIdentity c)
         {
             return string.Format("Add identity '{0}': {1}", c.DisplayName, c.Identity);
         }
+
         static string When(SecurityIdentityAdded e)
         {
             return string.Format("Added identity '{0}' as {1}", e.DisplayName, e.UserId.Id);
         }
-        
     }
 }

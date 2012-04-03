@@ -37,12 +37,7 @@ namespace Sample.Projections
             _writer.UpdateOrThrow(e.Id, v => v.AddItem(e.UserId, e.DisplayName, describe, "Identity"));
         }
 
-        public void When(SecurityKeyAdded e)
-        {
-            var describe = e.Key;
-            _writer.UpdateOrThrow(e.Id, v => v.AddItem(e.UserId, e.DisplayName, describe, "Key"));
-        }
-
+      
         public void When(UserLocked e)
         {
             _writer.UpdateOrThrow(e.SecurityId, cv => cv.Update(e.Id, v => v.IsLocked = true));

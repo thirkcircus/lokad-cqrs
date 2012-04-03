@@ -45,13 +45,13 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregateFactory.cs" />
     <Compile Include="DemoMessages.cs" />
     <Compile Include="EnvelopeSerializer.cs" />
     <Compile Include="MessageSender.cs" />
     <Compile Include="ProjectionStrategy.cs" />
     <Compile Include="RedirectToDynamicEvent.cs" />
     <Compile Include="SetupClassThatReplacesIoCContainerFramework.cs" />
+    <Compile Include="TapeStreamEventStore.cs" />
     <Compile Include="Topology.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,19 +1,18 @@
-#region Copyright (c) 2006-2011 LOKAD SAS. All rights reserved
+#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-// You must not remove this notice, or any other, from this software.
-// This document is the property of LOKAD SAS and must not be disclosed
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
 
 using System;
 using System.Linq;
 using NUnit.Framework;
-using Sample.Tests;
 
-namespace Sample.Aggregates
+namespace Sample
 {
     [TestFixture]
-    public abstract class ContainsSpecifications
+    public abstract class specs
     {
         protected TestCaseData[] GetSpecifications()
         {
@@ -32,11 +31,11 @@ namespace Sample.Aggregates
         // helpers
         protected static DateTime DateUtc(int year, int month, int day)
         {
-            return new DateTime(year,month, day, 0,0,0, DateTimeKind.Unspecified);
+            return new DateTime(year, month, day, 0, 0, 0, DateTimeKind.Unspecified);
         }
 
         [TestCaseSource("GetSpecifications")]
-        public void Verify(SpecificationToRun spec)
+        public void _(SpecificationToRun spec)
         {
             var result = new SpecificationRunner().RunSpecification(spec);
             spec.Specification.Document(result);
@@ -46,8 +45,18 @@ namespace Sample.Aggregates
                 {
                     throw result.Thrown;
                 }
-                Assert.Fail(result.Message);
+                Assert.Fail(result.Message ?? "<null>");
             }
+        }
+
+        protected static DateTime Date(int year, int month = 1, int day = 1, int hour = 0)
+        {
+            return new DateTime(year, month, day, hour, 0, 0, DateTimeKind.Unspecified);
+        }
+
+        protected static DateTime Time(int hour, int minute = 0, int second = 0)
+        {
+            return new DateTime(2011, 1, 1, hour, minute, second, DateTimeKind.Unspecified);
         }
     }
 }

@@ -1,12 +1,11 @@
-﻿#region (c) 2010-2011 Lokad CQRS - New BSD License 
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad SAS 2010-2012 (http://www.lokad.com)
-// This code is released as Open Source under the terms of the New BSD License
-// Homepage: http://lokad.github.com/lokad-cqrs/
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
 
-using System;
+using System.Collections.Generic;
 
 namespace Sample
 {
@@ -22,6 +21,12 @@ namespace Sample
         TIdentity Id { get; }
     }
 
+    public interface ICommandHandler
+    {
+        void Execute(object command);
+    }
+
+
     public interface IEvent<out TIdentity> : ISampleEvent
         where TIdentity : IIdentity
     {
@@ -34,9 +39,10 @@ namespace Sample
 
     /// <summary>The only messaging endpoint that is available to stateless services
     /// They are not allowed to send any other messages.</summary>
-    public interface IServiceEndpoint
+    public interface IEventPublisher
     {
         void Publish(IFunctionalEvent notification);
+        void PublishBatch(IEnumerable<IFunctionalEvent> events);
     }
 
 
@@ -57,10 +63,8 @@ namespace Sample
     /// Semi strongly-typed message sending endpoint made
     ///  available to stateless workflow processes.
     /// </summary>
-    public interface IFunctionalFlow
+    public interface ICommandSender
     {
-        void Schedule(ISampleCommand command, DateTime dateUtc);
-
         /// <summary>
         /// This interface is intentionally made long and unusable. Generally within the domain 
         /// (as in Mousquetaires domain) there will be extension methods that provide strongly-typed
@@ -68,5 +72,18 @@ namespace Sample
         /// </summary>
         /// <param name="commands">The commands.</param>
         void SendCommandsAsBatch(ISampleCommand[] commands);
+    }
+
+
+    public interface IEventStore
+    {
+        EventStream LoadEventStream(IIdentity id);
+        void AppendToStream(IIdentity id, long version, ICollection<IEvent<IIdentity>> events, string explanation);
+    }
+
+    public sealed class EventStream
+    {
+        public long Version;
+        public IList<IEvent<IIdentity>> Events;
     }
 }

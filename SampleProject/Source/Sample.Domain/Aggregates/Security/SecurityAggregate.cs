@@ -1,106 +1,111 @@
-#region (c) 2010-2011 Lokad CQRS - New BSD License 
+#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad SAS 2010-2012 (http://www.lokad.com)
-// This code is released as Open Source under the terms of the New BSD License
-// Homepage: http://lokad.github.com/lokad-cqrs/
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
 
 using System;
+using System.Collections.Generic;
 
 namespace Sample.Aggregates.Security
 {
-    public sealed class SecurityAggregate : IAggregate<SecurityId>, ISecurityAggregate
+    public sealed class SecurityAggregate
     {
-        readonly Action<IEvent<SecurityId>> _observer;
-        readonly SecurityAggregateState _state;
-        readonly PasswordGenerator _generator;
-        readonly IIdentityGenerator _identityGenerator;
+        readonly SecurityState _state;
 
-        public SecurityAggregate(SecurityAggregateState state, Action<IEvent<SecurityId>> observer,
-            PasswordGenerator generator, IIdentityGenerator identityGenerator)
+        public IList<IEvent<IIdentity>> Changes = new List<IEvent<IIdentity>>();
+
+        public SecurityAggregate(SecurityState state)
         {
             _state = state;
-            _observer = observer;
-            _generator = generator;
-            _identityGenerator = identityGenerator;
         }
 
-        public void Execute(ICommand<SecurityId> c)
-        {
-            RedirectToWhen.InvokeCommand(this, c);
-        }
 
         void Apply(IEvent<SecurityId> e)
         {
-            _state.Apply(e);
-            _observer(e);
+            _state.Mutate(e);
+            Changes.Add(e);
         }
 
-        public void When(AddSecurityPassword c)
+        public void AddPassword(IDomainIdentityService ids, IUserIndexService index, PasswordGenerator pwds,
+            string display, string login, string password)
         {
-            var user = new UserId(_identityGenerator.GetId());
-            var salt = _generator.CreateSalt();
-            var token = _generator.CreateToken();
-            var hash = _generator.HashPassword(c.Password, salt);
-            Apply(new SecurityPasswordAdded(c.Id, user, c.DisplayName, c.Login, hash, salt, token));
+            if (index.IsLoginRegistered(login))
+                throw DomainError.Named("duplicate-login", "Login {0} is already taken", login);
+
+            var user = new UserId(ids.GetId());
+            var salt = pwds.CreateSalt();
+            var token = pwds.CreateToken();
+            var hash = pwds.HashPassword(password, salt);
+            Apply(new SecurityPasswordAdded(_state.Id, user, display, login, hash, salt, token));
         }
 
-        public void When(AddSecurityKey c)
+        public void AddIdentity(IDomainIdentityService ids, PasswordGenerator pwds, string display, string identity)
         {
-            var key = _generator.CreatePassword(32);
-            var user = new UserId(_identityGenerator.GetId());
-            var token = _generator.CreateToken();
-            Apply(new SecurityKeyAdded(c.Id, user, c.DisplayName, key, token));
+            var user = new UserId(ids.GetId());
+            var token = pwds.CreateToken();
+            Apply(new SecurityIdentityAdded(_state.Id, user, display, identity, token));
         }
 
 
-        public void When(AddSecurityIdentity c)
+        public void CreateSecurityAggregate(SecurityId securityId)
         {
-            var user = new UserId(_identityGenerator.GetId());
-            var token = _generator.CreateToken();
-            Apply(new SecurityIdentityAdded(c.Id, user, c.DisplayName, c.Identity, token));
+            Apply(new SecurityAggregateCreated(securityId));
         }
 
-        public void When(CreateSecurityAggregate c)
-        {
-            Apply(new SecurityAggregateCreated(c.Id));
-        }
-
-        public void When(CreateSecurityFromRegistration c)
+        public void When(IDomainIdentityService ids, PasswordGenerator pwds, CreateSecurityFromRegistration c)
         {
             Apply(new SecurityAggregateCreated(c.Id));
-            var user = new UserId(_identityGenerator.GetId());
-            var salt = _generator.CreateSalt();
-            var token = _generator.CreateToken();
-            var hash = _generator.HashPassword(c.Pwd, salt);
+
+            var user = new UserId(ids.GetId());
+            var salt = pwds.CreateSalt();
+            var token = pwds.CreateToken();
+            var hash = pwds.HashPassword(c.Pwd, salt);
 
             Apply(new SecurityPasswordAdded(c.Id, user, c.DisplayName, c.Login, hash, salt, token));
             if (!string.IsNullOrEmpty(c.OptionalIdentity))
             {
-                var u2 = new UserId(_identityGenerator.GetId());
-
-                Apply(new SecurityIdentityAdded(c.Id, u2, c.DisplayName, c.OptionalIdentity, _generator.CreateToken()));
+                AddIdentity(ids, pwds, c.DisplayName, c.OptionalIdentity);
             }
             Apply(new SecurityRegistrationProcessCompleted(c.Id, c.DisplayName, user, token, c.RegistrationId));
         }
 
-        public void When(RemoveSecurityItem c)
+        public void RemoveSecurityItem(UserId userId)
         {
-            SecurityAggregateState.User user;
-            if (!_state.TryGetUser(c.UserId, out user))
+            SecurityState.User user;
+            if (!_state.TryGetUser(userId, out user))
             {
                 throw new InvalidOperationException("User not found");
             }
-            Apply(new SecurityItemRemoved(_state.Id, user.Id, user.Lookup));
+            var s = user.Kind.ToString().ToLowerInvariant();
+            Apply(new SecurityItemRemoved(_state.Id, user.Id, user.Lookup, s));
         }
 
 
-        public void When(UpdateSecurityItemDisplayName c)
+        public void UpdateDisplayName(UserId userId, string displayName)
         {
-            var user = _state.GetUser(c.UserId);
+            var user = _state.GetUser(userId);
 
-            Apply(new SecurityItemDisplayNameUpdated(c.Id, c.UserId, c.DisplayName));
+            if (user.DisplayName == displayName)
+                return;
+
+            Apply(new SecurityItemDisplayNameUpdated(_state.Id, userId, displayName));
+        }
+
+        public void AddPermissionToSecurityItem(UserId userId, string permission)
+        {
+            if (string.IsNullOrEmpty(permission))
+                throw DomainError.Named("empty", "Permission can't be empty");
+
+            if (!_state.ContainsUser(userId))
+            {
+                throw DomainError.Named("invalid-user", "User {0} does not exist", userId.Id);
+            }
+
+            var user = _state.GetUser(userId);
+            if (!user.Permissions.Contains(permission))
+                Apply(new PermissionAddedToSecurityItem(_state.Id, user.Id, user.DisplayName, permission, user.Token));
         }
     }
 }

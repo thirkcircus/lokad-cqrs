@@ -1,82 +1,76 @@
-﻿#region (c) 2010-2011 Lokad CQRS - New BSD License 
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad SAS 2010-2012 (http://www.lokad.com)
-// This code is released as Open Source under the terms of the New BSD License
-// Homepage: http://lokad.github.com/lokad-cqrs/
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
 
 using System;
+using System.Collections.Generic;
+using Sample;
+using Sample.Aggregates.User;
 
-namespace Sample.Aggregates.Login
+namespace Hub.Aggregates.Login
 {
-    public sealed class UserAggregate : IAggregate<UserId>, IUserAggregate
+    public sealed class UserAggregate
     {
-        readonly UserAggregateState _state;
-        readonly Action<IEvent<UserId>> _observer;
+        readonly UserState _state;
+        public IList<IEvent<IIdentity>> Changes = new List<IEvent<IIdentity>>();
 
         /// <summary>
         /// If relogin happens within the interval, we don't track it
         /// </summary>
         public static readonly TimeSpan DefaultLoginActivityThreshold = TimeSpan.FromMinutes(10);
 
-        public UserAggregate(UserAggregateState state, Action<IEvent<UserId>> observer)
+        public UserAggregate(UserState state)
         {
             _state = state;
-            _observer = observer;
         }
 
-        public void Execute(ICommand<UserId> c)
-        {
-            ThrowOnInvalidStateTransition(c);
-
-            RedirectToWhen.InvokeCommand(this, c);
-        }
-
-        public void When(CreateUser e)
+        public void Create(UserId userId, SecurityId securityId)
         {
             if (_state.Version != 0)
                 throw new DomainError("User already has non-zero version");
 
-            Apply(new UserCreated(e.Id, e.SecurityId, DefaultLoginActivityThreshold));
+            Apply(new UserCreated(userId, securityId, DefaultLoginActivityThreshold));
         }
 
-        public void When(ReportUserLoginFailure c)
+        public void ReportLoginFailure(DateTime timeUtc, string address)
         {
-            Apply(new UserLoginFailureReported(c.Id, c.TimeUtc, _state.SecurityId, c.Ip));
+            Apply(new UserLoginFailureReported(_state.Id, timeUtc, _state.SecurityId, address));
             if (_state.DoesLastFailureWarrantLockout())
             {
-                Apply(new UserLocked(c.Id, "Login failed too many times", _state.SecurityId));
+                Apply(new UserLocked(_state.Id, "Login failed too many times", _state.SecurityId, timeUtc.AddMinutes(10)));
             }
         }
 
-        public void When(ReportUserLoginSuccess c)
+        public void ReportLoginSuccess(DateTime timeUtc, string address)
         {
-            Apply(new UserLoginSuccessReported(c.Id, c.TimeUtc, _state.SecurityId, c.Ip));
+            Apply(new UserLoginSuccessReported(_state.Id, timeUtc, _state.SecurityId, address));
         }
 
-        public void When(UnlockUser c)
+        public void Unlock(string unlockReason)
         {
-            if (false == _state.Locked)
+            if (Current.UtcNow > _state.LockedOutTillUtc)
+                return; // lock has already expired
+
+            Apply(new UserUnlocked(_state.Id, unlockReason, _state.SecurityId));
+        }
+
+        public void Delete()
+        {
+            Apply(new UserDeleted(_state.Id, _state.SecurityId));
+        }
+
+        public void Lock(string lockReason)
+        {
+            if (_state.LockedOutTillUtc == Current.MaxValue)
                 return;
 
-            Apply(new UserUnlocked(c.Id, c.UnlockReason, _state.SecurityId));
+            Apply(new UserLocked(_state.Id, lockReason, _state.SecurityId, Current.MaxValue));
         }
 
-        public void When(DeleteUser c)
-        {
-            Apply(new UserDeleted(c.Id, _state.SecurityId));
-        }
-
-        public void When(LockUser c)
-        {
-            if (_state.Locked)
-                return;
-
-            Apply(new UserLocked(c.Id, c.LockReason, _state.SecurityId));
-        }
-
-        void ThrowOnInvalidStateTransition(ICommand<UserId> e)
+        public void ThrowOnInvalidStateTransition(ICommand<UserId> e)
         {
             if (_state.Version == 0)
             {
@@ -96,8 +90,8 @@ namespace Sample.Aggregates.Login
 
         void Apply(IEvent<UserId> e)
         {
-            _state.Apply(e);
-            _observer(e);
+            _state.Mutate(e);
+            Changes.Add(e);
         }
     }
 }

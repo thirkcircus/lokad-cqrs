@@ -1,13 +1,20 @@
+#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 
-namespace Sample.Tests.PAssert
+namespace Sample.PAssert
 {
     /// <summary>
     /// Indicates that marked element should be localized or not.
     /// </summary>
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
-    internal sealed class LocalizationRequiredAttribute : Attribute
+    sealed class LocalizationRequiredAttribute : Attribute
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalizationRequiredAttribute"/> class.
@@ -53,9 +60,9 @@ namespace Sample.Tests.PAssert
     /// The format string should be in <see cref="string.Format(IFormatProvider,string,object[])"/> -like form
     /// </summary>
     [AttributeUsage(AttributeTargets.Constructor | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    internal sealed class StringFormatMethodAttribute : Attribute
+    sealed class StringFormatMethodAttribute : Attribute
     {
-        private readonly string myFormatParameterName;
+        readonly string myFormatParameterName;
 
         /// <summary>
         /// Initializes new instance of StringFormatMethodAttribute
@@ -80,9 +87,7 @@ namespace Sample.Tests.PAssert
     /// For example, <see cref="ArgumentNullException"/> has such parameter.
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
-    internal sealed class InvokerParameterNameAttribute : Attribute
-    {
-    }
+    sealed class InvokerParameterNameAttribute : Attribute {}
 
     /// <summary>
     /// Indicates that the marked method is assertion method, i.e. it halts control flow if one of the conditions is satisfied. 
@@ -90,9 +95,7 @@ namespace Sample.Tests.PAssert
     /// </summary>
     /// <seealso cref="AssertionConditionAttribute"/>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    internal sealed class AssertionMethodAttribute : Attribute
-    {
-    }
+    sealed class AssertionMethodAttribute : Attribute {}
 
     /// <summary>
     /// Indicates the condition parameter of the assertion method. 
@@ -101,9 +104,9 @@ namespace Sample.Tests.PAssert
     /// </summary>
     /// <seealso cref="AssertionConditionType"/>
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = false, Inherited = true)]
-    internal sealed class AssertionConditionAttribute : Attribute
+    sealed class AssertionConditionAttribute : Attribute
     {
-        private readonly AssertionConditionType myConditionType;
+        readonly AssertionConditionType myConditionType;
 
         /// <summary>
         /// Initializes new instance of AssertionConditionAttribute
@@ -127,7 +130,7 @@ namespace Sample.Tests.PAssert
     /// Specifies assertion type. If the assertion method argument satisifes the condition, then the execution continues. 
     /// Otherwise, execution is assumed to be halted
     /// </summary>
-    internal enum AssertionConditionType
+    enum AssertionConditionType
     {
         /// <summary>
         /// Indicates that the marked parameter should be evaluated to true
@@ -155,34 +158,31 @@ namespace Sample.Tests.PAssert
     /// For example, it could unconditionally throw exception
     /// </summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    internal sealed class TerminatesProgramAttribute : Attribute
-    {
-    }
+    sealed class TerminatesProgramAttribute : Attribute {}
 
     /// <summary>
     /// Indicates that the value of marked element could be <c>null</c> sometimes, so the check for <c>null</c> is necessary before its usage
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Delegate | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    internal sealed class CanBeNullAttribute : Attribute
-    {
-    }
+    [AttributeUsage(
+        AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Delegate |
+            AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    sealed class CanBeNullAttribute : Attribute {}
 
     /// <summary>
     /// Indicates that the value of marked element could never be <c>null</c>
     /// </summary>
-    [AttributeUsage(AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Delegate | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-    internal sealed class NotNullAttribute : Attribute
-    {
-    }
+    [AttributeUsage(
+        AttributeTargets.Method | AttributeTargets.Parameter | AttributeTargets.Property | AttributeTargets.Delegate |
+            AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    sealed class NotNullAttribute : Attribute {}
 
     /// <summary>
     /// Indicates that the value of marked type (or its derivatives) cannot be compared using '==' or '!=' operators.
     /// There is only exception to compare with <c>null</c>, it is permitted
     /// </summary>
-    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false, Inherited = true)]
-    internal sealed class CannotApplyEqualityOperatorAttribute : Attribute
-    {
-    }
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Class | AttributeTargets.Struct, AllowMultiple = false
+        , Inherited = true)]
+    sealed class CannotApplyEqualityOperatorAttribute : Attribute {}
 
     /// <summary>
     /// When applied to target attribute, specifies a requirement for any type which is marked with 
@@ -201,9 +201,9 @@ namespace Sample.Tests.PAssert
     /// </example>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     [BaseTypeRequired(typeof(Attribute))]
-    internal sealed class BaseTypeRequiredAttribute : Attribute
+    sealed class BaseTypeRequiredAttribute : Attribute
     {
-        private readonly Type[] myBaseTypes;
+        readonly Type[] myBaseTypes;
 
         /// <summary>
         /// Initializes new instance of BaseTypeRequiredAttribute
@@ -228,13 +228,11 @@ namespace Sample.Tests.PAssert
     /// so this symbol will not be marked as unused (as well as by other usage inspections)
     /// </summary>
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
-    internal sealed class UsedImplicitlyAttribute : Attribute
+    sealed class UsedImplicitlyAttribute : Attribute
     {
         [UsedImplicitly]
         internal UsedImplicitlyAttribute()
-            : this(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Default)
-        {
-        }
+            : this(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Default) {}
 
         [UsedImplicitly]
         internal UsedImplicitlyAttribute(ImplicitUseKindFlags useKindFlags, ImplicitUseTargetFlags targetFlags)
@@ -245,15 +243,11 @@ namespace Sample.Tests.PAssert
 
         [UsedImplicitly]
         internal UsedImplicitlyAttribute(ImplicitUseKindFlags useKindFlags)
-            : this(useKindFlags, ImplicitUseTargetFlags.Default)
-        {
-        }
+            : this(useKindFlags, ImplicitUseTargetFlags.Default) {}
 
         [UsedImplicitly]
         internal UsedImplicitlyAttribute(ImplicitUseTargetFlags targetFlags)
-            : this(ImplicitUseKindFlags.Default, targetFlags)
-        {
-        }
+            : this(ImplicitUseKindFlags.Default, targetFlags) {}
 
         [UsedImplicitly]
         internal ImplicitUseKindFlags UseKindFlags { get; private set; }
@@ -269,13 +263,11 @@ namespace Sample.Tests.PAssert
     /// Should be used on attributes and causes ReSharper to not mark symbols marked with such attributes as unused (as well as by other usage inspections)
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
-    internal sealed class MeansImplicitUseAttribute : Attribute
+    sealed class MeansImplicitUseAttribute : Attribute
     {
         [UsedImplicitly]
         internal MeansImplicitUseAttribute()
-            : this(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Default)
-        {
-        }
+            : this(ImplicitUseKindFlags.Default, ImplicitUseTargetFlags.Default) {}
 
         [UsedImplicitly]
         internal MeansImplicitUseAttribute(ImplicitUseKindFlags useKindFlags, ImplicitUseTargetFlags targetFlags)
@@ -286,15 +278,11 @@ namespace Sample.Tests.PAssert
 
         [UsedImplicitly]
         internal MeansImplicitUseAttribute(ImplicitUseKindFlags useKindFlags)
-            : this(useKindFlags, ImplicitUseTargetFlags.Default)
-        {
-        }
+            : this(useKindFlags, ImplicitUseTargetFlags.Default) {}
 
         [UsedImplicitly]
         internal MeansImplicitUseAttribute(ImplicitUseTargetFlags targetFlags)
-            : this(ImplicitUseKindFlags.Default, targetFlags)
-        {
-        }
+            : this(ImplicitUseKindFlags.Default, targetFlags) {}
 
         [UsedImplicitly]
         internal ImplicitUseKindFlags UseKindFlags { get; private set; }
@@ -307,7 +295,7 @@ namespace Sample.Tests.PAssert
     }
 
     [Flags]
-    internal enum ImplicitUseKindFlags
+    enum ImplicitUseKindFlags
     {
         Default = Access | Assign | Instantiated,
 
@@ -331,7 +319,7 @@ namespace Sample.Tests.PAssert
     /// Specify what is considered used implicitly when marked with <see cref="MeansImplicitUseAttribute"/> or <see cref="UsedImplicitlyAttribute"/>
     /// </summary>
     [Flags]
-    internal enum ImplicitUseTargetFlags
+    enum ImplicitUseTargetFlags
     {
         Default = Itself,
 

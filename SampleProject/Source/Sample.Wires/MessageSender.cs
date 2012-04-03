@@ -11,7 +11,7 @@ using Lokad.Cqrs.Envelope;
 
 namespace Sample.Wires
 {
-    public sealed class MessageSender : IFunctionalFlow
+    public sealed class MessageSender : ICommandSender
     {
         readonly SimpleMessageSender _sender;
 

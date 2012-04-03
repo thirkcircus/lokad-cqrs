@@ -1,8 +1,7 @@
-﻿#region (c) 2010-2011 Lokad CQRS - New BSD License 
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad SAS 2010-2012 (http://www.lokad.com)
-// This code is released as Open Source under the terms of the New BSD License
-// Homepage: http://lokad.github.com/lokad-cqrs/
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
 
@@ -10,22 +9,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sample.Aggregates.Login
+namespace Sample.Aggregates.User
 {
-    public sealed class UserAggregateState : IAggregateState, IUserAggregateState
+    public sealed class UserState : IUserState
     {
         public SecurityId SecurityId { get; private set; }
         public string LockoutMessage { get; private set; }
-
+        public UserId Id { get; private set; }
         public int FailuresAllowed { get; private set; }
         public TimeSpan FailureLockoutWindow { get; private set; }
         public TimeSpan LoginActivityTrackingThreshold { get; private set; }
         public DateTime LastLoginUtc { get; private set; }
         public List<DateTime> TrackedLoginFailures { get; private set; }
+        public DateTime LockedOutTillUtc { get; private set; }
+        //public bool Locked { get; private set; }
 
-        public bool Locked { get; private set; }
-
-        public UserAggregateState(IEnumerable<IEvent<IIdentity>> events)
+        public UserState(IEnumerable<IEvent<IIdentity>> events)
         {
             TrackedLoginFailures = new List<DateTime>();
             FailuresAllowed = 5;
@@ -35,7 +34,7 @@ namespace Sample.Aggregates.Login
 
             foreach (var e in events)
             {
-                Apply(e);
+                Mutate(e);
             }
         }
 
@@ -68,12 +67,13 @@ namespace Sample.Aggregates.Login
         public void When(UserLocked e)
         {
             LockoutMessage = e.LockReason;
-            Locked = true;
+            LockedOutTillUtc = e.LockedTillUtc;
         }
 
         public void When(UserUnlocked e)
         {
-            Locked = false;
+            TrackedLoginFailures.Clear();
+            LockedOutTillUtc = DateTime.MinValue;
         }
 
         public void When(UserDeleted c)
@@ -84,11 +84,12 @@ namespace Sample.Aggregates.Login
         public void When(UserCreated e)
         {
             SecurityId = e.SecurityId;
+            Id = e.Id;
         }
 
         public int Version { get; private set; }
 
-        public void Apply(IEvent<IIdentity> e)
+        public void Mutate(IEvent<IIdentity> e)
         {
             Version += 1;
             RedirectToWhen.InvokeEventOptional(this, e);

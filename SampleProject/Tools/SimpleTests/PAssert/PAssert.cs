@@ -1,9 +1,16 @@
-﻿using System;
-using System.Linq.Expressions;
-using Sample.Tests.PAssert.Infrastructure;
-using Sample.Tests.PAssert.Infrastructure.Nodes;
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-namespace Sample.Tests.PAssert
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
+using System;
+using System.Linq.Expressions;
+using Sample.PAssert.Infrastructure;
+using Sample.PAssert.Infrastructure.Nodes;
+
+namespace Sample.PAssert
 {
     public static class PAssert
     {
@@ -13,12 +20,13 @@ namespace Sample.Tests.PAssert
             {
                 a();
             }
-            catch(TException exception)
+            catch (TException exception)
             {
                 return exception;
             }
 
-            throw new Exception("An exception of type " + typeof(TException).Name + " was expected, but no exception occured");
+            throw new Exception("An exception of type " + typeof(TException).Name +
+                " was expected, but no exception occured");
         }
 
         public static void IsTrue(Expression<Func<bool>> expression)
@@ -35,6 +43,7 @@ namespace Sample.Tests.PAssert
             Node constantNode = NaturalExpressionParser.Parse(expression.Body);
             return NodeFormatter.SimpleFormat(constantNode);
         }
+
         public static string CreateSimpleFormatFor(Expression<Action> expression)
         {
             Node constantNode = NaturalExpressionParser.Parse(expression.Body);

@@ -1,8 +1,7 @@
-﻿#region (c) 2010-2011 Lokad CQRS - New BSD License 
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad SAS 2010-2012 (http://www.lokad.com)
-// This code is released as Open Source under the terms of the New BSD License
-// Homepage: http://lokad.github.com/lokad-cqrs/
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
 
@@ -75,7 +74,7 @@ namespace Sample
 
             if (identity != null)
             {
-                return identity.Id.Equals(Id) && string.Equals(identity.GetTag(),GetTag());
+                return identity.Id.Equals(Id) && string.Equals(identity.GetTag(), GetTag());
             }
 
             return false;

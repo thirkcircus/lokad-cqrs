@@ -1,14 +1,22 @@
-﻿using System.Collections.Generic;
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Sample.Tests.PAssert.Infrastructure.Nodes;
+using Sample.PAssert.Infrastructure.Nodes;
 
-namespace Sample.Tests.PAssert.Infrastructure
+namespace Sample.PAssert.Infrastructure
 {
-    internal class NodeFormatter
+    class NodeFormatter
     {
         const char pipe = '|';
         const char dot = '\'';
+
         internal static string SimpleFormat(Node constantNode)
         {
             var textLine = new StringBuilder();
@@ -17,6 +25,7 @@ namespace Sample.Tests.PAssert.Infrastructure
             GetSimpleFormatString(constantNode, nodeInfos, textLine);
             return textLine.ToString();
         }
+
         internal static string[] Format(Node constantNode)
         {
             var textLine = new StringBuilder();
@@ -36,11 +45,11 @@ namespace Sample.Tests.PAssert.Infrastructure
                 lines.Add(line);
             }
 
-            if(nodeInfos.Any())
+            if (nodeInfos.Any())
             {
-                for (int i = nodeInfos.Max(x=>x.Depth)-1; i >= 0 ; i--)
+                for (int i = nodeInfos.Max(x => x.Depth) - 1; i >= 0; i--)
                 {
-                    var line = new StringBuilder(new string(' ', nodeInfos.Max(x=>x.Location)+1));
+                    var line = new StringBuilder(new string(' ', nodeInfos.Max(x => x.Location) + 1));
                     nodeInfos.ForEach(x => line[x.Location] = x.Depth > i ? dot : pipe);
                     lines.Add(line);
                 }
@@ -52,20 +61,20 @@ namespace Sample.Tests.PAssert.Infrastructure
                 .AsEnumerable()
                 .Reverse()
                 .Select(x => x.ToString().TrimEnd())
-                .Where(x=>x.Length > 0)
+                .Where(x => x.Length > 0)
                 .ToArray();
         }
 
-        private static void GetSimpleFormatString(Node constantNode, List<NodeInfo> nodeInfos, StringBuilder textLine)
+        static void GetSimpleFormatString(Node constantNode, List<NodeInfo> nodeInfos, StringBuilder textLine)
         {
             constantNode.Walk((text, value, depth) =>
-                                  {
-                                      if (value != null)
-                                      {
-                                          nodeInfos.Add(new NodeInfo { Location = textLine.Length, Value = value, Depth=depth });
-                                      }
-                                      textLine.Append(text);
-                                  }, 0);
+                {
+                    if (value != null)
+                    {
+                        nodeInfos.Add(new NodeInfo {Location = textLine.Length, Value = value, Depth = depth});
+                    }
+                    textLine.Append(text);
+                }, 0);
         }
 
         class NodeInfo
@@ -74,7 +83,5 @@ namespace Sample.Tests.PAssert.Infrastructure
             public string Value { get; set; }
             public int Depth { get; set; }
         }
-
     }
-
 }

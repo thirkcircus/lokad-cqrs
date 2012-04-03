@@ -73,6 +73,7 @@
   <ItemGroup>
     <Compile Include="AbstractIdentity.cs" />
     <Compile Include="ConcreteIdentity.cs" />
+    <Compile Include="Context.cs" />
     <Compile Include="Describe.cs" />
     <Compile Include="DescribeSecurity.cs" />
     <Compile Include="DescribeUser.cs" />

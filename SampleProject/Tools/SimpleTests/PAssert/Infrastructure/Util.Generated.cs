@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Collections.Generic;
 
-namespace Sample.Tests.PAssert.Infrastructure
+namespace Sample.PAssert.Infrastructure
 {
     internal class Util
     {

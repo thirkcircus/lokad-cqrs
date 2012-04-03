@@ -1,12 +1,20 @@
-﻿using System;
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
-namespace Sample.Tests
+namespace Sample
 {
-    public interface TypedSpecification<T> : Specification
+    public interface TypedSpecification<T> : spec
     {
         Action GetBefore();
         Delegate GetOn();
@@ -20,7 +28,7 @@ namespace Sample.Tests
         IEnumerable<ExpectationResult> Assert(object fromWhen);
     }
 
-    public interface Specification
+    public interface spec
     {
         string GetName();
         void Document(RunResult result);
@@ -48,11 +56,8 @@ namespace Sample.Tests
     }
 
 
-
     public static class TypeReader
     {
-
-
         public static IEnumerable<SpecificationToRun> GetSpecificationsIn(Type t)
         {
             foreach (var methodSpec in AllMethodSpecifications(t)) yield return methodSpec;
@@ -63,14 +68,14 @@ namespace Sample.Tests
         {
             foreach (var s in t.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static))
             {
-                if (typeof (Specification).IsAssignableFrom(s.ReturnType))
+                if (typeof(spec).IsAssignableFrom(s.ReturnType))
                 {
                     var result = CallMethod(s);
-                    if (result != null) yield return new SpecificationToRun((Specification) result, s);
+                    if (result != null) yield return new SpecificationToRun((spec) result, s);
                 }
-                if (typeof (IEnumerable<Specification>).IsAssignableFrom(s.ReturnType))
+                if (typeof(IEnumerable<spec>).IsAssignableFrom(s.ReturnType))
                 {
-                    var obj = (IEnumerable<Specification>) CallMethod(s);
+                    var obj = (IEnumerable<spec>) CallMethod(s);
                     foreach (var item in obj)
                         yield return new SpecificationToRun(item, s);
                 }
@@ -81,13 +86,13 @@ namespace Sample.Tests
         {
             foreach (var m in t.GetFields(BindingFlags.Public | BindingFlags.Instance))
             {
-                if (typeof (Specification).IsAssignableFrom(m.FieldType))
+                if (typeof(spec).IsAssignableFrom(m.FieldType))
                 {
-                    yield return new SpecificationToRun((Specification) m.GetValue(Activator.CreateInstance(t)), m);
+                    yield return new SpecificationToRun((spec) m.GetValue(Activator.CreateInstance(t)), m);
                 }
-                if (typeof (IEnumerable<Specification>).IsAssignableFrom(m.FieldType))
+                if (typeof(IEnumerable<spec>).IsAssignableFrom(m.FieldType))
                 {
-                    var obj = (IEnumerable<Specification>) m.GetValue(Activator.CreateInstance(t));
+                    var obj = (IEnumerable<spec>) m.GetValue(Activator.CreateInstance(t));
                     foreach (var item in obj)
                         yield return new SpecificationToRun(item, m);
                 }
@@ -105,13 +110,13 @@ namespace Sample.Tests
 
     public class SpecificationToRun
     {
-        public readonly Specification Specification;
+        public readonly spec Specification;
         public readonly MemberInfo FoundOn;
         public readonly bool IsRunnable;
         public readonly string Reason;
         public readonly Exception Exception;
 
-        public SpecificationToRun(Specification specification, MemberInfo foundOn)
+        public SpecificationToRun(spec specification, MemberInfo foundOn)
         {
             IsRunnable = true;
             Reason = "";
@@ -120,7 +125,7 @@ namespace Sample.Tests
             FoundOn = foundOn;
         }
 
-        public SpecificationToRun(Specification specification, string reason, Exception exception, MemberInfo foundOn)
+        public SpecificationToRun(spec specification, string reason, Exception exception, MemberInfo foundOn)
         {
             FoundOn = foundOn;
             Specification = specification;
@@ -170,15 +175,14 @@ namespace Sample.Tests
     }
 
 
-
     public class SpecificationRunner
     {
         public RunResult RunSpecification(SpecificationToRun spec)
         {
-            var method = typeof (SpecificationRunner).GetMethod("Run", BindingFlags.NonPublic | BindingFlags.Instance);
+            var method = typeof(SpecificationRunner).GetMethod("Run", BindingFlags.NonPublic | BindingFlags.Instance);
             var tomake =
                 spec.Specification.GetType().GetInterfaces().Single(
-                    x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof (TypedSpecification<>));
+                    x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(TypedSpecification<>));
             var generic = method.MakeGenericMethod(tomake.GetGenericArguments()[0]);
             var result = (RunResult) generic.Invoke(this, new[] {spec.Specification});
             result.FoundOnMemberInfo = spec.FoundOn;
@@ -208,6 +212,7 @@ namespace Sample.Tests
             catch (Exception ex)
             {
                 result.MarkFailure("On Failed", ex.InnerException);
+                return result;
             }
             object whenResult = null;
             Delegate when;
@@ -221,7 +226,7 @@ namespace Sample.Tests
                     whenResult = when.DynamicInvoke(new[] {sut});
                 else
                     whenResult = when.DynamicInvoke();
-                if (when.Method.ReturnType != typeof (void))
+                if (when.Method.ReturnType != typeof(void))
                     result.Result = whenResult;
                 else
                     result.Result = sut;
@@ -231,7 +236,7 @@ namespace Sample.Tests
                 result.MarkFailure("When Failed", ex.InnerException);
                 return result;
             }
-            var fromWhen = when.Method.ReturnType == typeof (void) ? sut : whenResult;
+            var fromWhen = when.Method.ReturnType == typeof(void) ? sut : whenResult;
 
             var allOk = true;
             foreach (var assertion in spec.GetAssertions())
@@ -257,7 +262,6 @@ namespace Sample.Tests
             result.Passed = allOk;
             return result;
         }
-
     }
 
     static class DelegateExtensions
@@ -285,10 +289,10 @@ namespace Sample.Tests
 
         public static string CleanupCamelCasing(this string name)
         {
-            return System.Text.RegularExpressions.Regex.Replace(name,
+            return Regex.Replace(name,
                 "([A-Z])",
                 " $1",
-                System.Text.RegularExpressions.RegexOptions.Compiled
+                RegexOptions.Compiled
                 ).Trim();
         }
     }

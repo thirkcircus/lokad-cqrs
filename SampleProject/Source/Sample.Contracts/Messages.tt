@@ -26,7 +26,6 @@ MailMessageSent!(ref SendMailMessage)
 
 
 
-
 entity Security (SecurityId Id) 
 // ============================
 // Matches to the customer/account but represents security details
@@ -34,7 +33,7 @@ entity Security (SecurityId Id)
 using ? = ICommand<SecurityId>;
 using ! = IEvent<SecurityId>;
 let display = string displayName;
-
+let token = string token;
 
 CreateSecurityAggregate? ()
 CreateSecurityFromRegistration? (registration, string login, string pwd, display, string optionalIdentity)
@@ -46,16 +45,17 @@ SecurityPasswordAdded! (user, display, string login, string passwordHash, string
 AddSecurityIdentity? (display, string identity)
 SecurityIdentityAdded! (user, display, string identity, string token)
 
-AddSecurityKey? (display)
-SecurityKeyAdded! (user, display, string key, string token)
 
 RemoveSecurityItem? (user)
-SecurityItemRemoved! (user, string lookup)
+SecurityItemRemoved! (user, string lookup, string type)
 
 UpdateSecurityItemDisplayName? (user, display)
 SecurityItemDisplayNameUpdated! (user, display)
 
-SecurityRegistrationProcessCompleted! (display, user, string token, registration)
+SecurityRegistrationProcessCompleted! (display, user, token, registration)
+
+AddPermissionToSecurityItem? (user, string permission)
+PermissionAddedToSecurityItem! (user, display, string permission, token)
 
 
 entity User (UserId id); 
@@ -75,7 +75,7 @@ ReportUserLoginSuccess? (DateTime timeUtc, string ip)
 UserLoginSuccessReported! (DateTime timeUtc, security, string ip)
 
 LockUser? (string lockReason)
-UserLocked! (string lockReason, security)
+UserLocked! (string lockReason, security, DateTime lockedTillUtc)
 
 UnlockUser? (string unlockReason)
 UserUnlocked! (string unlockReason, security)

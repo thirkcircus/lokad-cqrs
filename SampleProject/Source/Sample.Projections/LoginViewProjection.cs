@@ -51,19 +51,6 @@ namespace Sample.Projections
                 });
         }
 
-        public void When(SecurityKeyAdded e)
-        {
-            _writer.Add(e.UserId, new LoginView
-                {
-                    Security = e.Id,
-                    Display = e.DisplayName,
-                    Token = e.Token,
-                    Key = e.Key,
-                    Type = LoginViewType.Key,
-                    LoginTrackingThreshold = DefaultThreshold
-                });
-        }
-
         public void When(UserLocked e)
         {
             _writer.UpdateOrThrow(e.Id, lv =>

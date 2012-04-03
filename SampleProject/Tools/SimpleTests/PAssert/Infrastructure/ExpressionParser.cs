@@ -1,4 +1,11 @@
-﻿using System;
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -6,45 +13,45 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using Sample.Tests.PAssert.Infrastructure.Nodes;
+using Sample.PAssert.Infrastructure.Nodes;
 
-namespace Sample.Tests.PAssert.Infrastructure
+namespace Sample.PAssert.Infrastructure
 {
-    internal class ExpressionParser
+    class ExpressionParser
     {
         public static Node Parse(Expression e)
         {
             if (e.NodeType == ExpressionType.ArrayIndex)
             {
-                return ArrayIndex((BinaryExpression)e);
+                return ArrayIndex((BinaryExpression) e);
             }
             if (e is BinaryExpression)
             {
-                return Binary((BinaryExpression)e, Util.Operators[e.NodeType]);
+                return Binary((BinaryExpression) e, Util.Operators[e.NodeType]);
             }
             if (e is MemberExpression)
             {
-                return Member((MemberExpression)e);
+                return Member((MemberExpression) e);
             }
             if (e is ConstantExpression)
             {
-                return Constant((ConstantExpression)e);
+                return Constant((ConstantExpression) e);
             }
             if (e is MethodCallExpression)
             {
-                return MethodCall((MethodCallExpression)e);
+                return MethodCall((MethodCallExpression) e);
             }
             if (e is ConditionalExpression)
             {
-                return Conditional((ConditionalExpression)e);
+                return Conditional((ConditionalExpression) e);
             }
             if (e is NewArrayExpression)
             {
-                return NewArray((NewArrayExpression)e);
+                return NewArray((NewArrayExpression) e);
             }
             if (e is UnaryExpression)
             {
-                return Unary((UnaryExpression)e);
+                return Unary((UnaryExpression) e);
             }
             if (e.NodeType == ExpressionType.Lambda)
             {
@@ -52,10 +59,10 @@ namespace Sample.Tests.PAssert.Infrastructure
             }
             if (e is TypeBinaryExpression)
             {
-                return TypeBinary((TypeBinaryExpression)e);
+                return TypeBinary((TypeBinaryExpression) e);
             }
-            throw new ArgumentOutOfRangeException("e", string.Format("Can't handle expression of class {0} and type {1}", e.GetType().Name, e.NodeType));
-
+            throw new ArgumentOutOfRangeException("e",
+                string.Format("Can't handle expression of class {0} and type {1}", e.GetType().Name, e.NodeType));
         }
 
         static Node TypeBinary(TypeBinaryExpression e)
@@ -63,23 +70,23 @@ namespace Sample.Tests.PAssert.Infrastructure
             switch (e.NodeType)
             {
                 case ExpressionType.TypeIs:
-                    return new BinaryNode()
-                               {
-                                   Left = Parse(e.Expression),
-                                   Operator = "is",
-                                   Right = new ConstantNode() { Text = NameOfType(e.TypeOperand) },
-                                   Value = GetValue(e)
-                               };
+                    return new BinaryNode
+                        {
+                            Left = Parse(e.Expression),
+                            Operator = "is",
+                            Right = new ConstantNode {Text = NameOfType(e.TypeOperand)},
+                            Value = GetValue(e)
+                        };
                 default:
                     throw new NotImplementedException(string.Format(CultureInfo.CurrentCulture,
-                                                                    "Can't handle TypeBinaryExpression of type {0}",
-                                                                    e.NodeType));
+                        "Can't handle TypeBinaryExpression of type {0}",
+                        e.NodeType));
             }
         }
 
         static Node Lambda(Expression e)
         {
-            return new ConstantNode() { Text = e.ToString() };
+            return new ConstantNode {Text = e.ToString()};
         }
 
         static Node Unary(UnaryExpression e)
@@ -87,17 +94,22 @@ namespace Sample.Tests.PAssert.Infrastructure
             switch (e.NodeType)
             {
                 case ExpressionType.Convert:
-                    return new UnaryNode() { Prefix = "(" + NameOfType(e.Type) + ")(", Operand = Parse(e.Operand), Suffix = ")", PrefixValue = GetValue(e) };
+                    return new UnaryNode
+                        {
+                            Prefix = "(" + NameOfType(e.Type) + ")(",
+                            Operand = Parse(e.Operand),
+                            Suffix = ")",
+                            PrefixValue = GetValue(e)
+                        };
                 case ExpressionType.Not:
-                    return new UnaryNode() { Prefix = "!", Operand = Parse(e.Operand), PrefixValue = GetValue(e) };
+                    return new UnaryNode {Prefix = "!", Operand = Parse(e.Operand), PrefixValue = GetValue(e)};
                 case ExpressionType.Negate:
                 case ExpressionType.NegateChecked:
-                    return new UnaryNode() { Prefix = "-", Operand = Parse(e.Operand), PrefixValue = GetValue(e) };
-
-
+                    return new UnaryNode {Prefix = "-", Operand = Parse(e.Operand), PrefixValue = GetValue(e)};
             }
-            throw new ArgumentOutOfRangeException("e", string.Format("Can't handle UnaryExpression expression of class {0} and type {1}", e.GetType().Name, e.NodeType));
-
+            throw new ArgumentOutOfRangeException("e",
+                string.Format("Can't handle UnaryExpression expression of class {0} and type {1}", e.GetType().Name,
+                    e.NodeType));
         }
 
         static Node NewArray(NewArrayExpression e)
@@ -107,32 +119,32 @@ namespace Sample.Tests.PAssert.Infrastructure
                 case ExpressionType.NewArrayInit:
                     Type t = e.Type.GetElementType();
                     return new NewArrayNode
-                    {
-                        Items = e.Expressions.Select(Parse).ToList(),
-                        Type = NameOfType(t)
-                    };
+                        {
+                            Items = e.Expressions.Select(Parse).ToList(),
+                            Type = NameOfType(t)
+                        };
                 case ExpressionType.NewArrayBounds:
-                //todo:
+                    //todo:
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private static readonly Dictionary<Type, string> Aliases = new Dictionary<Type, string>()
+        static readonly Dictionary<Type, string> Aliases = new Dictionary<Type, string>
             {
-                { typeof(byte), "byte" },
-                { typeof(sbyte), "sbyte" },
-                { typeof(short), "short" },
-                { typeof(ushort), "ushort" },
-                { typeof(int), "int" },
-                { typeof(uint), "uint" },
-                { typeof(long), "long" },
-                { typeof(ulong), "ulong" },
-                { typeof(float), "float" },
-                { typeof(double), "double" },
-                { typeof(decimal), "decimal" },
-                { typeof(object), "object" },
-                { typeof(string), "string" },
+                {typeof(byte), "byte"},
+                {typeof(sbyte), "sbyte"},
+                {typeof(short), "short"},
+                {typeof(ushort), "ushort"},
+                {typeof(int), "int"},
+                {typeof(uint), "uint"},
+                {typeof(long), "long"},
+                {typeof(ulong), "ulong"},
+                {typeof(float), "float"},
+                {typeof(double), "double"},
+                {typeof(decimal), "decimal"},
+                {typeof(object), "object"},
+                {typeof(string), "string"},
             };
 
 
@@ -143,43 +155,43 @@ namespace Sample.Tests.PAssert.Infrastructure
 
         static Node ArrayIndex(BinaryExpression e)
         {
-            return new ArrayIndexNode() { Array = Parse(e.Left), Index = Parse(e.Right), Value = GetValue(e) };
+            return new ArrayIndexNode {Array = Parse(e.Left), Index = Parse(e.Right), Value = GetValue(e)};
         }
 
         static Node Conditional(ConditionalExpression e)
         {
             return new ConditionalNode
-            {
-                Condition = Parse(e.Test),
-                FalseValue = Parse(e.IfFalse),
-                TrueValue = Parse(e.IfTrue)
-            };
+                {
+                    Condition = Parse(e.Test),
+                    FalseValue = Parse(e.IfFalse),
+                    TrueValue = Parse(e.IfTrue)
+                };
         }
 
         static Node MethodCall(MethodCallExpression e)
         {
             var parameters = e.Arguments.Select(Parse);
-            if(e.Method.GetCustomAttributes(typeof(ExtensionAttribute), true).Any())
+            if (e.Method.GetCustomAttributes(typeof(ExtensionAttribute), true).Any())
             {
                 return new MethodCallNode
-                {
-                    Container = parameters.First(),
-                    MemberName = e.Method.Name,
-                    MemberValue = GetValue(e),
-                    Parameters = parameters.Skip(1).ToList(),
-                };
+                    {
+                        Container = parameters.First(),
+                        MemberName = e.Method.Name,
+                        MemberValue = GetValue(e),
+                        Parameters = parameters.Skip(1).ToList(),
+                    };
             }
             else
             {
                 return new MethodCallNode
-                {
-                    Container = e.Object == null ? new ConstantNode() { Text = e.Method.DeclaringType.Name } : Parse(e.Object),
-                    MemberName = e.Method.Name,
-                    MemberValue = GetValue(e),
-                    Parameters = parameters.ToList(),
-                };
+                    {
+                        Container =
+                            e.Object == null ? new ConstantNode {Text = e.Method.DeclaringType.Name} : Parse(e.Object),
+                        MemberName = e.Method.Name,
+                        MemberValue = GetValue(e),
+                        Parameters = parameters.ToList(),
+                    };
             }
-            
         }
 
         static Node Constant(ConstantExpression e)
@@ -187,9 +199,9 @@ namespace Sample.Tests.PAssert.Infrastructure
             string value = GetValue(e);
 
             return new ConstantNode
-            {
-                Text = value
-            };
+                {
+                    Text = value
+                };
         }
 
         static Node Member(MemberExpression e)
@@ -197,17 +209,17 @@ namespace Sample.Tests.PAssert.Infrastructure
             if (IsDisplayClass(e.Expression) || e.Expression == null)
             {
                 return new ConstantNode
-                {
-                    Value = GetValue(e),
-                    Text = e.Member.Name
-                };
+                    {
+                        Value = GetValue(e),
+                        Text = e.Member.Name
+                    };
             }
             return new MemberAccessNode
-            {
-                Container = Parse(e.Expression),
-                MemberValue = GetValue(e),
-                MemberName = e.Member.Name
-            };
+                {
+                    Container = Parse(e.Expression),
+                    MemberValue = GetValue(e),
+                    MemberName = e.Member.Name
+                };
         }
 
 
@@ -223,12 +235,12 @@ namespace Sample.Tests.PAssert.Infrastructure
         static Node Binary(BinaryExpression e, string text)
         {
             return new BinaryNode
-            {
-                Operator = text,
-                Value = GetValue(e),
-                Left = Parse(e.Left),
-                Right = Parse(e.Right),
-            };
+                {
+                    Operator = text,
+                    Value = GetValue(e),
+                    Left = Parse(e.Left),
+                    Right = Parse(e.Right),
+                };
         }
 
         static string GetValue(Expression e)
@@ -254,9 +266,9 @@ namespace Sample.Tests.PAssert.Infrastructure
 
         static string GetHints(Expression e, object value)
         {
-            if (value is bool && !(bool)value && e is BinaryExpression && e.NodeType == ExpressionType.Equal)
+            if (value is bool && !(bool) value && e is BinaryExpression && e.NodeType == ExpressionType.Equal)
             {
-                var be = (BinaryExpression)e;
+                var be = (BinaryExpression) e;
                 object left;
                 object right;
                 try
@@ -268,13 +280,13 @@ namespace Sample.Tests.PAssert.Infrastructure
                 {
                     return FormatTargetInvocationException(exception);
                 }
-                if (Object.Equals(left, right))
+                if (Equals(left, right))
                 {
                     return ", but would have been True with .Equals()";
                 }
                 if (left is string && right is string)
                 {
-                    if (((string)left).Equals((string)right, StringComparison.InvariantCultureIgnoreCase))
+                    if (((string) left).Equals((string) right, StringComparison.InvariantCultureIgnoreCase))
                     {
                         return ", but would have been True if case insensitive";
                     }
@@ -282,7 +294,7 @@ namespace Sample.Tests.PAssert.Infrastructure
                 }
                 if (left is IEnumerable && right is IEnumerable)
                 {
-                    if (((IEnumerable)left).Cast<object>().SequenceEqual(((IEnumerable)right).Cast<object>()))
+                    if (((IEnumerable) left).Cast<object>().SequenceEqual(((IEnumerable) right).Cast<object>()))
                     {
                         return ", but would have been True with .SequenceEqual()";
                     }
@@ -312,14 +324,14 @@ namespace Sample.Tests.PAssert.Infrastructure
             }
             if (value is IEnumerable)
             {
-                IEnumerable enumerable = (IEnumerable)value;
+                IEnumerable enumerable = (IEnumerable) value;
                 var values = enumerable.Cast<object>().Select(FormatObject);
                 //in case the enumerable is really long, let's cut off the end arbitrarily?
                 const int Limit = 100;
                 values = values.Take(Limit);
-                if(values.Count() == Limit)
+                if (values.Count() == Limit)
                 {
-                    values = values.Concat(new[] { "... (MORE THAN " + Limit + " ITEMS FOUND)" });
+                    values = values.Concat(new[] {"... (MORE THAN " + Limit + " ITEMS FOUND)"});
                 }
                 return "{" + string.Join(", ", values.ToArray()) + "}";
             }
@@ -329,4 +341,3 @@ namespace Sample.Tests.PAssert.Infrastructure
         }
     }
 }
-

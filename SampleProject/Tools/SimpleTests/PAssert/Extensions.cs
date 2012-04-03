@@ -1,6 +1,14 @@
-﻿using System.Linq;
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-namespace Sample.Tests.PAssert
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace Sample.PAssert
 {
     public static class Extensions
     {
@@ -19,11 +27,11 @@ namespace Sample.Tests.PAssert
 
         public static string CleanupCamelCasing(this string name)
         {
-            return System.Text.RegularExpressions.Regex.Replace(name,
-            "([A-Z])",
-            " $1",
-            System.Text.RegularExpressions.RegexOptions.Compiled
-            ).Trim();
+            return Regex.Replace(name,
+                "([A-Z])",
+                " $1",
+                RegexOptions.Compiled
+                ).Trim();
         }
     }
 }

@@ -38,11 +38,22 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Aggregates\AggregateAssertion.cs" />
-    <Compile Include="Aggregates\AggregateSpecification.cs" />
-    <Compile Include="Aggregates\ContainsSpecifications.cs" />
-    <Compile Include="Aggregates\User\UserSpec.cs" />
-    <Compile Include="Aggregates\User\user_management.cs" />
+    <Compile Include="Aggregates\Security\add_permission_to_security_item.cs" />
+    <Compile Include="Aggregates\Security\add_security_identity.cs" />
+    <Compile Include="Aggregates\Security\add_security_password.cs" />
+    <Compile Include="Aggregates\Security\create_security_from_registration.cs" />
+    <Compile Include="Aggregates\Security\remove_security_item.cs" />
+    <Compile Include="Aggregates\Security\security_spec.cs" />
+    <Compile Include="Aggregates\Security\update_security_item_display_name.cs" />
+    <Compile Include="Aggregates\TestIdentityService.cs" />
+    <Compile Include="Aggregates\TestUserIndexService.cs" />
+    <Compile Include="Aggregates\User\create_user.cs" />
+    <Compile Include="Aggregates\User\delete_user.cs" />
+    <Compile Include="Aggregates\User\lock_user.cs" />
+    <Compile Include="Aggregates\User\report_login_success.cs" />
+    <Compile Include="Aggregates\User\report_user_login_failure.cs" />
+    <Compile Include="Aggregates\User\unlock_user.cs" />
+    <Compile Include="Aggregates\User\user_spec.cs" />
     <Compile Include="ExtendTimeSpan.cs" />
     <Compile Include="TestPassword.cs" />
   </ItemGroup>

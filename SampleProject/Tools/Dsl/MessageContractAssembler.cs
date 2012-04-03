@@ -1,7 +1,7 @@
-﻿#region Copyright (c) 2006-2011 LOKAD SAS. All rights reserved
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-// You must not remove this notice, or any other, from this software.
-// This document is the property of LOKAD SAS and must not be disclosed
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
 
@@ -93,7 +93,7 @@ namespace Lokad.CodeDsl
                             modifiers.Add(new Modifier(mod, s));
                         }
                     }
-                    
+
 
                     var message = new Message(name, modifiers);
                     if (modifiers.Any())

@@ -1,8 +1,7 @@
-﻿#region (c) 2010-2011 Lokad CQRS - New BSD License 
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad SAS 2010-2012 (http://www.lokad.com)
-// This code is released as Open Source under the terms of the New BSD License
-// Homepage: http://lokad.github.com/lokad-cqrs/
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
 
@@ -25,7 +24,6 @@ namespace Sample
         }
     }
 
-  
 
     [DataContract(Namespace = "Sample")]
     public sealed class SecurityId : AbstractIdentity<long>
@@ -51,7 +49,6 @@ namespace Sample
     }
 
 
-
     [DataContract(Namespace = "Sample")]
     public sealed class UserId : AbstractIdentity<long>
     {
@@ -70,7 +67,7 @@ namespace Sample
         }
 
         public UserId() {}
-        
+
         [DataMember(Order = 1)]
         public override long Id { get; protected set; }
     }
@@ -90,7 +87,7 @@ namespace Sample
             return TagValue;
         }
 
-        public RegistrationId() { }
+        public RegistrationId() {}
 
         [DataMember(Order = 1)]
         public override Guid Id { get; protected set; }
@@ -99,7 +96,5 @@ namespace Sample
         {
             return string.Format("reg-" + Id.ToString().ToLowerInvariant().Substring(0, 6));
         }
-
     }
-
 }

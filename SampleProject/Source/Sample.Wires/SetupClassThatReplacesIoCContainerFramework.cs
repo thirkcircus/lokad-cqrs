@@ -1,11 +1,12 @@
 using System;
+using System.Collections.Generic;
 using Lokad.Cqrs;
 using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.Build;
 using Lokad.Cqrs.Partition;
 using Lokad.Cqrs.StreamingStorage;
 using Lokad.Cqrs.TapeStorage;
-using Sample.Processes;
+
 using Sample.Projections;
 
 namespace Sample.Wires
@@ -30,40 +31,38 @@ namespace Sample.Wires
 
         public AssembledComponents AssembleComponents()
         {
-            var documents = CreateNuclear(new DocumentStrategy());
-            var identity = new IdentityGenerator(documents);
+            var nuclear = CreateNuclear(new DocumentStrategy());
+            var docs = nuclear.Container;
+            var identity = new IdentityGenerator(nuclear);
             var streamer = Streamer;
 
             var tapes = Tapes;
             var streaming = Streaming;
             var routerQueue = CreateQueueWriter(Topology.RouterQueue);
-            var aggregates = new AggregateFactory(tapes, streamer, routerQueue, documents, identity);
 
+            var command = new RedirectToCommand();
+
+
+            var eventStore = new TapeStreamEventStore(tapes, streamer, routerQueue);
+            DomainBoundedContext.ApplicationServices(docs,  eventStore).ForEach(command.WireToWhen);
+
+            
             var sender = new SimpleMessageSender(streamer, routerQueue);
             var flow = new MessageSender(sender);
 
             var builder = new CqrsEngineBuilder(streamer);
 
 
-            builder.Handle(CreateInbox(Topology.RouterQueue),
-                Topology.Route(CreateQueueWriter, streamer, tapes), "router");
-            builder.Handle(CreateInbox(Topology.EntityQueue), aggregates.Dispatch);
+            builder.Handle(CreateInbox(Topology.RouterQueue),Topology.Route(CreateQueueWriter, streamer, tapes), "router");
+            builder.Handle(CreateInbox(Topology.EntityQueue), em => CallHandlers(command, em));
 
             var functions = new RedirectToDynamicEvent();
             // documents
             //functions.WireToWhen(new RegistrationUniquenessProjection(atomic.Factory.GetEntityWriter<unit, RegistrationUniquenessDocument>()));
 
-            // UI projections
-            var projectionStore = CreateNuclear(new ProjectionStrategy());
-            foreach (var projection in BootstrapProjections.BuildProjectionsWithWhenConvention(projectionStore.Container))
-            {
-                functions.WireToWhen(projection);
-            }
-
-            // processes
-            //functions.WireToWhen(new BillingProcess(flow));
-            //functions.WireToWhen(new RegistrationProcess(flow));
-            functions.WireToWhen(new ReplicationProcess(flow));
+            
+            ClientBoundedContext.Projections(docs).ForEach(functions.WireToWhen);
+            DomainBoundedContext.Receptors(flow).ForEach(functions.WireToWhen);
 
             builder.Handle(CreateInbox(Topology.EventsQueue), aem => CallHandlers(functions, aem));
 
@@ -85,6 +84,24 @@ namespace Sample.Wires
             var content = aem.Items[0].Content;
             functions.InvokeEvent(content);
             functions.InvokeEvent(Source.For(aem.EnvelopeId, aem.CreatedOnUtc, (ISampleEvent) content));
+        }
+
+        static void CallHandlers(RedirectToCommand serviceCommands, ImmutableEnvelope aem)
+        {
+            var content = aem.Items[0].Content;
+            serviceCommands.Invoke(content);
+        }
+
+    }
+
+    public static class ExtendArrayEvil
+    {
+        public static void ForEach<T>(this IEnumerable<T> self, Action<T> action)
+        {
+            foreach (var variable in self)
+            {
+                action(variable);
+            }
         }
     }
 }

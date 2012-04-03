@@ -31,10 +31,6 @@ namespace Sample.Projections
             _writer.UpdateEnforcingNew(unit.it, si => si.Identities[e.Identity] = e.UserId.Id);
         }
 
-        public void When(SecurityKeyAdded e)
-        {
-            _writer.UpdateEnforcingNew(unit.it, si => si.Keys[e.Key] = e.UserId.Id);
-        }
 
         public void When(SecurityItemRemoved e)
         {

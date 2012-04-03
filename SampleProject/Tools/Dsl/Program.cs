@@ -1,7 +1,7 @@
-﻿#region Copyright (c) 2006-2011 LOKAD SAS. All rights reserved
+﻿#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
 
-// You must not remove this notice, or any other, from this software.
-// This document is the property of LOKAD SAS and must not be disclosed
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
 
@@ -81,19 +81,18 @@ namespace Hub.Dsl
         static void Rebuild(string text, string fullPath)
         {
             var dsl = text;
-            var generator = new TemplatedGenerator()
+            var generator = new TemplatedGenerator
                 {
-                    Namespace = "Hub",
+                    Namespace = "Sample",
                     GenerateInterfaceForEntityWithModifiers = "?",
                     TemplateForInterfaceName = "public interface I{0}Aggregate",
                     TemplateForInterfaceMember = "void When({0} c);",
                     ClassNameTemplate = @"
     
 
-[DataContract(Namespace = ""Hub"")]
+[DataContract(Namespace = ""Sample"")]
 public partial class {0}",
                     MemberTemplate = "[DataMember(Order = {0})] public {1} {2} {{ get; private set; }}",
-                    
                 };
 
             var prefix = @"

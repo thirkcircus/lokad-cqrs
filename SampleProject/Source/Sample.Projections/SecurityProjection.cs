@@ -25,11 +25,6 @@ namespace Sample.Projections
             _writer.Add(e.Id, new SecurityView());
         }
 
-        public void When(SecurityKeyAdded e)
-        {
-            _writer.UpdateOrThrow(e.Id, view => view.AddItem(e.UserId, SecurityItemType.Key, e.DisplayName, e.Key));
-        }
-
         public void When(SecurityIdentityAdded e)
         {
             _writer.UpdateOrThrow(e.Id,
