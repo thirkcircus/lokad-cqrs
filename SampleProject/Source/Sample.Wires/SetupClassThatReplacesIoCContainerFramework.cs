@@ -1,5 +1,11 @@
+#region (c) 2010-2012 Lokad - CQRS Sample for Windows Azure - New BSD License 
+
+// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// This code is released as Open Source under the terms of the New BSD Licence
+
+#endregion
+
 using System;
-using System.Collections.Generic;
 using Lokad.Cqrs;
 using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.Build;
@@ -45,7 +51,8 @@ namespace Sample.Wires
             var builder = new CqrsEngineBuilder(Streamer);
 
             // route queue infrastructure together
-            builder.Handle(CreateInbox(Topology.RouterQueue), Topology.Route(CreateQueueWriter, Streamer, Tapes), "router");
+            builder.Handle(CreateInbox(Topology.RouterQueue), Topology.Route(CreateQueueWriter, Streamer, Tapes),
+                "router");
             builder.Handle(CreateInbox(Topology.EntityQueue), em => CallHandlers(commands, em));
             builder.Handle(CreateInbox(Topology.EventsQueue), aem => CallHandlers(events, aem));
 

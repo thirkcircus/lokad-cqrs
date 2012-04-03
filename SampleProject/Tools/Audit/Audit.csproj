@@ -126,10 +126,6 @@
       <Project>{2A4A9A2C-5D8D-4078-B118-02A1D386A9FA}</Project>
       <Name>Sample.Contracts</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Source\Sample.Projections\Sample.Projections.csproj">
-      <Project>{37C981DB-8D49-42B8-8854-53A2945F53A8}</Project>
-      <Name>Sample.Projections</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Source\Sample.Wires\Sample.Wires.csproj">
       <Project>{5EE3B59D-B4BD-4466-95DD-334D0A9C784C}</Project>
       <Name>Sample.Wires</Name>

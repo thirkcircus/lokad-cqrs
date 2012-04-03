@@ -8,7 +8,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using Lokad.Cqrs.Envelope;
 using Lokad.Cqrs.Evil;
 using ServiceStack.Text;
