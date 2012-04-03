@@ -46,13 +46,11 @@
     <Compile Include="Current.cs" />
     <Compile Include="DomainBoundedContext.cs" />
     <Compile Include="DomainIdentityGenerator.cs" />
-    <Compile Include="IdentityGenerator.cs" />
     <Compile Include="Aggregates\User\UserAggregate.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="Processes\ReplicationProcess.cs" />
     <Compile Include="PasswordGenerator.cs" />
     <Compile Include="RedirectToWhen.cs" />
-    <Compile Include="SampleEntityVector.cs" />
     <Compile Include="Services\UserIndex\UserIndexLookup.cs" />
     <Compile Include="Services\UserIndex\UserIndexProjection.cs" />
     <Compile Include="Services\UserIndex\UserIndexService.cs" />

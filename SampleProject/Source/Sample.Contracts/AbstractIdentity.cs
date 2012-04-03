@@ -93,9 +93,4 @@ namespace Sample
             }
         }
     }
-
-    public interface IIdentityGenerator
-    {
-        long GetId();
-    }
 }

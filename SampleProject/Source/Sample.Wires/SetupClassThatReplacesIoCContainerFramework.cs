@@ -33,27 +33,21 @@ namespace Sample.Wires
         {
             var nuclear = CreateNuclear(new DocumentStrategy());
             var docs = nuclear.Container;
-            var identity = new IdentityGenerator(nuclear);
-            var streamer = Streamer;
-
-            var tapes = Tapes;
-            var streaming = Streaming;
             var routerQueue = CreateQueueWriter(Topology.RouterQueue);
 
             var command = new RedirectToCommand();
 
-
-            var eventStore = new TapeStreamEventStore(tapes, streamer, routerQueue);
+            var eventStore = new TapeStreamEventStore(Tapes, Streamer, routerQueue);
             DomainBoundedContext.ApplicationServices(docs,  eventStore).ForEach(command.WireToWhen);
 
             
-            var sender = new SimpleMessageSender(streamer, routerQueue);
+            var sender = new SimpleMessageSender(Streamer, routerQueue);
             var flow = new MessageSender(sender);
 
-            var builder = new CqrsEngineBuilder(streamer);
+            var builder = new CqrsEngineBuilder(Streamer);
 
 
-            builder.Handle(CreateInbox(Topology.RouterQueue),Topology.Route(CreateQueueWriter, streamer, tapes), "router");
+            builder.Handle(CreateInbox(Topology.RouterQueue),Topology.Route(CreateQueueWriter, Streamer, Tapes), "router");
             builder.Handle(CreateInbox(Topology.EntityQueue), em => CallHandlers(command, em));
 
             var functions = new RedirectToDynamicEvent();
