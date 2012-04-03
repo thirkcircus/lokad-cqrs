@@ -207,7 +207,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
             var previousVersion = _stream.GetCurrentVersion();
             Assert.AreEqual(0, previousVersion, "Version should be zero");
 
-            var result = _stream.TryAppend(_batch[0], TapeAppendCondition.VersionIs(1))==0;
+            var result = _stream.TryAppend(_batch[0], TapeAppendCondition.VersionIs(1))!=0;
             Assert.IsFalse(result, "Appending records should fail");
 
             var currentVersion = _stream.GetCurrentVersion();
