@@ -26,16 +26,13 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
             _root.Create();
         }
 
-        public IStreamingContainer GetContainer(string name)
+        public IStreamContainer GetContainer(string name)
         {
             var combine = Path.Combine(_root.FullName, "test");
-            return new FileStreamingContainer(new DirectoryInfo(combine));
+            return new FileStreamContainer(new DirectoryInfo(combine));
         }
 
-        public StreamingWriteOptions GetWriteHints()
-        {
-            return StreamingWriteOptions.None;
-        }
+        
 
         [TestFixture]
         public sealed class When_deleting_blob_item :

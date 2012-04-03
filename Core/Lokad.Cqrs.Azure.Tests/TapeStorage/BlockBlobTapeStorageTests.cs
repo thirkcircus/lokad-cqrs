@@ -15,7 +15,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
         const string ContainerName = "blob-tape-test";
 
         readonly CloudStorageAccount _cloudStorageAccount = CloudStorageAccount.DevelopmentStorageAccount;
-        ITapeStorageFactory _storageFactory;
+        ITapeContainer _storageFactory;
 
 
         [Test, Explicit]

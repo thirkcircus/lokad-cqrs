@@ -18,24 +18,21 @@ namespace Lokad.Cqrs.Envelope
     {
         public readonly string QueueName;
         public readonly string EnvelopeId;
-        public readonly bool Transactional;
         public readonly string[] MappedTypes;
         public readonly ICollection<ImmutableAttribute> Attributes; 
 
-        public EnvelopeSent(string queueName, string envelopeId, bool transactional, string[] mappedTypes, ICollection<ImmutableAttribute> attributes)
+        public EnvelopeSent(string queueName, string envelopeId, string[] mappedTypes, ICollection<ImmutableAttribute> attributes)
         {
             QueueName = queueName;
             EnvelopeId = envelopeId;
-            Transactional = transactional;
             MappedTypes = mappedTypes;
             Attributes = attributes;
         }
 
         public override string ToString()
         {
-            return string.Format("Sent {0}{1} to '{2}' as [{3}]", 
-                string.Join("+", MappedTypes), 
-                Transactional ? " +tx" : "",
+            return string.Format("Sent {0} to '{1}' as [{2}]", 
+                string.Join("+", MappedTypes),
                 QueueName, 
                 EnvelopeId);
         }

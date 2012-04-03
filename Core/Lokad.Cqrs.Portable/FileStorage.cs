@@ -20,57 +20,34 @@ namespace Lokad.Cqrs
 {
     public static class FileStorage
     {
-        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IAtomicStorageStrategy strategy)
+        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IDocumentStrategy strategy)
         {
-            var factory = new FileAtomicContainer(config.FullPath, strategy);
+            var factory = new FileDocumentStore(config.FullPath, strategy);
             return new NuclearStorage(factory);
         }
 
-        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IAtomicStorageStrategy strategy, string subfolder)
-        {
-            return CreateNuclear(config.SubFolder(subfolder), strategy);
-        }
 
-        public static NuclearStorage CreateNuclear(this FileStorageConfig self, Action<DefaultAtomicStorageStrategyBuilder> config, string path)
-        {
-            return self.SubFolder(path).CreateNuclear(config);
-        }
-
-        public static NuclearStorage CreateNuclear(this FileStorageConfig self, Action<DefaultAtomicStorageStrategyBuilder> config)
-        {
-            var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
-            config(strategyBuilder);
-            var strategy = strategyBuilder.Build();
-            return CreateNuclear(self, strategy);
-        }
-
-        public static NuclearStorage CreateNuclear(this FileStorageConfig config, string path)
-        {
-            return CreateNuclear(config, builder => { }, path);
-        }
-
-
-        public static IStreamingRoot CreateStreaming(this FileStorageConfig config)
+        public static IStreamRoot CreateStreaming(this FileStorageConfig config)
         {
             var path = config.FullPath;
-            var container = new FileStreamingContainer(path);
+            var container = new FileStreamContainer(path);
             container.Create();
             return container;
         }
-        public static IStreamingContainer CreateStreaming(this FileStorageConfig config, string subfolder)
+        public static IStreamContainer CreateStreaming(this FileStorageConfig config, string subfolder)
         {
             return config.CreateStreaming().GetContainer(subfolder).Create();
         }
         
-        public static FileTapeStorageFactory CreateTape(this FileStorageConfig config, string subfolder)
+        public static FileTapeContainer CreateTape(this FileStorageConfig config, string subfolder)
         {
             return CreateTape(config.SubFolder(subfolder));
 
         }
 
-        public static FileTapeStorageFactory CreateTape(this FileStorageConfig config)
+        public static FileTapeContainer CreateTape(this FileStorageConfig config)
         {
-            var factory = new FileTapeStorageFactory(config.FullPath);
+            var factory = new FileTapeContainer(config.FullPath);
             factory.InitializeForWriting();
             return factory;
         }

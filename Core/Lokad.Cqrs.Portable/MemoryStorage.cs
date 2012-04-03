@@ -9,8 +9,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using Lokad.Cqrs.AtomicStorage;
-using Lokad.Cqrs.Build;
-using Lokad.Cqrs.Envelope;
 using Lokad.Cqrs.Partition;
 using Lokad.Cqrs.TapeStorage;
 
@@ -21,66 +19,20 @@ namespace Lokad.Cqrs
 
     public static class MemoryStorage
     {
-        /// <summary>
-        /// Creates the simplified nuclear storage wrapper around Atomic storage, using the default
-        /// storage configuration and atomic strategy.
-        /// </summary>
-        /// <param name="dictionary">The dictionary.</param>
-        /// <returns>
-        /// new instance of the nuclear storage
-        /// </returns>
-        public static NuclearStorage CreateNuclear(this MemoryStorageConfig dictionary)
-        {
-            return CreateNuclear(dictionary, b => { });
-        }
-
         public static MemoryStorageConfig CreateConfig()
         {
             return new MemoryStorageConfig();
         }
 
-  
-
-        /// <summary>
-        /// Creates the simplified nuclear storage wrapper around Atomic storage.
-        /// </summary>
-        /// <param name="dictionary">The dictionary.</param>
-        /// <param name="configStrategy">The config strategy.</param>
-        /// <returns></returns>
-        public static NuclearStorage CreateNuclear(this MemoryStorageConfig dictionary,
-            Action<DefaultAtomicStorageStrategyBuilder> configStrategy)
-        {
-            var strategyBuilder = new DefaultAtomicStorageStrategyBuilder();
-            configStrategy(strategyBuilder);
-
-            var strategy = strategyBuilder.Build();
-            return CreateNuclear(dictionary, strategy);
-        }
-
-
         /// <summary>
         /// Creates the simplified nuclear storage wrapper around Atomic storage.
         /// </summary>
         /// <param name="dictionary">The dictionary.</param>
         /// <param name="strategy">The atomic storage strategy.</param>
         /// <returns></returns>
-        public static NuclearStorage CreateNuclear(this MemoryStorageConfig dictionary, IAtomicStorageStrategy strategy)
+        public static NuclearStorage CreateNuclear(this MemoryStorageConfig dictionary, IDocumentStrategy strategy)
         {
-            var container = new MemoryAtomicContainer(dictionary.Data, strategy);
-            container.Initialize();
-            return new NuclearStorage(container);
-        }
-
-        /// <summary>
-        /// Creates the simplified nuclear storage wrapper around Atomic storage, using the provided subfolder.
-        /// </summary>
-        /// <param name="dictionary">The dictionary.</param>
-        /// <param name="strategy">The atomic storage strategy.</param>
-        /// <returns></returns>
-        public static NuclearStorage CreateNuclear(this MemoryStorageConfig dictionary, IAtomicStorageStrategy strategy, string subFolder)
-        {
-            var container = new MemoryAtomicContainer(dictionary.Data, strategy, subFolder);
-            container.Initialize();
+            var container = new MemoryDocumentStore(dictionary.Data, strategy);
             return new NuclearStorage(container);
         }
 
@@ -89,25 +41,7 @@ namespace Lokad.Cqrs
             return new MemoryQueueWriterFactory(storageConfig);
         }
 
-        /// <summary>
-        /// Creates memory-based tape storage factory, using the provided concurrent dictionary.
-        /// </summary>
-        /// <param name="dictionary">The dictionary.</param>
-        /// <returns></returns>
-        public static MemoryTapeStorageFactory CreateTape(this MemoryStorageConfig storageConfig, string container)
-        {
-            var factory = new MemoryTapeStorageFactory(storageConfig.Tapes, container);
-            factory.InitializeForWriting();
-            return factory;
-        }
-
-
-        public static MemoryTapeStorageFactory CreateTape(this MemoryStorageConfig storageConfig)
-        {
-            var factory = new MemoryTapeStorageFactory(storageConfig.Tapes, null);
-            factory.InitializeForWriting();
-            return factory;
-        }
+       
 
         public static MemoryPartitionInbox CreateInbox(this MemoryStorageConfig storageConfig,  params string[] queueNames)
         {

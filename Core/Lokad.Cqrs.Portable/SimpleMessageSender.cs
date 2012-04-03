@@ -8,12 +8,18 @@
 
 using System;
 using System.Linq;
-using System.Transactions;
+using System.Security.Cryptography;
 using Lokad.Cqrs.Envelope;
 using Lokad.Cqrs.Partition;
 
 namespace Lokad.Cqrs
 {
+    public enum IdGeneration
+    {
+        Default,
+        HashContent
+    }
+
     public sealed class SimpleMessageSender 
     {
         readonly IQueueWriter[] _queues;
@@ -43,12 +49,12 @@ namespace Lokad.Cqrs
         }
 
 
-        public void SendBatch(object[] content)
+        public void SendBatch(object[] content, IdGeneration id = IdGeneration.Default)
         {
             if (content.Length == 0)
                 return;
 
-            InnerSendBatch(cb => { }, content);
+            InnerSendBatch(cb => { }, content, id);
         }
 
         public void SendBatch(object[] content, Action<EnvelopeBuilder> builder)
@@ -64,45 +70,57 @@ namespace Lokad.Cqrs
 
         readonly Random _random = new Random();
 
-
-        void InnerSendBatch(Action<EnvelopeBuilder> configure, object[] messageItems)
+        string HashContents(Action<EnvelopeBuilder> configure, object[] messageItems)
         {
-            var id = _idGenerator();
-
-            var builder = new EnvelopeBuilder(id);
+            var builder = new EnvelopeBuilder("hash");
+            builder.OverrideCreatedOnUtc(DateTime.MinValue);
+            
             foreach (var item in messageItems)
             {
                 builder.AddItem(item);
             }
+            configure(builder);
+            var envelope = builder.Build();
+            var data = _streamer.SaveEnvelopeData(envelope);
+            using (var sha1 = new SHA1Managed())
+            {
+                var hash = sha1.ComputeHash(data);
+                return BitConverter.ToString(hash).Replace("-", "").ToLowerInvariant();
+            }
+        }
 
+        void InnerSendBatch(Action<EnvelopeBuilder> configure, object[] messageItems, IdGeneration id = IdGeneration.Default)
+        {
+            string envelopeId;
+
+            switch (id)
+            {
+                case IdGeneration.Default:
+                    envelopeId = _idGenerator();
+                    break;
+                case IdGeneration.HashContent:
+                    envelopeId = HashContents(configure, messageItems);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("id");
+            }
+
+            var builder = new EnvelopeBuilder(envelopeId);
+            foreach (var item in messageItems)
+            {
+                builder.AddItem(item);
+            }
             configure(builder);
             var envelope = builder.Build();
 
-            SendEnvelope(envelope);
-        }
-
-        public void SendEnvelope(ImmutableEnvelope envelope)
-        {
-            var queue = GetOutboundQueue();
+            
             var data = _streamer.SaveEnvelopeData(envelope);
 
-            if (Transaction.Current == null)
-            {
-                queue.PutMessage(data);
+            var queue = GetOutboundQueue();
+            queue.PutMessage(data);
 
-                SystemObserver.Notify(new EnvelopeSent(queue.Name, envelope.EnvelopeId, false,
-                    envelope.Items.Select(x => x.MappedType.Name).ToArray(), envelope.GetAllAttributes()));
-            }
-            else
-            {
-                var action = new CommitActionEnlistment(() =>
-                    {
-                        queue.PutMessage(data);
-                        SystemObserver.Notify(new EnvelopeSent(queue.Name, envelope.EnvelopeId, true,
-                            envelope.Items.Select(x => x.MappedType.Name).ToArray(), envelope.GetAllAttributes()));
-                    });
-                Transaction.Current.EnlistVolatile(action, EnlistmentOptions.None);
-            }
+            SystemObserver.Notify(new EnvelopeSent(queue.Name, envelope.EnvelopeId,
+                envelope.Items.Select(x => x.MappedType.Name).ToArray(), envelope.GetAllAttributes()));
         }
 
         IQueueWriter GetOutboundQueue()
@@ -112,37 +130,5 @@ namespace Lokad.Cqrs
             var random = _random.Next(_queues.Length);
             return _queues[random];
         }
-
-        sealed class CommitActionEnlistment : IEnlistmentNotification
-        {
-            readonly Action _commit;
-
-            public CommitActionEnlistment(Action commit)
-            {
-                _commit = commit;
-            }
-
-            public void Prepare(PreparingEnlistment preparingEnlistment)
-            {
-                preparingEnlistment.Prepared();
-            }
-
-            public void Commit(Enlistment enlistment)
-            {
-                _commit();
-                enlistment.Done();
-            }
-
-            public void Rollback(Enlistment enlistment)
-            {
-                enlistment.Done();
-            }
-
-            public void InDoubt(Enlistment enlistment)
-            {
-                enlistment.Done();
-            }
-        }
-
     }
 }

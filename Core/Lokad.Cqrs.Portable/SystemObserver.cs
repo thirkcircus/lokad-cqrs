@@ -7,6 +7,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace Lokad.Cqrs
 {
@@ -36,6 +37,25 @@ namespace Lokad.Cqrs
                     var message = string.Format("Observer {0} failed with {1}", observer, ex);
                     Trace.WriteLine(message);
                 }
+            }
+        }
+
+        public static void Notify(string message, params object[] args)
+        {
+            Notify(new MessageEvent(string.Format(CultureInfo.InvariantCulture,message, args)));
+        }
+
+        public sealed class MessageEvent : ISystemEvent
+        {
+            public MessageEvent(string message)
+            {
+                Message = message;
+            }
+
+            public readonly string Message;
+            public override string ToString()
+            {
+                return Message;
             }
         }
 

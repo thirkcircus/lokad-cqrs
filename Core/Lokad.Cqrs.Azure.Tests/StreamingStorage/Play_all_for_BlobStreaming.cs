@@ -27,7 +27,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
             return client;
         }
 
-        public IStreamingContainer GetContainer(string path)
+        public IStreamContainer GetContainer(string path)
         {
             //UseLocalFiddler();
 

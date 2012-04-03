@@ -58,11 +58,17 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
         CqrsEngineBuilder BootstrapHandlers(Setup setup)
         {
             var builder = new CqrsEngineBuilder(_streamer);
-            var writer = setup.Store.Factory.GetEntityWriter<unit, int>();
-            var handler = new CommandHandler();
+            var writer = setup.Store.Container.GetWriter<unit, int>();
+            var handler = new RedirectToCommand();
             handler.WireToLambda<AtomicMessage>(am => HandleAtomic(am, setup.Sender, writer));
             handler.WireToLambda<NuclearMessage>(am => HandleNuclear(am, setup.Sender, setup.Store));
-            builder.Handle(setup.Inbox, handler.HandleAll);
+            builder.Handle(setup.Inbox, envelope =>
+            {
+                foreach (var message in envelope.Items)
+                {
+                    handler.Invoke(message.Content);
+                }
+            });
             return builder;
         }
 
@@ -104,7 +110,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
                 });
         }
 
-        protected static void HandleAtomic(AtomicMessage msg, SimpleMessageSender sender, IAtomicWriter<unit, int> arg3)
+        protected static void HandleAtomic(AtomicMessage msg, SimpleMessageSender sender, IDocumentWriter<unit, int> arg3)
         {
             var count = arg3.AddOrUpdate(unit.it, () => 1, i => i + 1);
             if (count > 2)

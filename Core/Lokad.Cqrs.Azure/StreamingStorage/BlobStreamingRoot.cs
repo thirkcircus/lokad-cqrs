@@ -26,7 +26,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
             _client = client;
         }
 
-        public IStreamingContainer GetContainer(string name)
+        public IStreamContainer GetContainer(string name)
         {
             return new BlobStreamingContainer(_client.GetBlobDirectoryReference(name));
         }

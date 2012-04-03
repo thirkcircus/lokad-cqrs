@@ -15,15 +15,12 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
 {
     public sealed class Run_all_StreamingStorage_scenarios_for_Memory : ITestStorage
     {
-        public IStreamingContainer GetContainer(string name)
+        public IStreamContainer GetContainer(string name)
         {
-            return new MemoryStreamingRoot().GetContainer("test");
+            return new MemoryStreamContainer().GetContainer("test");
         }
 
-        public StreamingWriteOptions GetWriteHints()
-        {
-            return StreamingWriteOptions.None;
-        }
+        
 
         [TestFixture]
         public sealed class When_deleting_blob_item :

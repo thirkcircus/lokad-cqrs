@@ -64,7 +64,9 @@ namespace Lokad.Cqrs
             var inbox = account.CreateInbox("input");
             var sender = account.CreateSimpleSender(streamer, "input");
 
-            var handler = new MessageHandler();
+
+
+            var handler = new Red
             handler.WireToLambda<CreateCustomer>(customer => Consume(customer, nuclear, sender));
             handler.WireToLambda<CustomerCreated>(m => Console.WriteLine("Created!"));
             builder.Handle(inbox, handler.HandleEnvelope);

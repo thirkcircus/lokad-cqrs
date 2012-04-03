@@ -88,7 +88,7 @@ namespace Lokad.Cqrs.TapeStorage
             }
         }
 
-        public bool TryAppend(byte[] buffer, TapeAppendCondition condition)
+        public long TryAppend(byte[] buffer, TapeAppendCondition condition)
         {
             if (buffer == null)
                 throw new ArgumentNullException("buffer");
@@ -103,12 +103,12 @@ namespace Lokad.Cqrs.TapeStorage
                 var version = TapeStreamSerializer.ReadVersionFromTheEnd(file);
 
                 if (!condition.Satisfy(version))
-                    return false;
+                    return 0;
 
                 var versionToWrite = version + 1;
                 TapeStreamSerializer.WriteRecord(file, buffer, versionToWrite);
 
-                return true;
+                return versionToWrite;
             }
         }
 

@@ -27,7 +27,7 @@ namespace Sample.Wires
         public const string TapesContainer = "sample-tapes";
 
         public static Action<ImmutableEnvelope> Route(Func<string, IQueueWriter> factory, IEnvelopeStreamer serializer,
-            ITapeStorageFactory tapes)
+            ITapeContainer tapes)
         {
             var events = factory(EventsQueue);
             var timerQueue = factory(TimerQueue);

@@ -14,9 +14,9 @@ using Microsoft.WindowsAzure.StorageClient;
 namespace Lokad.Cqrs.Feature.StreamingStorage
 {
     /// <summary>
-    /// Azure BLOB implementation of the <see cref="IStreamingItem"/>
+    /// Azure BLOB implementation of the <see cref="IStreamItem"/>
     /// </summary>
-    public sealed class BlobStreamingItem : IStreamingItem
+    public sealed class BlobStreamingItem : IStreamItem
     {
         readonly CloudBlob _blob;
 
@@ -75,7 +75,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
         /// <param name="reader">The reader.</param>
         /// <param name="condition">The condition.</param>
         /// <exception cref="StreamingItemNotFoundException">if the item does not exist.</exception>
-        /// <exception cref="StreamingContainerNotFoundException">if the container for the item does not exist</exception>
+        /// <exception cref="StreamContainerNotFoundException">if the container for the item does not exist</exception>
         /// <exception cref="StreamingItemIntegrityException">when integrity check fails</exception>
         public void ReadInto(ReaderDelegate reader, StreamingCondition condition)
         {
@@ -172,7 +172,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
             }
         }
 
-        public void CopyFrom(IStreamingItem sourceItem,
+        public void CopyFrom(IStreamItem sourceItem,
             StreamingCondition condition,
             StreamingCondition copySourceCondition,
             StreamingWriteOptions writeOptions)

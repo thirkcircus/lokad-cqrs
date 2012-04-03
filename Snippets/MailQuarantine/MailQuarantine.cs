@@ -24,7 +24,7 @@ namespace Snippets.MailQuarantine
     sealed class MailQuarantine : IEnvelopeQuarantine
     {
         readonly SmtpHandlerCore _core;
-        readonly IStreamingContainer _container;
+        readonly IStreamContainer _container;
         readonly MemoryQuarantine _quarantine = new MemoryQuarantine();
 
         public MailQuarantine(SmtpHandlerCore core, IStreamingRoot root)
@@ -37,7 +37,7 @@ namespace Snippets.MailQuarantine
 
    
 
-        IStreamingItem GetStreamingItem(DateTime dateTime, string envelopeId)
+        IStreamItem GetStreamingItem(DateTime dateTime, string envelopeId)
         {
             var file = string.Format("{0:yyyy-MM-dd-HH-mm}-{1}-engine.txt",
                 dateTime,

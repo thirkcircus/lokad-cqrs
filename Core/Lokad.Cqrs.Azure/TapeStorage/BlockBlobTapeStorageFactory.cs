@@ -13,7 +13,7 @@ using Microsoft.WindowsAzure.StorageClient;
 
 namespace Lokad.Cqrs.Feature.TapeStorage
 {
-    public class BlockBlobTapeStorageFactory : ITapeStorageFactory
+    public class BlockBlobTapeStorageFactory : ITapeContainer
     {
         readonly CloudBlobClient _cloudBlobClient;
         readonly string _containerName;

@@ -17,9 +17,9 @@ namespace Snippets.HttpEndpoint
 {
     public class HeatMapRequestHandler : AbstractHttpRequestHandler 
     {
-        readonly IAtomicReader<unit, HeatMapView> _reader;
+        readonly IDocumentReader<unit, HeatMapView> _reader;
 
-        public HeatMapRequestHandler(IAtomicReader<unit, HeatMapView> reader )
+        public HeatMapRequestHandler(IDocumentReader<unit, HeatMapView> reader )
         {
             _reader = reader;
         }

@@ -13,11 +13,11 @@ namespace Lokad.Cqrs.Evil
 {
     public static class ContractEvil
     {
-        sealed class AttributeHelper
+        public sealed class Helper
         {
             readonly Tuple<string,object>[] _attributes;
 
-            public AttributeHelper(IEnumerable<object> attributes)
+            public Helper(IEnumerable<object> attributes)
             {
                 _attributes = attributes.Select(a => Tuple.Create(a.GetType().Name,a)).ToArray();
             }
@@ -46,7 +46,7 @@ namespace Lokad.Cqrs.Evil
         public static string GetContractReference(Type type)
         {
             var attribs = type.GetCustomAttributes(false);
-            var helper = new AttributeHelper(attribs);
+            var helper = new Helper(attribs);
 
 
             var s1 = Optional<string>.Empty;

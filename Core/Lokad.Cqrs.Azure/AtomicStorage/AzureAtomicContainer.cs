@@ -12,9 +12,9 @@ using Microsoft.WindowsAzure.StorageClient;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
-    public sealed class AzureAtomicContainer : IAtomicContainer
+    public sealed class AzureAtomicContainer : IDocumentStore
     {
-        public IAtomicWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
+        public IDocumentWriter<TKey, TEntity> GetEntityWriter<TKey, TEntity>()
         {
             var writer = new AzureAtomicWriter<TKey, TEntity>(_directory, _strategy);
 
@@ -32,12 +32,12 @@ namespace Lokad.Cqrs.AtomicStorage
             return _directory.Uri.AbsoluteUri;
         }
 
-        public IAtomicReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
+        public IDocumentReader<TKey, TEntity> GetEntityReader<TKey, TEntity>()
         {
             return new AzureAtomicReader<TKey, TEntity>(_directory, _strategy);
         }
 
-        public IAtomicStorageStrategy Strategy
+        public IDocumentStrategy Strategy
         {
             get { return _strategy; }
         }
@@ -72,12 +72,12 @@ namespace Lokad.Cqrs.AtomicStorage
         }
 
 
-        readonly IAtomicStorageStrategy _strategy;
+        readonly IDocumentStrategy _strategy;
 
         readonly HashSet<Tuple<Type, Type>> _initialized = new HashSet<Tuple<Type, Type>>();
         readonly CloudBlobDirectory _directory;
 
-        public AzureAtomicContainer(IAtomicStorageStrategy strategy, CloudBlobDirectory directory)
+        public AzureAtomicContainer(IDocumentStrategy strategy, CloudBlobDirectory directory)
         {
             _strategy = strategy;
             _directory = directory;

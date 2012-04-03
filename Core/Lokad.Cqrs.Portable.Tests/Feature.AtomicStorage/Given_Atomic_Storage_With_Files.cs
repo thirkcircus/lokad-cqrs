@@ -6,7 +6,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
     [TestFixture]
     public sealed class Given_Atomic_Storage_With_Files : Given_Atomic_Storage
     {
-        protected override NuclearStorage Compose(IAtomicStorageStrategy strategy)
+        protected override NuclearStorage Compose(IDocumentStrategy strategy)
         {
             return _config.CreateNuclear(strategy);
         }

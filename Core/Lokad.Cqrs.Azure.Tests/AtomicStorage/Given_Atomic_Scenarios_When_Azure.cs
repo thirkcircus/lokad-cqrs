@@ -35,7 +35,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
     [TestFixture]
     public sealed class Given_Atomic_Storage_When_Azure : Given_Atomic_Storage
     {
-        protected override NuclearStorage Compose(IAtomicStorageStrategy strategy)
+        protected override NuclearStorage Compose(IDocumentStrategy strategy)
         {
             var dev = AzureStorage.CreateConfigurationForDev();
             WipeAzureAccount.Fast(s => s.StartsWith("test-views"), dev);

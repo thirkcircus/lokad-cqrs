@@ -26,13 +26,13 @@ namespace Lokad.Cqrs.Build
         }
 
 
-        public void AddProcess(IEngineProcess process)
+        public void AddTask(IEngineProcess process)
         {
             Processes.Add(process);
         }
 
         
-        public void AddProcess(Func<CancellationToken, Task> factoryToStartTask)
+        public void AddTask(Func<CancellationToken, Task> factoryToStartTask)
         {
             Processes.Add(new TaskProcess(factoryToStartTask));
         }
@@ -48,7 +48,7 @@ namespace Lokad.Cqrs.Build
         {
             var dispatcherName = name ?? "inbox-" + Interlocked.Increment(ref _counter);
             var dispatcher = new EnvelopeDispatcher(lambda, Streamer, Quarantine, Duplication, dispatcherName);
-            AddProcess(new DispatcherProcess(dispatcher.Dispatch, inbox));
+            AddTask(new DispatcherProcess(dispatcher.Dispatch, inbox));
         }
 
         public CqrsEngineHost Build()

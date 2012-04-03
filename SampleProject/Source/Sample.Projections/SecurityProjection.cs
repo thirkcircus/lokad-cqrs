@@ -13,9 +13,9 @@ namespace Sample.Projections
 {
     sealed class SecurityProjection
     {
-        readonly IAtomicWriter<SecurityId, SecurityView> _writer;
+        readonly IDocumentWriter<SecurityId, SecurityView> _writer;
 
-        public SecurityProjection(IAtomicWriter<SecurityId, SecurityView> writer)
+        public SecurityProjection(IDocumentWriter<SecurityId, SecurityView> writer)
         {
             _writer = writer;
         }

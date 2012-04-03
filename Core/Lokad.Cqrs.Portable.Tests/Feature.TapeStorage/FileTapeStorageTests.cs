@@ -16,7 +16,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
     {
         string _path;
         
-        ITapeStorageFactory _storageFactory;
+        ITapeContainer _storageFactory;
 
         protected override void PrepareEnvironment()
         {
@@ -27,7 +27,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
 
         protected override ITapeStream InitializeAndGetTapeStorage()
         {
-            _storageFactory = new FileTapeStorageFactory(_path);
+            _storageFactory = new FileTapeContainer(_path);
             _storageFactory.InitializeForWriting();
 
             const string name = "test";

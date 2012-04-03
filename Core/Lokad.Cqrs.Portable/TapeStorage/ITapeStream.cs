@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lokad.Cqrs.TapeStorage
 {
@@ -27,15 +29,89 @@ namespace Lokad.Cqrs.TapeStorage
         /// </summary>
         /// <param name="buffer">The data to append.</param>
         /// <param name="appendCondition">The append condition.</param>
-        /// <returns>whether the data was appended</returns>
-        bool TryAppend(byte[] buffer, TapeAppendCondition appendCondition = default(TapeAppendCondition));
+        /// <returns>version of the appended data</returns>
+        long TryAppend(byte[] buffer, TapeAppendCondition appendCondition = default(TapeAppendCondition));
+    }
 
-        ///// <summary>
-        ///// Appends block in non-transactional manner (used for high throughput copying).
-        ///// It is the duty of the writer to verify that there are no concurrent changes
-        ///// and that IO failures are handled. 
-        ///// </summary>
-        ///// <param name="records">The records to copy.</param>
-        //void AppendNonAtomic(IEnumerable<TapeRecord> records);
+    /// <summary>
+    /// Contains information about the committed data
+    /// </summary>
+    public sealed class TapeRecord
+    {
+        public readonly long Version;
+        public readonly byte[] Data;
+
+        public TapeRecord(long version, byte[] data)
+        {
+            Version = version;
+            Data = data;
+        }
+    }
+
+    public sealed class MemoryTapeContainer : ITapeContainer
+    {
+        ConcurrentDictionary<string, IList<TapeRecord>> _dict = new ConcurrentDictionary<string, IList<TapeRecord>>();
+        
+ 
+        public ITapeStream GetOrCreateStream(string name)
+        {
+            return new MemoryTapeStream(_dict, name);
+        }
+
+        public void InitializeForWriting()
+        {
+            
+        }
+    }
+
+    sealed class MemoryTapeStream : ITapeStream
+    {
+        ConcurrentDictionary<string, IList<TapeRecord>> _dictionary;
+        readonly string _name;
+
+        public MemoryTapeStream(ConcurrentDictionary<string, IList<TapeRecord>> dictionary, string name)
+        {
+            _dictionary = dictionary;
+            _name = name;
+        }
+
+        public IEnumerable<TapeRecord> ReadRecords(long afterVersion, int maxCount)
+        {
+            IList<TapeRecord> bytes;
+            if (_dictionary.TryGetValue(_name, out bytes))
+            {
+                foreach (var bytese in bytes.Where(r => r.Version > afterVersion).Take(maxCount))
+                {
+                    yield return bytese;
+                }
+            }
+        }
+
+        public long GetCurrentVersion()
+        {
+            IList<TapeRecord> records;
+            if (_dictionary.TryGetValue(_name, out records))
+            {
+                return records.Count;
+            }
+            return 0;
+        }
+
+        public long TryAppend(byte[] buffer, TapeAppendCondition appendCondition = new TapeAppendCondition())
+        {
+            var result = _dictionary.AddOrUpdate(_name, s =>
+                {
+                    appendCondition.Enforce(0);
+                    var records = new List<TapeRecord>();
+                    records.Add(new TapeRecord(1, buffer));
+                    return records;
+                }, (s, list) =>
+                    {
+                        appendCondition.Enforce(list.Count);
+                        return list.Concat(new TapeRecord[] {new TapeRecord(list.Count + 1, buffer)}).ToList();
+                    });
+
+            return result.Count;
+        }
     }
 }

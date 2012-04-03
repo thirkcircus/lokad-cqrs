@@ -18,13 +18,13 @@ namespace Lokad.Cqrs.AtomicStorage
     /// <typeparam name="TEntity">The type of the view.</typeparam>
     /// <typeparam name="TKey">the type of the key</typeparam>
     public sealed class AzureAtomicWriter<TKey, TEntity> :
-        IAtomicWriter<TKey, TEntity>
+        IDocumentWriter<TKey, TEntity>
         //where TEntity : IAtomicEntity<TKey>
     {
         readonly CloudBlobDirectory _container;
-        readonly IAtomicStorageStrategy _strategy;
+        readonly IDocumentStrategy _strategy;
 
-        public AzureAtomicWriter(CloudBlobDirectory directory, IAtomicStorageStrategy strategy)
+        public AzureAtomicWriter(CloudBlobDirectory directory, IDocumentStrategy strategy)
         {
             _strategy = strategy;
             var folderForEntity = strategy.GetFolderForEntity(typeof(TEntity), typeof(TKey));

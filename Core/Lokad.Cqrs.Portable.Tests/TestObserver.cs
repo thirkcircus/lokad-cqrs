@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Lokad.Cqrs
 {
@@ -19,37 +20,47 @@ namespace Lokad.Cqrs
             }
         }
 
+        sealed class EventsObserver : IObserver<ISystemEvent>
+        {
+            readonly Action<ISystemEvent> _when;
+            public EventsObserver(Action<ISystemEvent> when)
+            {
+                _when = when;
+            }
+
+            public void OnNext(ISystemEvent value)
+            {
+                _when(value);
+            }
+
+            public void OnError(Exception error)
+            {
+            }
+
+            public void OnCompleted()
+            {
+            }
+        }
+
         public static IDisposable When<T>(Action<T> when, bool includeTracing = true) where T : class
         {
-
-            var eventsObserver = new ImmediateEventsObserver();
-
-            Action<ISystemEvent> onEvent = @event =>
+            var observer = new EventsObserver(@event =>
                 {
+                    var type1 = @event as T;
 
-                    var type = @event as T;
-
-                    if (type != null)
+                    if (type1 != null)
                     {
-                        when(type);
+                        when(type1);
                     }
-                };
-            eventsObserver.Event += onEvent;
-            var list = new List<IObserver<ISystemEvent>>
-                {
-                    eventsObserver
-                };
-            if (includeTracing)
-            {
-                list.Add(new ImmediateTracingObserver());
-            }
-            var old = SystemObserver.Swap(list.ToArray());
-
-            return new Disposable(() =>
-                {
-                    SystemObserver.Swap(old);
-                    eventsObserver.Event -= onEvent;
+                    if (includeTracing)
+                    {
+                        Trace.WriteLine(@event);
+                    }
                 });
+           
+            var old = SystemObserver.Swap(new IObserver<ISystemEvent>[]{observer});
+
+            return new Disposable(() => SystemObserver.Swap(old));
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Lokad.Cqrs
         public readonly ConcurrentDictionary<string, BlockingCollection<byte[]>> Queues =
             new ConcurrentDictionary<string, BlockingCollection<byte[]>>();
 
-        public readonly ConcurrentDictionary<string, byte[]> Data = new ConcurrentDictionary<string, byte[]>();
+        public readonly ConcurrentDictionary<string, ConcurrentDictionary<string,byte[]>> Data = new ConcurrentDictionary<string, ConcurrentDictionary<string, byte[]>>();
 
         public readonly ConcurrentDictionary<string, List<byte[]>> Tapes =
             new ConcurrentDictionary<string, List<byte[]>>();

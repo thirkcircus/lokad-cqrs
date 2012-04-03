@@ -18,7 +18,7 @@ namespace Sample.Projections
 {
     public static class BootstrapProjections
     {
-        public static IEnumerable<object> BuildProjectionsWithWhenConvention(IAtomicContainer factory)
+        public static IEnumerable<object> BuildProjectionsWithWhenConvention(IDocumentStore factory)
         {
             yield return new AccountLoginsProjection(factory.GetEntityWriter<SecurityId, AccountLoginsView>());
             yield return new LoginViewProjection(factory.GetEntityWriter<UserId, LoginView>());

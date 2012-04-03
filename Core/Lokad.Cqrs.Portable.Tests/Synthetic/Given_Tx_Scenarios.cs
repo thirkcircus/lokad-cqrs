@@ -19,6 +19,7 @@ using Lokad.Cqrs.Envelope.Events;
 using Lokad.Cqrs.Feature.AtomicStorage;
 using Lokad.Cqrs.Partition;
 using NUnit.Framework;
+using System.Linq;
 
 // ReSharper disable InconsistentNaming
 
@@ -66,17 +67,16 @@ namespace Lokad.Cqrs.Synthetic
             var builder = new CqrsEngineBuilder(streamer);
             var setup = ComposeComponents(streamer);
 
-            var handler = new CommandHandler();
+            var handler = new RedirectToCommand();
             handler.WireToLambda<Act>(act => Consume(act, setup.Storage));
             builder.Handle(setup.Inbox, envelope =>
                 {
                     using (var tx = new TransactionScope(TransactionScopeOption.RequiresNew))
                     {
-                        handler.HandleAll(envelope);
+                        handler.InvokeMany(envelope.Items.Select(i => i.Content));
                         tx.Complete();
                     }
                 });
-
 
             using (var source = new CancellationTokenSource())
             using (TestObserver.When<EnvelopeDispatched>(e => source.Cancel()))

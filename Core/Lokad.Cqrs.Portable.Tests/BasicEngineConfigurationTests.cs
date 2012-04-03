@@ -22,7 +22,7 @@ namespace Lokad.Cqrs
     public sealed class BasicEngineConfigurationTests
     {
         // ReSharper disable InconsistentNaming
-        static void TestConfiguration(IQueueWriter sender, RawEngineBuilder builder)
+        static void TestConfiguration(IQueueWriter sender, CqrsEngineBuilder builder)
         {
             int i = 0;
             using (var t = new CancellationTokenSource())
@@ -51,7 +51,7 @@ namespace Lokad.Cqrs
         public void PartitionWithRouter()
         {
             var config = new MemoryStorageConfig();
-            var raw = new RawEngineBuilder();
+            var raw = new CqrsEngineBuilder();
 
             var inWriter = config.CreateQueueWriter("in");
             var doWriter = config.CreateQueueWriter("do");
@@ -70,7 +70,7 @@ namespace Lokad.Cqrs
         public void Direct()
         {
             var config = new MemoryStorageConfig();
-            var raw = new RawEngineBuilder();
+            var raw = new CqrsEngineBuilder();
             var doWriter = config.CreateQueueWriter("do");
 
             // forwarder do => do
@@ -90,7 +90,7 @@ namespace Lokad.Cqrs
         public void RouterChain()
         {
             var config = new MemoryStorageConfig();
-            var raw = new RawEngineBuilder();
+            var raw = new CqrsEngineBuilder();
             var doWriter = config.CreateQueueWriter("do");
 
             var route1 = config.CreateQueueWriter("route1");

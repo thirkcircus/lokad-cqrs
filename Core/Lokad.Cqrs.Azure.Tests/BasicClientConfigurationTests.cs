@@ -24,7 +24,7 @@ namespace Lokad.Cqrs
             {
                 var dev = AzureStorage.CreateConfigurationForDev();
                 WipeAzureAccount.Fast(s => s.StartsWith("test-"), dev);
-                var b = new RawEngineBuilder();
+                var b = new CqrsEngineBuilder();
                 b.Dispatch(dev.CreateInbox("test-publish"), bytes =>
                     {
                         if (bytes[0] == 42)

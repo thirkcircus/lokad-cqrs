@@ -13,9 +13,9 @@ namespace Sample.Projections
 {
     sealed class AccountLoginsProjection
     {
-        readonly IAtomicWriter<SecurityId, AccountLoginsView> _writer;
+        readonly IDocumentWriter<SecurityId, AccountLoginsView> _writer;
 
-        public AccountLoginsProjection(IAtomicWriter<SecurityId, AccountLoginsView> writer)
+        public AccountLoginsProjection(IDocumentWriter<SecurityId, AccountLoginsView> writer)
         {
             _writer = writer;
         }

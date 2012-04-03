@@ -16,13 +16,13 @@ namespace Lokad.Cqrs.AtomicStorage
     /// </summary>
     /// <typeparam name="TEntity">The type of the view.</typeparam>
     public sealed class AzureAtomicReader<TKey, TEntity> :
-        IAtomicReader<TKey, TEntity>
+        IDocumentReader<TKey, TEntity>
     {
         
         readonly CloudBlobDirectory _container;
-        private IAtomicStorageStrategy _strategy;
+        private IDocumentStrategy _strategy;
 
-        public AzureAtomicReader(CloudBlobDirectory storage, IAtomicStorageStrategy strategy)
+        public AzureAtomicReader(CloudBlobDirectory storage, IDocumentStrategy strategy)
         {
             _strategy = strategy;
             var folder = strategy.GetFolderForEntity(typeof(TEntity), typeof(TKey));

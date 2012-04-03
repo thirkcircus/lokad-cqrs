@@ -6,7 +6,7 @@ using ServiceStack.Text;
 
 namespace Sample.Wires
 {
-    public sealed class ProjectionStrategy : IAtomicStorageStrategy
+    public sealed class ProjectionStrategy : IDocumentStrategy
     {
         public string GetFolderForEntity(Type entityType, Type keyType)
         {
@@ -37,7 +37,7 @@ namespace Sample.Wires
         }
     }
 
-    public sealed class DocumentStrategy : IAtomicStorageStrategy
+    public sealed class DocumentStrategy : IDocumentStrategy
     {
         public string GetFolderForEntity(Type entityType, Type keyType)
         {

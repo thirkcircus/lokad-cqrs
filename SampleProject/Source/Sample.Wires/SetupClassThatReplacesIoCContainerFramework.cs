@@ -15,10 +15,10 @@ namespace Sample.Wires
     public sealed class SetupClassThatReplacesIoCContainerFramework
     {
         public IStreamingRoot Streaming;
-        public ITapeStorageFactory Tapes;
+        public ITapeContainer Tapes;
         public Func<string, IQueueWriter> CreateQueueWriter;
         public Func<string, IPartitionInbox> CreateInbox;
-        public Func<IAtomicStorageStrategy, NuclearStorage> CreateNuclear;
+        public Func<IDocumentStrategy, NuclearStorage> CreateNuclear;
 
 
         public IEnvelopeStreamer Streamer = Contracts.CreateStreamer();

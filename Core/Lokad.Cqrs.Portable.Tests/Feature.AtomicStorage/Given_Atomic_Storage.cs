@@ -5,13 +5,12 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
 {
     public abstract class Given_Atomic_Storage
     {
-        protected abstract NuclearStorage Compose(IAtomicStorageStrategy strategy);
-        
+        protected abstract NuclearStorage Compose(IDocumentStrategy strategy);
 
         [Test]
         public void SimpleWriteRoundtrip()
         {
-            var strategy = new DefaultAtomicStorageStrategyBuilder().Build();
+            var strategy = new TestStrategy();
             var setup = Compose(strategy);
 
             setup.AddOrUpdateEntity(1, "test");
@@ -19,14 +18,17 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
 
             AssertContents(setup);
 
-            var mem = new MemoryStorageConfig().CreateNuclear(strategy);
-            mem.CopyFrom(setup);
+            var memStore = new MemoryStorageConfig();
+            var mem = memStore.CreateNuclear(strategy);
+            
+            
+            mem.CopyFrom(setup, strategy.GetEntityBucket<string>(), strategy.GetEntityBucket<int>());
 
             AssertContents(mem);
 
             setup.Reset();
 
-            setup.CopyFrom(mem);
+            setup.CopyFrom(mem, strategy.GetEntityBucket<string>(), strategy.GetEntityBucket<int>());
 
             AssertContents(setup);
         }

@@ -14,9 +14,9 @@ namespace Sample.Projections
 {
     public sealed class LoginsIndexProjection
     {
-        readonly IAtomicWriter<unit, LoginsIndexView> _writer;
+        readonly IDocumentWriter<unit, LoginsIndexView> _writer;
 
-        public LoginsIndexProjection(IAtomicWriter<unit, LoginsIndexView> writer)
+        public LoginsIndexProjection(IDocumentWriter<unit, LoginsIndexView> writer)
         {
             _writer = writer;
         }

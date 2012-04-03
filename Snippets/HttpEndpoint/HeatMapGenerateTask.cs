@@ -17,10 +17,10 @@ namespace Snippets.HttpEndpoint
 {
     public class HeatMapGenerateTask : IEngineProcess
     {
-        readonly IAtomicReader<unit, PointsView> _reader;
-        readonly IAtomicWriter<unit, HeatMapView> _mapWriter;
+        readonly IDocumentReader<unit, PointsView> _reader;
+        readonly IDocumentWriter<unit, HeatMapView> _mapWriter;
 
-        public HeatMapGenerateTask(IAtomicReader<unit, PointsView> reader, IAtomicWriter<unit, HeatMapView> mapWriter )
+        public HeatMapGenerateTask(IDocumentReader<unit, PointsView> reader, IDocumentWriter<unit, HeatMapView> mapWriter )
         {
             _reader = reader;
             _mapWriter = mapWriter;

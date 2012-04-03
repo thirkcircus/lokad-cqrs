@@ -14,9 +14,9 @@ namespace Sample.Projections
 {
     sealed class LoginViewProjection
     {
-        readonly IAtomicWriter<UserId, LoginView> _writer;
+        readonly IDocumentWriter<UserId, LoginView> _writer;
 
-        public LoginViewProjection(IAtomicWriter<UserId, LoginView> writer)
+        public LoginViewProjection(IDocumentWriter<UserId, LoginView> writer)
         {
             _writer = writer;
         }

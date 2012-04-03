@@ -98,7 +98,7 @@ namespace Snippets.HttpEndpoint
             stats.RecordMessage();
         }
 
-        private static void MouseClickHandler(ImmutableEnvelope envelope, IAtomicWriter<unit, PointsView> writer)
+        private static void MouseClickHandler(ImmutableEnvelope envelope, IDocumentWriter<unit, PointsView> writer)
         {
             var mouseMovedEvent = (MouseClick)envelope.Items[0].Content;
 

@@ -23,13 +23,13 @@ namespace Sample.Wires
 {
     public sealed class AggregateFactory
     {
-        readonly ITapeStorageFactory _factory;
+        readonly ITapeContainer _factory;
         readonly IEnvelopeStreamer _streamer;
         readonly IQueueWriter _writer;
         readonly NuclearStorage _storage;
         readonly IIdentityGenerator _generator;
 
-        public AggregateFactory(ITapeStorageFactory factory, IEnvelopeStreamer streamer, IQueueWriter writer, NuclearStorage storage, IIdentityGenerator generator)
+        public AggregateFactory(ITapeContainer factory, IEnvelopeStreamer streamer, IQueueWriter writer, NuclearStorage storage, IIdentityGenerator generator)
         {
             _factory = factory;
             _streamer = streamer;

@@ -44,9 +44,15 @@ namespace Lokad.Cqrs.Synthetic
         CqrsEngineBuilder BootstrapHandlers(Setup setup)
         {
             var builder = new CqrsEngineBuilder(_streamer);
-            var handler = new CommandHandler();
+            var handler = new RedirectToCommand();
             handler.WireToLambda<FailingMessage>(am => SmartFailing(am, setup.Store));
-            builder.Handle(setup.Inbox, handler.HandleAll);
+            builder.Handle(setup.Inbox, envelope =>
+                {
+                    foreach (var message in envelope.Items)
+                    {
+                        handler.Invoke(message.Content);
+                    }
+                });
             return builder;
         }
 

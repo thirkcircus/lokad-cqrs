@@ -18,7 +18,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
         readonly ITestStorage _factory = new TStorage();
 
 
-        static void Expect<TEx>(Action action) where TEx : StreamingBaseException
+        static void Expect<TEx>(Action action) where TEx : StreamBaseException
         {
             try
             {
@@ -31,15 +31,13 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
         }
 
 
-        IStreamingContainer GetContainer(string path)
+        IStreamContainer GetContainer(string path)
         {
             return _factory.GetContainer(path);
         }
 
-        protected IStreamingContainer TestContainer { get; private set; }
-        protected IStreamingItem TestItem { get; private set; }
-
-        protected StreamingWriteOptions WriteOptions { get; set; }
+        protected IStreamContainer TestContainer { get; private set; }
+        protected IStreamItem TestItem { get; private set; }
 
         [SetUp]
         public void SetUp()
@@ -54,7 +52,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
             TestContainer.Delete();
         }
 
-        protected IStreamingItem GetItem(string path)
+        protected IStreamItem GetItem(string path)
         {
             return TestContainer.GetItem(path);
         }
@@ -62,76 +60,63 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
 
         protected void ExpectContainerNotFound(Action action)
         {
-            Expect<StreamingContainerNotFoundException>(action);
+            Expect<StreamContainerNotFoundException>(action);
         }
 
         protected void ExpectItemNotFound(Action action)
         {
-            Expect<StreamingItemNotFoundException>(action);
+            Expect<StreamItemNotFoundException>(action);
         }
-
-        protected void ExpectConditionFailed(Action action)
+        protected void Write(IStreamItem streamingItem, Guid g)
         {
-            Expect<StreamingConditionFailedException>(action);
+            streamingItem.Write(stream => stream.Write(g.ToByteArray(), 0, 16));
         }
 
-        protected void Write(IStreamingItem streamingItem, Guid g, StreamingCondition condition = default(StreamingCondition))
+        protected void Write(IStreamItem streamingItem, byte[] bytes)
         {
-            streamingItem.Write(stream => stream.Write(g.ToByteArray(), 0, 16), condition, WriteOptions);
+            streamingItem.Write(stream => stream.Write(bytes, 0, bytes.Length));
         }
 
-        protected void Write(IStreamingItem streamingItem, byte[] bytes, StreamingCondition condition = default(StreamingCondition))
+        protected void TryToRead(IStreamItem item)
         {
-            streamingItem.Write(stream => stream.Write(bytes, 0, bytes.Length), condition, WriteOptions);
+            item.ReadInto((stream) => stream.Read(new byte[1], 0, 1));
         }
 
-        protected void TryToRead(IStreamingItem item, StreamingCondition condition = default(StreamingCondition))
-        {
-            item.ReadInto((props, stream) => stream.Read(new byte[1], 0, 1), condition);
-        }
-
-        protected void ShouldHaveGuid(IStreamingItem streamingItem, Guid g,
-            StreamingCondition condition = default(StreamingCondition))
+        protected void ShouldHaveGuid(IStreamItem streamingItem, Guid g)
         {
             var set = false;
             Guid actual = Guid.Empty;
-            StreamingItemInfo streamingItemInfo = null;
-            streamingItem.ReadInto((properties, stream) =>
+            
+            streamingItem.ReadInto((stream) =>
                 {
                     var b = new byte[16];
                     stream.Read(b, 0, 16);
                     actual = new Guid(b);
                     set = true;
-                    streamingItemInfo = properties;
-                }, condition);
+                });
 
             Assert.AreEqual(g, actual);
             
-            Assert.That(streamingItemInfo.ETag, Is.Not.Empty);
-
+            
             set = true;
 
             Assert.IsTrue(set);
         }
 
-        protected void ShouldHaveBytes(IStreamingItem streamingItem, byte[] bytes,
-            StreamingCondition condition = default(StreamingCondition))
+        protected void ShouldHaveBytes(IStreamItem streamingItem, byte[] bytes)
         {
-            StreamingItemInfo streamingItemInfo = null;
             byte[] actualBytes = null;
 
             using (var ms = new MemoryStream())
             {
-                streamingItem.ReadInto((properties, stream) =>
+                streamingItem.ReadInto((stream) =>
                     {
                         stream.CopyTo(ms);
                         actualBytes = ms.ToArray();
-                        streamingItemInfo = properties;
-                    }, condition);
+                    });
 
             }
             Assert.AreEqual(bytes, actualBytes);
-            Assert.That(streamingItemInfo.ETag, Is.Not.Empty);
         }
     }
 }

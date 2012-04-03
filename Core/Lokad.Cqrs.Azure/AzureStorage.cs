@@ -47,7 +47,7 @@ namespace Lokad.Cqrs
         /// <param name="strategy">The atomic storage strategy.</param>
         /// <returns></returns>
         public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig,
-            IAtomicStorageStrategy strategy, string folder)
+            IDocumentStrategy strategy, string folder)
         {
             var dir = storageConfig.CreateBlobClient().GetBlobDirectoryReference(folder);
             var factory = new AzureAtomicContainer(strategy, dir);
@@ -130,7 +130,7 @@ namespace Lokad.Cqrs
         }
 
 
-        public static IStreamingContainer CreateStreaming(this IAzureStorageConfig config, string container)
+        public static IStreamContainer CreateStreaming(this IAzureStorageConfig config, string container)
         {
             return config.CreateStreaming().GetContainer(container).Create();
         }
