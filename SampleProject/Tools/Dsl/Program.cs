@@ -11,7 +11,7 @@ using System.IO;
 using System.Media;
 using Lokad.CodeDsl;
 
-namespace Hub.Dsl
+namespace Dsl
 {
     class Program
     {

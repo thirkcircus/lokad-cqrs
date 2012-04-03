@@ -7,10 +7,8 @@
 
 using System;
 using System.Collections.Generic;
-using Sample;
-using Sample.Aggregates.User;
 
-namespace Hub.Aggregates.Login
+namespace Sample.Aggregates.User
 {
     public sealed class UserAggregate
     {

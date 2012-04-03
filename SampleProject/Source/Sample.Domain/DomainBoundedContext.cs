@@ -9,12 +9,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Hub.Services;
-using Hub.Services.UserIndex;
 using Lokad.Cqrs.AtomicStorage;
 using Sample.Aggregates.Security;
 using Sample.Aggregates.User;
 using Sample.Processes;
+using Sample.Services.UserIndex;
 
 namespace Sample
 {

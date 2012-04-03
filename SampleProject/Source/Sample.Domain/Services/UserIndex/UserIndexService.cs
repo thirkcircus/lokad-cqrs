@@ -7,11 +7,9 @@
 
 using System.Security.Cryptography;
 using System.Text;
-using Hub.Services.UserIndex;
 using Lokad.Cqrs.AtomicStorage;
-using Sample;
 
-namespace Hub.Services
+namespace Sample.Services.UserIndex
 {
     public sealed class UserIndexService : IUserIndexService
     {

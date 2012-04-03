@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
-namespace Hub.Services.UserIndex
+namespace Sample.Services.UserIndex
 {
     [DataContract]
     public sealed class UserIndexLookup

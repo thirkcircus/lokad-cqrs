@@ -8,9 +8,8 @@
 using System.Security.Cryptography;
 using System.Text;
 using Lokad.Cqrs.AtomicStorage;
-using Sample;
 
-namespace Hub.Services.UserIndex
+namespace Sample.Services.UserIndex
 {
     public sealed class UserIndexProjection
     {

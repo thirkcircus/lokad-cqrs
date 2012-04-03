@@ -6,7 +6,6 @@
 #endregion
 
 using System;
-using Hub.Aggregates.Login;
 
 namespace Sample.Aggregates.User
 {
