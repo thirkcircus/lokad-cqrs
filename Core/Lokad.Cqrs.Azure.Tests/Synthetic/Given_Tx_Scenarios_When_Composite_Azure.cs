@@ -31,7 +31,7 @@ namespace Lokad.Cqrs.Synthetic
                 {
                     Sender = dev.CreateSimpleSender(streamer, "test-incoming"),
                     Inbox = dev.CreateInbox("test-incoming", visibilityTimeout : TimeSpan.FromMilliseconds(1)),
-                    Storage = dev.CreateNuclear(new TestStrategy(), "nuclear")
+                    Storage = dev.CreateNuclear(new TestStrategy(), "test-nuclear")
                 };
         }
     }
