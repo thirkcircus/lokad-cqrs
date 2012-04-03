@@ -44,8 +44,8 @@ namespace Lokad.Cqrs.Synthetic
             using (var build = builder.Build())
             using (TestObserver.When<EnvelopeDuplicateDiscarded>(discarded => token.Cancel()))
             {
-                sender.SendBatch(new object[]{"1"}, IdGeneration.HashContent);
-                sender.SendBatch(new object[] { "1" }, IdGeneration.HashContent);
+                sender.SendBatch(new object[]{new Message()}, IdGeneration.HashContent);
+                sender.SendBatch(new object[] { new Message()}, IdGeneration.HashContent);
                 build.Start(token.Token);
 
                 if (Debugger.IsAttached)
