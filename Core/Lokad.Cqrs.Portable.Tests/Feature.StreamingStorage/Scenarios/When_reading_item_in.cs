@@ -31,74 +31,9 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
             ExpectItemNotFound(() => TryToRead(TestItem));
         }
 
-        [Test]
-        public void Valid_item_and_failed_IfMatch_throws_condition_failed()
-        {
-            TestContainer.Create();
-            Write(TestItem, Guid.Empty);
-
-            ExpectConditionFailed(() => TryToRead(TestItem, StreamingCondition.IfMatch("asd")));
-        }
+       
 
 
-
-        [Test, Ignore("Azure dev fabric messes up the compliance")]
-        public void Missing_container_and_IfMatch_throw_container_not_found()
-        {
-            ExpectContainerNotFound(() => TryToRead(TestItem, StreamingCondition.IfMatch("mismatch")));
-        }
-
-        [Test, Ignore("Azure dev fabric messes up the compliance")]
-        public void Missing_container_and_IfNoneMatch_throw_condition_failed()
-        {
-            ExpectContainerNotFound(() => TryToRead(TestItem, StreamingCondition.IfNoneMatch("mismatch")));
-        }
-
-        [Test]
-        public void Missing_item_and_IfNoneMatch_throw_item_not_found()
-        {
-            TestContainer.Create();
-            ExpectItemNotFound(() => TryToRead(TestItem, StreamingCondition.IfNoneMatch("mismatch")));
-        }
-
-        [Test, Ignore("Azure dev fabric messes up the compliance")]
-        public void Missing_item_and_IfMatch_throw_item_not_found()
-        {
-            TestContainer.Create();
-            ExpectItemNotFound(() => TryToRead(TestItem, StreamingCondition.IfMatch("mismatch")));
-        }
-
-        [Test]
-        public void Valid_item_and_valid_IfNoneMatch_exact_return()
-        {
-            TestContainer.Create();
-            var g = Guid.NewGuid();
-
-            Write(TestItem, g);
-            ShouldHaveGuid(TestItem, g, StreamingCondition.IfNoneMatch("none"));
-        }
-
-        [Test]
-        public void Valid_item_and_valid_IfMatch_exact_return()
-        {
-            TestContainer.Create();
-            var g = Guid.NewGuid();
-
-            Write(TestItem, g);
-
-            var tag = TestItem.GetInfo().Value.ETag;
-            ShouldHaveGuid(TestItem, g, StreamingCondition.IfMatch(tag));
-        }
-
-        [Test, Ignore("Azure dev fabric messes up the compliance")]
-        public void Valid_item_and_valid_match_wild_return()
-        {
-            TestContainer.Create();
-            var g = Guid.NewGuid();
-
-            Write(TestItem, g);
-            ShouldHaveGuid(TestItem, g, StreamingCondition.IfMatch("*"));
-        }
 
  
 

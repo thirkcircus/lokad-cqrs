@@ -7,6 +7,7 @@
 #endregion
 
 using Lokad.Cqrs.Envelope;
+using Lokad.Cqrs.Feature.AtomicStorage;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
@@ -41,7 +42,7 @@ namespace Lokad.Cqrs.Synthetic
                 {
                     Inbox = _config.CreateInbox("in"),
                     Sender = _config.CreateSimpleSender(streamer, "in"),
-                    Storage = _config.CreateNuclear("nuclear")
+                    Storage = _config.CreateNuclear(new TestStrategy())
                 };
         }
     }

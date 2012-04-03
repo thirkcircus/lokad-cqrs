@@ -19,46 +19,24 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
         [Test]
         public void Missing_container_returns_empty()
         {
-            TestItem.GetInfo().ShouldFail();
+            Assert.IsFalse(TestItem.Exists());
         }
 
         [Test]
         public void Missing_item_returns_empty()
         {
             TestContainer.Create();
-            TestItem.GetInfo().ShouldFail();
+            Assert.IsFalse(TestItem.Exists());
         }
 
-        [Test]
-        public void Valid_item_and_failed_IfMatch_returns_empty()
-        {
-            TestContainer.Create();
-            Write(TestItem, Guid.Empty);
-            TestItem.GetInfo(StreamingCondition.IfMatch("mismatch")).ShouldFail();
-        }
-
-        [Test]
-        public void Valid_item_and_valid_IfMatch_wild_returns_info()
-        {
-            TestContainer.Create();
-            Write(TestItem, Guid.Empty);
-            TestItem.GetInfo(StreamingCondition.IfMatch("*")).ShouldPass();
-        }
-
+        
         [Test]
         public void Valid_item_returns_info()
         {
             TestContainer.Create();
             Write(TestItem, Guid.Empty);
-            TestItem.GetInfo().ShouldPass();
+            Assert.IsTrue(TestItem.Exists());
         }
 
-        [Test]
-        public void Valid_item_and_valid_IfNoneMatch_returns_info()
-        {
-            TestContainer.Create();
-            Write(TestItem, Guid.Empty);
-            TestItem.GetInfo(StreamingCondition.IfNoneMatch("never")).ShouldPass();
-        }
     }
 }

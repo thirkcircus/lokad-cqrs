@@ -60,16 +60,16 @@ namespace Lokad.Cqrs
             var builder = new CqrsEngineBuilder(streamer);
             var account = new MemoryStorageConfig();
 
-            var nuclear = account.CreateNuclear();
+            var nuclear = account.CreateNuclear(new TestStrategy());
             var inbox = account.CreateInbox("input");
             var sender = account.CreateSimpleSender(streamer, "input");
 
 
 
-            var handler = new Red
+            var handler = new RedirectToCommand();
             handler.WireToLambda<CreateCustomer>(customer => Consume(customer, nuclear, sender));
             handler.WireToLambda<CustomerCreated>(m => Console.WriteLine("Created!"));
-            builder.Handle(inbox, handler.HandleEnvelope);
+            builder.Handle(inbox,  envelope => handler.InvokeMany(envelope.SelectContents()));
 
             using (var engine = builder.Build())
             {

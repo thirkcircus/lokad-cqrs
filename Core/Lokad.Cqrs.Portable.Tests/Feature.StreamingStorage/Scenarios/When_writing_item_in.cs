@@ -22,35 +22,9 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
             ExpectContainerNotFound(() => Write(TestItem, Guid.Empty));
         }
 
-        [Test]
-        public void Missing_container_and_failed_IfMatch_throw_item_not_found()
-        {
-            ExpectContainerNotFound(() => Write(TestItem, Guid.Empty, StreamingCondition.IfMatch("none")));
-        }
+        
 
-        [Test]
-        public void Missing_item_and_failed_IfMatch_throw_condition_failed()
-        {
-            TestContainer.Create();
-            ExpectConditionFailed(() => Write(TestItem, Guid.Empty, StreamingCondition.IfMatch("none")));
-        }
-
-        [Test]
-        public void Missing_item_and_valid_IfNoneMatch_succeed()
-        {
-            TestContainer.Create();
-            Write(TestItem, Guid.Empty, StreamingCondition.IfNoneMatch("none"));
-            ShouldHaveGuid(TestItem, Guid.Empty);
-        }
-
-
-        [Test]
-        public void Failed_IfMatch_throws_condition_failed()
-        {
-            TestContainer.Create();
-
-            ExpectConditionFailed(() => Write(TestItem, Guid.Empty, StreamingCondition.IfMatch("tag")));
-        }
+        
 
 
         [Test]
@@ -60,12 +34,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
             Write(TestItem, Guid.Empty);
         }
 
-        [Test]
-        public void Conditional_append_works()
-        {
-            TestContainer.Create();
-            Write(TestItem, Guid.Empty, StreamingCondition.IfNoneMatch("tag"));
-        }
+       
 
         [Test]
         public void Unconditional_upsert_works()

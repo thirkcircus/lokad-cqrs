@@ -34,6 +34,7 @@ namespace Lokad.Cqrs.Synthetic
             var builder = new CqrsEngineBuilder(streamer);
 
             var cfg = new MemoryStorageConfig();
+
             var sender = cfg.CreateSimpleSender(streamer, "in");
             builder.Handle(cfg.CreateInbox("in"), envelope => Console.WriteLine("Got message"));
 
@@ -43,8 +44,8 @@ namespace Lokad.Cqrs.Synthetic
             using (var build = builder.Build())
             using (TestObserver.When<EnvelopeDuplicateDiscarded>(discarded => token.Cancel()))
             {
-                sender.SendEnvelope(env);
-                sender.SendEnvelope(env);
+                sender.SendBatch(new object[]{"1"}, IdGeneration.HashContent);
+                sender.SendBatch(new object[] { "1" }, IdGeneration.HashContent);
                 build.Start(token.Token);
 
                 if (Debugger.IsAttached)

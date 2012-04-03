@@ -17,7 +17,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
     {
         public IStreamContainer GetContainer(string name)
         {
-            return new MemoryStreamContainer().GetContainer("test");
+            return new MemoryStreamRoot().GetContainer("test");
         }
 
         

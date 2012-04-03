@@ -51,7 +51,7 @@ namespace Lokad.Cqrs
         public void PartitionWithRouter()
         {
             var config = new MemoryStorageConfig();
-            var raw = new CqrsEngineBuilder();
+            var raw = new CqrsEngineBuilder(EnvelopeStreamer.CreateDefault());
 
             var inWriter = config.CreateQueueWriter("in");
             var doWriter = config.CreateQueueWriter("do");
@@ -70,7 +70,7 @@ namespace Lokad.Cqrs
         public void Direct()
         {
             var config = new MemoryStorageConfig();
-            var raw = new CqrsEngineBuilder();
+            var raw = new CqrsEngineBuilder(EnvelopeStreamer.CreateDefault());
             var doWriter = config.CreateQueueWriter("do");
 
             // forwarder do => do
@@ -90,7 +90,7 @@ namespace Lokad.Cqrs
         public void RouterChain()
         {
             var config = new MemoryStorageConfig();
-            var raw = new CqrsEngineBuilder();
+            var raw = new CqrsEngineBuilder(EnvelopeStreamer.CreateDefault());
             var doWriter = config.CreateQueueWriter("do");
 
             var route1 = config.CreateQueueWriter("route1");

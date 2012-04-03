@@ -29,38 +29,5 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
             TestItem.Delete();
         }
 
-        [Test]
-        public void Missing_item_and_failed_IfMatch_work()
-        {
-            TestContainer.Create();
-            TestItem.Delete(StreamingCondition.IfMatch("some"));
-        }
-
-        [Test]
-        public void Valid_item_and_failed_IfMatch_dont_delete()
-        {
-            TestContainer.Create();
-            Write(TestItem, Guid.Empty);
-            TestItem.Delete(StreamingCondition.IfMatch("random"));
-            TestItem.GetInfo().ShouldPass();
-        }
-
-        [Test]
-        public void Valid_item_and_valid_IfMatch_wild_delete()
-        {
-            TestContainer.Create();
-            Write(TestItem, Guid.Empty);
-            TestItem.Delete(StreamingCondition.IfMatch("*"));
-            TestItem.GetInfo().ShouldFail();
-        }
-
-        [Test]
-        public void Valid_item_and_valid_IfNoneMatch_delete()
-        {
-            TestContainer.Create();
-            Write(TestItem, Guid.Empty);
-            TestItem.Delete(StreamingCondition.IfNoneMatch("random"));
-            TestItem.GetInfo().ShouldFail();
-        }
     }
 }

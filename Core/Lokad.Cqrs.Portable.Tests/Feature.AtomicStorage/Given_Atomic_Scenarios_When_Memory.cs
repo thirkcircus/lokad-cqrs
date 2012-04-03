@@ -23,7 +23,7 @@ namespace Lokad.Cqrs.Feature.AtomicStorage
             var _config = new MemoryStorageConfig();
             return new Setup
             {
-                Store = _config.CreateNuclear(),
+                Store = _config.CreateNuclear(new TestStrategy()),
                 Inbox = _config.CreateInbox("dev"),
                 Sender = _config.CreateSimpleSender(streamer, "dev")
 

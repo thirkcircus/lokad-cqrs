@@ -7,6 +7,7 @@
 #endregion
 
 using Lokad.Cqrs.Envelope;
+using Lokad.Cqrs.Feature.AtomicStorage;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
@@ -22,7 +23,7 @@ namespace Lokad.Cqrs.Synthetic
             var acc = new MemoryStorageConfig();
             return new Setup
                 {
-                    Store = acc.CreateNuclear(),
+                    Store = acc.CreateNuclear(new TestStrategy()),
                     Inbox = acc.CreateInbox("queue"),
                     Sender = acc.CreateSimpleSender(config, "queue")
                 };

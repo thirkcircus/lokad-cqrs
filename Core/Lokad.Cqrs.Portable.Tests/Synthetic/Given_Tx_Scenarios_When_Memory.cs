@@ -7,6 +7,7 @@
 #endregion
 
 using Lokad.Cqrs.Envelope;
+using Lokad.Cqrs.Feature.AtomicStorage;
 using NUnit.Framework;
 
 namespace Lokad.Cqrs.Synthetic
@@ -21,7 +22,7 @@ namespace Lokad.Cqrs.Synthetic
             {
                 Inbox = config.CreateInbox("in"),
                 Sender = config.CreateSimpleSender(streamer, "in"),
-                Storage = config.CreateNuclear()
+                Storage = config.CreateNuclear(new TestStrategy())
             };
         }
     }

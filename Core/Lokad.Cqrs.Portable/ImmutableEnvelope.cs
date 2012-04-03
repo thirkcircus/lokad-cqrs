@@ -50,6 +50,10 @@ namespace Lokad.Cqrs
             return defaultValue;
         }
 
+        public IEnumerable<object> SelectContents()
+        {
+            return Items.Select(i => i.Content);
+        } 
 
 
 

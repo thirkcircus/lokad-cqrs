@@ -59,6 +59,12 @@ namespace Lokad.Cqrs.StreamingStorage
             return _file.Length;
         }
 
+        public bool Exists()
+        {
+            Refresh();
+            return _file.Exists;
+        }
+
         FileStream OpenForWrite()
         {
             // we allow concurrent reading

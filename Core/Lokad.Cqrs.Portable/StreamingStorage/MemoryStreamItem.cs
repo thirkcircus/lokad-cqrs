@@ -48,6 +48,11 @@ namespace Lokad.Cqrs.StreamingStorage
             return _content.Length;
         }
 
+        public bool Exists()
+        {
+            return _parent.Contains(this);
+        }
+
         /// <summary>
         /// Attempts to read the storage item.
         /// </summary>

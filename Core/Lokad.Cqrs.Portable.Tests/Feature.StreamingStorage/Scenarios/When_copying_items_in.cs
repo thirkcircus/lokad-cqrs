@@ -24,7 +24,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage.Scenarios
 
             Write(source, Guid.Empty);
 
-            target.CopyFrom(source);
+            source.ReadInto(s => target.Write(s.CopyTo));
 
             ShouldHaveGuid(target, Guid.Empty);
         }

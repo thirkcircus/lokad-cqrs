@@ -28,6 +28,8 @@ namespace Lokad.Cqrs.StreamingStorage
         /// <returns>number of bytes written</returns>
         long Write(Action<Stream> writer);
 
+        bool Exists();
+
         /// <summary>
         /// Attempts to read the storage item.
         /// </summary>
@@ -38,7 +40,7 @@ namespace Lokad.Cqrs.StreamingStorage
         void ReadInto(Action<Stream> reader);
 
         /// <summary>
-        /// Removes the item, ensuring that the specified condition is met.
+        /// Removes the item.
         /// </summary>
         void Delete();
         

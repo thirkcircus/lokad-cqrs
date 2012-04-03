@@ -19,7 +19,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
 
         protected override ITapeStream InitializeAndGetTapeStorage()
         {
-            _storageFactory = new MemoryTapeContainer(_storage, "default");
+            _storageFactory = new MemoryTapeContainer();
             
 
             const string name = "Memory";

@@ -207,7 +207,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
             var previousVersion = _stream.GetCurrentVersion();
             Assert.AreEqual(0, previousVersion, "Version should be zero");
 
-            var result = _stream.TryAppend(_batch[0], TapeAppendCondition.VersionIs(1));
+            var result = _stream.TryAppend(_batch[0], TapeAppendCondition.VersionIs(1))==0;
             Assert.IsFalse(result, "Appending records should fail");
 
             var currentVersion = _stream.GetCurrentVersion();
@@ -223,7 +223,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
             var currentVersion1 = _stream.GetCurrentVersion();
             Assert.Greater(currentVersion1, previousVersion, "Version should be equal to one");
 
-            var result = _stream.TryAppend(_batch[1], TapeAppendCondition.VersionIs(previousVersion));
+            var result = _stream.TryAppend(_batch[1], TapeAppendCondition.VersionIs(previousVersion))!=0;
             Assert.IsFalse(result, "Appending records should fail");
 
             var currentVersion2 = _stream.GetCurrentVersion();
@@ -235,7 +235,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
         {
             var version = _stream.GetCurrentVersion();
 
-            var success = _stream.TryAppend(_batch[0], TapeAppendCondition.VersionIs(version));
+            var success = _stream.TryAppend(_batch[0], TapeAppendCondition.VersionIs(version))!=0;
             Assert.IsTrue(success, "Appending records should succeed");
 
             var currentVersion = _stream.GetCurrentVersion();
@@ -248,7 +248,7 @@ namespace Lokad.Cqrs.Feature.TapeStorage
             _stream.TryAppend(_batch[0]);
             var before = _stream.GetCurrentVersion();
 
-            var success = _stream.TryAppend(_batch[1], TapeAppendCondition.VersionIs(before));
+            var success = _stream.TryAppend(_batch[1], TapeAppendCondition.VersionIs(before))!=0;
             Assert.IsTrue(success, "Appending records should succeed");
 
             var currentVersion = _stream.GetCurrentVersion();

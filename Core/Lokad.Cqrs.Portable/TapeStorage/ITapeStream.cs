@@ -99,19 +99,27 @@ namespace Lokad.Cqrs.TapeStorage
 
         public long TryAppend(byte[] buffer, TapeAppendCondition appendCondition = new TapeAppendCondition())
         {
-            var result = _dictionary.AddOrUpdate(_name, s =>
-                {
-                    appendCondition.Enforce(0);
-                    var records = new List<TapeRecord>();
-                    records.Add(new TapeRecord(1, buffer));
-                    return records;
-                }, (s, list) =>
+            try
+            {
+                var result = _dictionary.AddOrUpdate(_name, s =>
                     {
-                        appendCondition.Enforce(list.Count);
-                        return list.Concat(new TapeRecord[] {new TapeRecord(list.Count + 1, buffer)}).ToList();
-                    });
 
-            return result.Count;
+                        appendCondition.Enforce(0);
+                        var records = new List<TapeRecord>();
+                        records.Add(new TapeRecord(1, buffer));
+                        return records;
+                    }, (s, list) =>
+                        {
+                            appendCondition.Enforce(list.Count);
+                            return list.Concat(new TapeRecord[] {new TapeRecord(list.Count + 1, buffer)}).ToList();
+                        });
+
+                return result.Count;
+            }
+            catch(TapeAppendConditionException e)
+            {
+                return 0;
+            }
         }
     }
 }
