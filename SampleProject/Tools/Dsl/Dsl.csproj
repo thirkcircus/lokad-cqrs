@@ -50,21 +50,16 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Context.cs" />
-    <Compile Include="Errors.cs" />
-    <Compile Include="Fragment.cs" />
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CodeModel.cs" />
     <Compile Include="GeneratorUtil.cs" />
-    <Compile Include="IGenerateCode.cs" />
-    <Compile Include="Member.cs" />
-    <Compile Include="Message.cs" />
     <Compile Include="MessageContractAssembler.cs" />
     <Compile Include="MessageContractsLexer.cs" />
     <Compile Include="MessageContractsParser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="TemplatedGenerator.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="MessageContracts.g" />

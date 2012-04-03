@@ -2,13 +2,13 @@
 using System.CodeDom.Compiler;
 using System.Linq;
 
-namespace Dsl
+namespace Lokad.CodeDsl
 {
-	public sealed class TemplatedGenerator : IGenerateCode
+	public sealed class TemplatedGenerator 
 	{
         public string ClassNameTemplate { get; set; }
         public string MemberTemplate { get; set; }
-        public string PrivateCtorTemplate { get; set; }
+        
         public string Namespace { get; set; }
         public string Region { get; set; }
         public string GenerateInterfaceForEntityWithModifiers { get; set; }
@@ -22,8 +22,7 @@ namespace Dsl
 public sealed class {0}";
 
 		    MemberTemplate = @"[ProtoMember({0})] public readonly {1} {2};";
-		    PrivateCtorTemplate = @"
-private {0} () {{}}";
+		    
 		    TemplateForInterfaceName = "public interface I{0}";
 		    TemplateForInterfaceMember = "void When({0} c)";
 		    GenerateInterfaceForEntityWithModifiers = "none";
@@ -79,7 +78,11 @@ private {0} () {{}}";
 	            if (contract.Members.Count > 0)
 	            {
 	                WriteMembers(contract, writer);
-	                writer.WriteLine(PrivateCtorTemplate, contract.Name);
+
+                    writer.WriteLine();
+	                WritePrivateCtor(writer, contract);
+
+
 	                writer.Write("public {0} (", contract.Name);
 	                WriteParameters(contract, writer);
 	                writer.WriteLine(")");
@@ -92,21 +95,44 @@ private {0} () {{}}";
 	                writer.WriteLine("}");
 					
 	            }
-
-
 	            writer.Indent -= 1;
 	            writer.WriteLine("}");
 	        }
             foreach (var entity in context.Entities)
             {
-                if ((entity.Name ?? "null") == "null")
+                if ((entity.Name ?? "default") == "default")
                     continue;
 
-                GenerateEntityInterface(entity, writer, "?", "public interface I{0}Aggregate");
-                GenerateEntityInterface(entity, writer, "!", "public interface I{0}AggregateState");
+                GenerateEntityInterface(entity, writer, "?", "public interface I{0}Handler");
+                GenerateEntityInterface(entity, writer, "!", "public interface I{0}State");
             }
 	    }
-        void GenerateEntityInterface(Entity entity, CodeWriter writer, string member, string template)
+
+	    static void WritePrivateCtor(CodeWriter writer, Message contract)
+	    {
+	        var arrays = contract.Members.Where(p => p.Type.EndsWith("[]")).ToArray();
+	        if (!arrays.Any())
+	        {
+	            writer.WriteLine(@"{0} () {{}}", contract.Name);
+	        }
+	        else
+	        {
+	            writer.WriteLine(@"{0} () 
+{{", contract.Name);
+	            writer.Indent += 1;
+	            foreach (var array in arrays)
+	            {
+	                writer.WriteLine("{0} = new {1};",
+	                    GeneratorUtil.MemberCase(array.Name),
+	                    array.Type.Replace("[]", "[0]")
+	                    );
+	            }
+	            writer.Indent -= 1;
+	            writer.WriteLine("}");
+	        }
+	    }
+
+	    void GenerateEntityInterface(Entity entity, CodeWriter writer, string member, string template)
         {
             var ms = member.Split(',');
             var matches = entity.Messages.Where(m => m.Modifiers.Select(s => s.Identifier).Intersect(ms).Any()).ToList();
@@ -118,7 +144,7 @@ private {0} () {{}}";
                 writer.Indent += 1;
                 foreach (var contract in matches)
                 {
-                    writer.WriteLine("void When({0} c);", contract.Name);
+                    writer.WriteLine("void When({0} {1});", contract.Name, member == "!" ? "e" : "c");
                 }
                 writer.Indent -= 1;
                 writer.WriteLine("}");

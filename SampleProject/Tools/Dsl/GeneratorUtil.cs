@@ -2,22 +2,17 @@
 using System.IO;
 using System.Text;
 
-namespace Dsl
+namespace Lokad.CodeDsl
 {
     public static class GeneratorUtil
     {
-        public static string Build(string source, IGenerateCode generator)
-        {
-            return Build(GenerateContext(source), generator);
-        }
-
-        public static string Build(Context context, IGenerateCode generator)
+        public static string Build(string source, TemplatedGenerator generator)
         {
             var builder = new StringBuilder();
             using (var stream = new StringWriter(builder))
             using (var writer = new IndentedTextWriter(stream, "    "))
             {
-                generator.Generate(context, writer);
+                generator.Generate(GenerateContext(source), writer);
             }
             return builder.ToString();
         }
@@ -37,7 +32,5 @@ namespace Dsl
         {
             return char.ToUpperInvariant(s[0]) + s.Substring(1);
         }
-
-        //public static string Extend(this GeneratedTextTransformation )
     }
 }

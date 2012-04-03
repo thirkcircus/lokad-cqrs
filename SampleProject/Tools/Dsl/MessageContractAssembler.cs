@@ -10,8 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
+using MessageContracts;
 
-namespace Dsl
+namespace Lokad.CodeDsl
 {
     public sealed class MessageContractAssembler
     {
@@ -23,7 +24,7 @@ namespace Dsl
 
                 if (!context.Fragments.ContainsKey(fragmentId))
                 {
-                    throw Errors.InvalidOperation("Unknown fragment '{0}'", fragmentId);
+                    throw new InvalidOperationException(string.Format("Unknown fragment '{0}'", fragmentId));
                 }
 
                 var fragment = context.Fragments[fragmentId];
@@ -45,7 +46,7 @@ namespace Dsl
                         }
                         yield break;
                     }
-                    throw Errors.InvalidOperation("Unknown include '{0}'", name);
+                    throw new InvalidOperationException(string.Format("Unknown include '{0}'", name));
                 }
                 yield return (new Member(type, name));
                 yield break;
@@ -65,31 +66,34 @@ namespace Dsl
                     context.Fragments[fragmentId] = new Fragment(fragmentType, fragmentName);
                     break;
                 case MessageContractsLexer.ModifierDefinition:
-                    //Console.WriteLine(t);
-
-                    var modifier = t.GetChild(1).Text;
-                    var type = t.GetChild(0).Text;
-                    context.CurrentEntity.Modifiers[modifier] = type;
+                    var modifier = t.GetChild(0).Text;
+                    context.CurrentEntity.Modifiers.Remove(modifier);
+                    for (int i = 1; i < t.ChildCount; i++)
+                    {
+                        context.CurrentEntity.Modifiers.Add(modifier, t.GetChild(i).Text);
+                    }
                     break;
-
-
                 case MessageContractsLexer.TypeToken:
                     var name = t.GetChild(0).Text;
                     var block = t.GetChild(1);
 
                     var modifiers = new List<Modifier>();
-                    if (t.ChildCount > 2)
+                    for (int i = 2; i < t.ChildCount; i++)
                     {
-                        var mod = t.GetChild(2).Text;
-                        string typeName;
-                        if (!context.CurrentEntity.Modifiers.TryGetValue(mod, out typeName))
+                        var mod = t.GetChild(i).Text;
+                        var used = context.CurrentEntity.Modifiers.GetValues(mod);
+                        if (null == used || used.Length == 0)
                         {
                             var format = string.Format("Entity '{0}' does not have modifier reference: '{1}'",
                                 context.CurrentEntity.Name, mod);
                             throw new InvalidOperationException(format);
                         }
-                        modifiers.Add(new Modifier(mod, typeName));
+                        foreach (var s in used)
+                        {
+                            modifiers.Add(new Modifier(mod, s));
+                        }
                     }
+                    
 
                     var message = new Message(name, modifiers);
                     if (modifiers.Any())
@@ -138,7 +142,10 @@ namespace Dsl
 
             var tokens = new CommonTokenStream(lexer);
 
-            var parser = new MessageContractsParser(tokens);
+            var parser = new MessageContractsParser(tokens)
+                {
+                    TreeAdaptor = new CommonTreeAdaptor()
+                };
 
             var program = parser.GetProgram();
 
@@ -160,10 +167,13 @@ namespace Dsl
             return ctx;
         }
     }
+}
 
+namespace MessageContracts
+{
     public partial class MessageContractsParser
     {
-        public program_return GetProgram()
+        public AstParserRuleReturnScope<object, IToken> GetProgram()
         {
             return program();
         }
