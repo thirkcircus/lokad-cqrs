@@ -16,6 +16,9 @@ using Sample.Security;
 
 namespace Sample.Projections
 {
+    /// <summary>
+    /// This is bounded context for the web client
+    /// </summary>
     public static class ClientBoundedContext
     {
         public static IEnumerable<object> Projections(IDocumentStore factory)

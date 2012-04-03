@@ -15,7 +15,7 @@ namespace Dsl
 {
     class Program
     {
-        static ConcurrentDictionary<string, string> _states = new ConcurrentDictionary<string, string>();
+        static readonly ConcurrentDictionary<string, string> States = new ConcurrentDictionary<string, string>();
 
         static void Main(string[] args)
         {
@@ -66,7 +66,7 @@ namespace Dsl
         static bool Changed(string path, string value)
         {
             var changed = false;
-            _states.AddOrUpdate(path, key =>
+            States.AddOrUpdate(path, key =>
                 {
                     changed = true;
                     return value;
