@@ -54,7 +54,6 @@
     <Compile Include="BasicClientConfigurationTests.cs" />
     <Compile Include="AtomicStorage\Given_Atomic_Scenarios_When_Azure.cs" />
     <Compile Include="AtomicStorage\Given_Atomic_Scenarios_When_Composite_Azure.cs" />
-    <Compile Include="AtomicStorage\When_DefaultAzureAtomicStorageStrategy_is_used.cs" />
     <Compile Include="TapeStorage\BlobTapeStorageTests.cs" />
     <Compile Include="TapeStorage\BlockBlobTapeStorageTests.cs" />
     <Compile Include="MiscTests.cs" />
@@ -67,7 +66,6 @@
     <Compile Include="Serialization\ProtoBufNativeTests.cs" />
     <Compile Include="Serialization\ProtoBufXmlTests.cs" />
     <Compile Include="StreamingStorage\Play_all_for_BlobStreaming.cs" />
-    <Compile Include="StreamingStorage\HashingTests.cs" />
     <Compile Include="Synthetic\Given_Basic_Scenarios_When_Composite_Azure.cs" />
     <Compile Include="Synthetic\Given_Tx_Scenarios_When_Composite_Azure.cs" />
   </ItemGroup>

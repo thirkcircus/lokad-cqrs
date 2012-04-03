@@ -8,6 +8,7 @@
 
 using System;
 using Lokad.Cqrs.Envelope;
+using Lokad.Cqrs.Feature.AtomicStorage;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
@@ -30,10 +31,7 @@ namespace Lokad.Cqrs.Synthetic
                 {
                     Sender = dev.CreateSimpleSender(streamer, "test-incoming"),
                     Inbox = dev.CreateInbox("test-incoming", visibilityTimeout : TimeSpan.FromMilliseconds(1)),
-                    Storage = dev.CreateNuclear(builder =>
-                        {
-                            builder.FolderForSingleton("test-single");
-                        }, "nuclear")
+                    Storage = dev.CreateNuclear(new TestStrategy(), "nuclear")
                 };
         }
     }

@@ -27,7 +27,7 @@ namespace Lokad.Cqrs
             var writer = config.CreateQueueWriter("test");
             var inbox = config.CreateInbox("test");
 
-            var builder = new CqrsEngineBuilder();
+            var builder = new CqrsEngineBuilder(null);
             builder.Dispatch(inbox, bytes => { });
 
             var setup = new Setup
@@ -48,7 +48,7 @@ namespace Lokad.Cqrs
 
             var writer = config.CreateQueueWriter("test");
             var inbox = config.CreateInbox("test", u => TimeSpan.Zero);
-            var builder = new CqrsEngineBuilder();
+            var builder = new CqrsEngineBuilder(null);
             builder.Dispatch(inbox, bytes => { });
 
             var setup = new Setup
@@ -68,7 +68,7 @@ namespace Lokad.Cqrs
 
             var writer = config.CreateQueueWriter("test");
             var inbox = config.CreateInbox("test",  u => TimeSpan.FromMilliseconds(0));
-            var builder = new CqrsEngineBuilder();
+            var builder = new CqrsEngineBuilder(null);
             builder.Dispatch(inbox, bytes => { });
 
             var setup = new Setup

@@ -8,6 +8,7 @@
 
 using System;
 using Lokad.Cqrs.Build.Engine;
+using Lokad.Cqrs.Feature.AtomicStorage;
 using NUnit.Framework;
 
 // ReSharper disable InconsistentNaming
@@ -27,7 +28,7 @@ namespace Lokad.Cqrs.Synthetic
             WipeAzureAccount.Fast(s => s.StartsWith("test-"), dev);
             return new Setup
                 {
-                    Store = dev.CreateNuclear("nuclear"),
+                    Store = dev.CreateNuclear(new TestStrategy(), "nuclear"),
                     Inbox = dev.CreateInbox("test-incoming", visibilityTimeout : TimeSpan.FromSeconds(1)),
                     Sender = dev.CreateSimpleSender(config, "test-incoming")
                 };

@@ -41,10 +41,7 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
                 CloudStorageAccount.Parse(File.ReadAllText(@"D:\Environment\Azure.blob.test")).CreateCloudBlobClient();
         }
 
-        public StreamingWriteOptions GetWriteHints()
-        {
-            return StreamingWriteOptions.None;
-        }
+        
 
         //public Play_all_for_BlobStreaming UseLocalFiddler()
         //{
@@ -85,7 +82,6 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
         {
             public When_reading_blob_item_with_gzip()
             {
-                WriteOptions |= StreamingWriteOptions.CompressIfPossible;
             }
         }
 
@@ -108,7 +104,6 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
         {
             public When_writing_blob_item_with_gzip()
             {
-                WriteOptions |= StreamingWriteOptions.CompressIfPossible;
             }
         }
     }
