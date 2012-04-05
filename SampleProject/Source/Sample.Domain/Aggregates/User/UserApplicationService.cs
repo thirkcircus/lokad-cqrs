@@ -9,11 +9,11 @@ using System;
 
 namespace Sample.Aggregates.User
 {
-    public sealed class UserHandler : IUserHandler, ICommandHandler
+    public sealed class UserApplicationService : IUserApplicationService, IApplicationService
     {
         readonly IEventStore _store;
 
-        public UserHandler(IEventStore store)
+        public UserApplicationService(IEventStore store)
         {
             _store = store;
         }

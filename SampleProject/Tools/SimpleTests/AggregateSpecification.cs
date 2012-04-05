@@ -37,7 +37,7 @@ namespace Sample
         public ICommand<T> When;
         public string Name;
         public InMemoryStore Factory = new InMemoryStore();
-        public Func<ICommandHandler> Handler;
+        public Func<IApplicationService> Handler;
         public List<Func<object>> Docs = new List<Func<object>>();
 
 
@@ -67,7 +67,7 @@ namespace Sample
 
         public Delegate GetOn()
         {
-            return new Func<ICommandHandler>(() =>
+            return new Func<IApplicationService>(() =>
                 {
                     var list = new List<IEvent<T>>();
 
@@ -100,7 +100,7 @@ namespace Sample
 
         public Delegate GetWhen()
         {
-            return new Func<ICommandHandler, TException>(feed =>
+            return new Func<IApplicationService, TException>(feed =>
                 {
                     foreach (var @event in Given)
                     {
@@ -151,7 +151,7 @@ namespace Sample
 
 
         public InMemoryStore Factory = new InMemoryStore();
-        public Func<ICommandHandler> Handler;
+        public Func<IApplicationService> Handler;
 
         public string GetName()
         {
@@ -171,7 +171,7 @@ namespace Sample
 
         public Delegate GetOn()
         {
-            return new Func<ICommandHandler>(() =>
+            return new Func<IApplicationService>(() =>
                 {
                     foreach (var @event in Given)
                     {
@@ -186,7 +186,7 @@ namespace Sample
 
         public Delegate GetWhen()
         {
-            return new Func<ICommandHandler, IEvent<T>[]>(feed =>
+            return new Func<IApplicationService, IEvent<T>[]>(feed =>
                 {
                     using (Context.CaptureForThread(s => _text.AppendLine(s)))
                     {

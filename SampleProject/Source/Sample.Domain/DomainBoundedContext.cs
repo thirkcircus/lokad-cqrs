@@ -50,8 +50,8 @@ namespace Sample
             var passwords = new PasswordGenerator();
 
 
-            yield return new UserHandler(store);
-            yield return new SecurityHandler(store, id, passwords, unique);
+            yield return new UserApplicationService(store);
+            yield return new SecurityApplicationService(store, id, passwords, unique);
 
             yield return id;
         }

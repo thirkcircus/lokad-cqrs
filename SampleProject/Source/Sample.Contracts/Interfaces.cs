@@ -21,7 +21,7 @@ namespace Sample
         TIdentity Id { get; }
     }
 
-    public interface ICommandHandler
+    public interface IApplicationService
     {
         void Execute(object command);
     }

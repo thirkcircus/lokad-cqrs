@@ -9,18 +9,20 @@ using System;
 
 namespace Sample.Aggregates.Security
 {
-    public sealed class SecurityHandler : ISecurityHandler, ICommandHandler
+    public sealed class SecurityApplicationService : ISecurityApplicationService, IApplicationService
     {
-        readonly IEventStore _store;
+        readonly IEventStore _eventStore;
         readonly IDomainIdentityService _ids;
         readonly PasswordGenerator _pwds;
         readonly IUserIndexService _index;
-        readonly IMailSender _mail;
 
-        public SecurityHandler(IEventStore store, IDomainIdentityService ids, PasswordGenerator pwds,
+        public SecurityApplicationService(
+            IEventStore eventStore, 
+            IDomainIdentityService ids, 
+            PasswordGenerator pwds,
             IUserIndexService index)
         {
-            _store = store;
+            _eventStore = eventStore;
             _ids = ids;
             _pwds = pwds;
             _index = index;
@@ -33,14 +35,14 @@ namespace Sample.Aggregates.Security
 
         void Update(ICommand<SecurityId> c, Action<SecurityAggregate> action)
         {
-            var stream = _store.LoadEventStream(c.Id);
-            var state = new SecurityState(stream.Events);
+            var eventStream = _eventStore.LoadEventStream(c.Id);
+            var state = new SecurityState(eventStream.Events);
             var agg = new SecurityAggregate(state);
 
             using (var capture = Context.CaptureForThread())
             {
                 action(agg);
-                _store.AppendToStream(c.Id, stream.Version, agg.Changes, capture.Log);
+                _eventStore.AppendToStream(c.Id, eventStream.Version, agg.Changes, capture.Log);
             }
         }
 

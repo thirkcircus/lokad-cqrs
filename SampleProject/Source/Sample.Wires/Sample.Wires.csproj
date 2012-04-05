@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="DemoMessages.cs" />
     <Compile Include="EnvelopeSerializer.cs" />
-    <Compile Include="MessageSender.cs" />
+    <Compile Include="CommandSender.cs" />
     <Compile Include="ProjectionStrategy.cs" />
     <Compile Include="RedirectToDynamicEvent.cs" />
     <Compile Include="SetupClassThatReplacesIoCContainerFramework.cs" />

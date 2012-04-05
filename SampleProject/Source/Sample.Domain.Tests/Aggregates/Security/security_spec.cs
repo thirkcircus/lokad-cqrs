@@ -20,7 +20,7 @@ namespace Sample.Aggregates.Security
             Docs.Add(() => Passwords);
 
 
-            Handler = () => new SecurityHandler(Factory, Identity, Passwords, Index);
+            Handler = () => new SecurityApplicationService(Factory, Identity, Passwords, Index);
         }
     }
 
@@ -36,7 +36,7 @@ namespace Sample.Aggregates.Security
             Docs.Add(() => Identity);
             Docs.Add(() => Passwords);
 
-            Handler = () => new SecurityHandler(Factory, Identity, Passwords, Index);
+            Handler = () => new SecurityApplicationService(Factory, Identity, Passwords, Index);
         }
     }
 }

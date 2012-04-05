@@ -21,38 +21,37 @@ namespace Sample.Wires
     {
         public IStreamRoot Streaming;
         public ITapeContainer Tapes;
+
         public Func<string, IQueueWriter> CreateQueueWriter;
         public Func<string, IPartitionInbox> CreateInbox;
         public Func<IDocumentStrategy, NuclearStorage> CreateNuclear;
 
 
         public IEnvelopeStreamer Streamer = Contracts.CreateStreamer();
+        public IDocumentStrategy Strategy = new DocumentStrategy();
 
         public sealed class AssembledComponents
         {
             public SetupClassThatReplacesIoCContainerFramework Setup;
             public CqrsEngineBuilder Builder;
-            public SimpleMessageSender Sender;
+            public ICommandSender Sender;
         }
 
         public AssembledComponents AssembleComponents()
         {
             // set up all the variables
-            var nuclear = CreateNuclear(new DocumentStrategy());
-            var docs = nuclear.Container;
+            var docs = CreateNuclear(Strategy).Container;
             var routerQueue = CreateQueueWriter(Topology.RouterQueue);
 
             var commands = new RedirectToCommand();
             var events = new RedirectToDynamicEvent();
 
             var eventStore = new TapeStreamEventStore(Tapes, Streamer, routerQueue);
-            var sender = new SimpleMessageSender(Streamer, routerQueue);
-            var flow = new MessageSender(sender);
+            var flow = new CommandSender(new SimpleMessageSender(Streamer, routerQueue));
             var builder = new CqrsEngineBuilder(Streamer);
 
             // route queue infrastructure together
-            builder.Handle(CreateInbox(Topology.RouterQueue), Topology.Route(CreateQueueWriter, Streamer, Tapes),
-                "router");
+            builder.Handle(CreateInbox(Topology.RouterQueue), Topology.Route(CreateQueueWriter, Streamer, Tapes), "router");
             builder.Handle(CreateInbox(Topology.EntityQueue), em => CallHandlers(commands, em));
             builder.Handle(CreateInbox(Topology.EventsQueue), aem => CallHandlers(events, aem));
 
@@ -67,7 +66,7 @@ namespace Sample.Wires
             return new AssembledComponents
                 {
                     Builder = builder,
-                    Sender = sender,
+                    Sender = flow,
                     Setup = this
                 };
         }

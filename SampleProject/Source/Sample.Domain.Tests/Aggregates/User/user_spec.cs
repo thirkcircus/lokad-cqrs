@@ -13,7 +13,7 @@ namespace Sample.Aggregates.User
     {
         public user_spec()
         {
-            Handler = () => new UserHandler(Factory);
+            Handler = () => new UserApplicationService(Factory);
         }
     }
 
@@ -21,7 +21,7 @@ namespace Sample.Aggregates.User
     {
         public user_fail()
         {
-            Handler = () => new UserHandler(Factory);
+            Handler = () => new UserApplicationService(Factory);
         }
     }
 }

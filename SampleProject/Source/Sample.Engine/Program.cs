@@ -17,9 +17,7 @@ namespace Sample.Engine
             const string integrationPath = @"temp";
             var config = FileStorage.CreateConfig(integrationPath, "files");
 
-            var startupMessages = new List<ISampleMessage>();
-            var proc = Process.GetCurrentProcess();
-            startupMessages.Add(new InstanceStarted("Inject git rev", proc.ProcessName, proc.Id.ToString()));
+            var startupMessages = new List<ISampleCommand>();
             {
                 Console.WriteLine("Starting in funny mode by wiping store and sending a few messages");
                 config.Reset();
@@ -42,7 +40,7 @@ namespace Sample.Engine
             {
                 var task = engine.Start(cts.Token);
 
-                startupMessages.ForEach(components.Sender.SendOne);
+                startupMessages.ForEach(c => components.Sender.SendCommandsAsBatch(new ISampleCommand[]{c}));
 
                 Console.WriteLine(@"Press enter to stop");
                 Console.ReadLine();

@@ -5,7 +5,7 @@ namespace Sample.Engine
 {
     public static class DemoMessages
     {
-        public static IEnumerable<ISampleMessage> Create()
+        public static IEnumerable<ISampleCommand> Create()
         {
             var security = new SecurityId(0);
             yield return (new CreateSecurityAggregate(security));
