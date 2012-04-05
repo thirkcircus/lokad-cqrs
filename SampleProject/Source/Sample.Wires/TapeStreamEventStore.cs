@@ -44,6 +44,9 @@ namespace Sample.Wires
         public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent<IIdentity>> events,
             string explanation)
         {
+
+            if (events.Count == 0)
+                return;
             var stream = _factory.GetOrCreateStream(IdentityConvert.ToStream(id));
             var b = new EnvelopeBuilder("unknown");
 
