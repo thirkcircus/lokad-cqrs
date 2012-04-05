@@ -54,6 +54,7 @@
     <Compile Include="Aggregates\User\report_user_login_failure.cs" />
     <Compile Include="Aggregates\User\unlock_user.cs" />
     <Compile Include="Aggregates\User\user_spec.cs" />
+    <Compile Include="DocumentedFixture.cs" />
     <Compile Include="ExtendTimeSpan.cs" />
     <Compile Include="TestPassword.cs" />
   </ItemGroup>
