@@ -4,6 +4,4 @@
 
 # Continuous Version
 
-At the moment of writing, latest version with continuous deployment is located:
-
-https://github.com/abdullin/lokad-cqrs-appharbor
+At the moment of writing, latest version with continuous deployment is located within 'anatomy' branch of this project.
