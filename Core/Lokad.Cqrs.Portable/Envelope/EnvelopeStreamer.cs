@@ -121,11 +121,18 @@ namespace Lokad.Cqrs.Envelope
                 var itemSize = (int)itemContract.ContentSize;
                 if (_dataSerializer.TryGetContractTypeByName(itemContract.ContractName, out contractType))
                 {
-                    // we can deserialize. Convert it to a message
-                    using (var stream = new MemoryStream(buffer, itemPosition, itemSize))
+                    try
                     {
-                        var instance = _dataSerializer.Deserialize(stream, contractType);
-                        items[i] = new ImmutableMessage(contractType, instance, attributes, i);
+                        // we can deserialize. Convert it to a message
+                        using (var stream = new MemoryStream(buffer, itemPosition, itemSize))
+                        {
+                            var instance = _dataSerializer.Deserialize(stream, contractType);
+                            items[i] = new ImmutableMessage(contractType, instance, attributes, i);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new InvalidOperationException("Failed to deserialize: " + itemContract.ContractName, ex);
                     }
                 }
                 else
