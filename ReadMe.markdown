@@ -25,3 +25,6 @@ Cloud deployments and massive scalability are side effects of the Lokad.CQRS arc
 
 
 
+# Continuous Version
+
+At the moment of writing, latest version with continuous deployment is located within 'anatomy' branch of this project.
