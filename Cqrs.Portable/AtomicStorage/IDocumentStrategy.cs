@@ -10,13 +10,25 @@ using System.IO;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
-    public interface IDocumentStrategy
+    public interface IDocumentStrategy : 
+        IDocumentLocationStrategy,
+        IDocumentSerializationStrategy
+    {
+        
+
+
+        
+    }
+
+    public interface IDocumentSerializationStrategy
+    {
+        void Serialize<TEntity>(TEntity entity, Stream stream);
+        TEntity Deserialize<TEntity>(Stream stream);
+    }
+
+    public interface IDocumentLocationStrategy
     {
         string GetEntityBucket<TEntity>();
         string GetEntityLocation(Type entity, object key);
-
-
-        void Serialize<TEntity>(TEntity entity, Stream stream);
-        TEntity Deserialize<TEntity>(Stream stream);
     }
 }
