@@ -57,7 +57,7 @@ namespace SaaS
         public UserId(long id)
         {
             if (id <= 0)
-                throw new InvalidOperationException("Tried to assemble non-existent login");
+                throw new InvalidOperationException("Tried to assemble non-existent user");
             Id = id;
         }
 
@@ -102,12 +102,12 @@ namespace SaaS
     [DataContract(Namespace = "Sample")]
     public sealed class CustomerId : AbstractIdentity<long>
     {
-        public const string TagValue = "user";
+        public const string TagValue = "customer";
 
         public CustomerId(long id)
         {
             if (id <= 0)
-                throw new InvalidOperationException("Tried to assemble non-existent login");
+                throw new InvalidOperationException("Tried to assemble non-existent customer");
             Id = id;
         }
 
