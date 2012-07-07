@@ -52,7 +52,7 @@ namespace SaaS.Web
             }
             else
             {
-                throw new InvalidOperationException("Unsupperted environment");
+                throw new InvalidOperationException("Unsupported environment");
             }
 
          
