@@ -58,7 +58,8 @@ namespace SaaS.Wires
             var result = stream.TryAppend(data, TapeAppendCondition.VersionIs(originalVersion));
             if (result == 0)
             {
-                throw new InvalidOperationException("Failed to update the stream - it has been changed concurrently");
+                // this is temporary implementation
+                throw OptimisticConcurrencyException.Create(-1, originalVersion, id, null);
             }
 
             PublishDomainSuccess(id, events, originalVersion);
