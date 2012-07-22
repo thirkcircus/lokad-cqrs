@@ -41,7 +41,7 @@ namespace SaaS.Wires
                 };
         }
 
-        public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent<IIdentity>> events)
+        public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent> events)
         {
 
             if (events.Count == 0)

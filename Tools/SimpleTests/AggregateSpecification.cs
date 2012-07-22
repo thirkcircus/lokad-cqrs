@@ -357,11 +357,11 @@ namespace Sample
                 };
         }
 
-        public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent<IIdentity>> events)
+        public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent> events)
         {
             foreach (var @event in events)
             {
-                Store.Add(Tuple.Create<IIdentity, IEvent>(id, @event));
+                Store.Add(Tuple.Create(id, @event));
             }
         }
     }

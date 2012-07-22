@@ -13,7 +13,7 @@ namespace SaaS.Aggregates.User
     public sealed class UserAggregate
     {
         readonly UserState _state;
-        public IList<IEvent<IIdentity>> Changes = new List<IEvent<IIdentity>>();
+        public IList<IEvent> Changes = new List<IEvent>();
 
         /// <summary>
         /// If relogin happens within the interval, we don't track it

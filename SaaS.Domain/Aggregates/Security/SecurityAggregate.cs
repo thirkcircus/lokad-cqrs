@@ -14,7 +14,7 @@ namespace SaaS.Aggregates.Security
     {
         readonly SecurityState _state;
 
-        public IList<IEvent<IIdentity>> Changes = new List<IEvent<IIdentity>>();
+        public IList<IEvent> Changes = new List<IEvent>();
 
         public SecurityAggregate(SecurityState state)
         {

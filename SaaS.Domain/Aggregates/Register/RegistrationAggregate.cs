@@ -13,7 +13,7 @@ namespace SaaS.Aggregates.Register
     public sealed class RegistrationAggregate 
     {
         readonly RegistrationState _state;
-        public IList<IEvent<IIdentity>> Changes = new List<IEvent<IIdentity>>();
+        public IList<IEvent> Changes = new List<IEvent>();
 
         public RegistrationAggregate(RegistrationState state)
         {
