@@ -41,7 +41,7 @@ namespace SaaS.Wires
             var commands = new RedirectToCommand();
             var events = new RedirectToDynamicEvent();
 
-            var eventStore = new TapeStreamEventStore(Tapes(Topology.TapesContainer), Streamer, routerQueue);
+            var eventStore = new LegacyTapeStreamEventStore(Tapes(Topology.TapesContainer), Streamer, routerQueue);
             var simple = new SimpleMessageSender(Streamer, routerQueue);
             var flow = new CommandSender(simple);
             var builder = new CqrsEngineBuilder(Streamer);

@@ -346,15 +346,22 @@ namespace Sample
 
         public EventStream LoadEventStream(IIdentity id)
         {
+            return LoadEventStream(id, 0, int.MaxValue);
+        }
+
+        public EventStream LoadEventStream(IIdentity id, long skipEvents, int maxCount)
+        {
             var stream = Store
                 .Where(i => id.Equals(i.Item1))
+                .Skip((int) skipEvents)
+                .Take(maxCount)
                 .Select(i => i.Item2)
                 .ToList();
             return new EventStream
-                {
-                    Events = stream,
-                    Version = stream.Count
-                };
+            {
+                Events = stream,
+                Version = stream.Count
+            };
         }
 
         public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent> events)

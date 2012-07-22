@@ -8,9 +8,9 @@ using Lokad.Cqrs.TapeStorage;
 
 namespace SaaS.Wires
 {
-    public sealed class TapeStreamEventStore : IEventStore
+    public sealed class LegacyTapeStreamEventStore : IEventStore
     {
-        public TapeStreamEventStore(ITapeContainer factory, IEnvelopeStreamer streamer, IQueueWriter writer)
+        public LegacyTapeStreamEventStore(ITapeContainer factory, IEnvelopeStreamer streamer, IQueueWriter writer)
         {
             _factory = factory;
             _streamer = streamer;
@@ -38,6 +38,16 @@ namespace SaaS.Wires
                 {
                     Events = events.ToList(),
                     Version = version
+                };
+        }
+
+        public EventStream LoadEventStream(IIdentity id, long skipEvents, int maxCount)
+        {
+            var stream = LoadEventStream(id);
+            return new EventStream()
+                {
+                    Version = stream.Version,
+                    Events = stream.Events.Skip((int) skipEvents).Take(maxCount).ToList()
                 };
         }
 
