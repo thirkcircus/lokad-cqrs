@@ -24,7 +24,7 @@ namespace SaaS.Aggregates.User
         public DateTime LockedOutTillUtc { get; private set; }
         //public bool Locked { get; private set; }
 
-        public UserState(IEnumerable<IEvent<IIdentity>> events)
+        public UserState(IEnumerable<IEvent> events)
         {
             TrackedLoginFailures = new List<DateTime>();
             FailuresAllowed = 5;
@@ -89,7 +89,7 @@ namespace SaaS.Aggregates.User
 
         public int Version { get; private set; }
 
-        public void Mutate(IEvent<IIdentity> e)
+        public void Mutate(IEvent e)
         {
             Version += 1;
             RedirectToWhen.InvokeEventOptional(this, e);

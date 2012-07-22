@@ -27,7 +27,7 @@ namespace SaaS.Wires
             var stream = _factory.GetOrCreateStream(partitionedName);
             var records = stream.ReadRecords(0, int.MaxValue).ToList();
             var events = records
-                .SelectMany(r => _streamer.ReadAsEnvelopeData(r.Data).Items.Select(m => (IEvent<IIdentity>)m.Content))
+                .SelectMany(r => _streamer.ReadAsEnvelopeData(r.Data).Items.Select(m => (IEvent)m.Content))
                 .ToArray();
             var version = 0L;
             if (records.Count > 0)
@@ -36,7 +36,7 @@ namespace SaaS.Wires
             }
             return new EventStream
                 {
-                    Events = events,
+                    Events = events.ToList(),
                     Version = version
                 };
         }

@@ -105,7 +105,7 @@ namespace Sample
                 {
                     foreach (var @event in Given)
                     {
-                        Factory.Store.Add((IEvent<IIdentity>) @event);
+                        Factory.Store.Add(Tuple.Create<IIdentity, IEvent>(@event.Id, @event));
                     }
                     using (var capt = Context.CaptureForThread())
                     {
@@ -176,7 +176,7 @@ namespace Sample
                 {
                     foreach (var @event in Given)
                     {
-                        Factory.Store.Add((IEvent<IIdentity>) @event);
+                        Factory.Store.Add(Tuple.Create<IIdentity, IEvent>(@event.Id, @event));
                     }
                     return Handler();
                 });
@@ -193,7 +193,7 @@ namespace Sample
                     {
                         var before = Factory.Store.Count;
                         feed.Execute(When);
-                        return Factory.Store.Skip(before).Cast<IEvent<T>>().ToArray();
+                        return Factory.Store.Skip(before).Select(i => i.Item2).Cast<IEvent<T>>().ToArray();
                     }
                 });
         }
@@ -341,13 +341,14 @@ namespace Sample
 
     public sealed class InMemoryStore : IEventStore
     {
-        public List<IEvent<IIdentity>> Store = new List<IEvent<IIdentity>>();
+        public List<Tuple<IIdentity,IEvent>> Store = new List<Tuple<IIdentity, IEvent>>();
 
 
         public EventStream LoadEventStream(IIdentity id)
         {
             var stream = Store
-                .Where(i => id.Equals(i.Id))
+                .Where(i => id.Equals(i.Item1))
+                .Select(i => i.Item2)
                 .ToList();
             return new EventStream
                 {
@@ -361,7 +362,7 @@ namespace Sample
         {
             foreach (var @event in events)
             {
-                Store.Add(@event);
+                Store.Add(Tuple.Create<IIdentity, IEvent>(id, @event));
             }
         }
     }

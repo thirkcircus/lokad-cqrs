@@ -14,7 +14,7 @@ namespace SaaS.Aggregates.Register
         public RegistrationId Id { get; private set; }
 
 
-        public RegistrationState(IEnumerable<IEvent<IIdentity>> events)
+        public RegistrationState(IEnumerable<IEvent> events)
         {
             Problems = new List<string>();
             foreach (var e in events)
@@ -84,7 +84,7 @@ namespace SaaS.Aggregates.Register
         }
 
 
-        public void Mutate(IEvent<IIdentity> e)
+        public void Mutate(IEvent e)
         {
             RedirectToWhen.InvokeEventOptional(this, e);
         }

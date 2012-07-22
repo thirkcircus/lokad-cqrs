@@ -81,9 +81,11 @@ namespace SaaS
         void AppendToStream(IIdentity id, long version, ICollection<IEvent<IIdentity>> events, string explanation);
     }
 
-    public sealed class EventStream
+    public class EventStream
     {
+        // version of the event stream returned
         public long Version;
-        public IList<IEvent<IIdentity>> Events;
+        // all events in the stream
+        public List<IEvent> Events = new List<IEvent>();
     }
 }

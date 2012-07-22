@@ -57,7 +57,7 @@ namespace SaaS.Aggregates.Security
             return _globals.TryGetValue(id, out user);
         }
 
-        public SecurityState(IEnumerable<IEvent<IIdentity>> events)
+        public SecurityState(IEnumerable<IEvent> events)
         {
             foreach (var e in events)
             {
@@ -93,7 +93,7 @@ namespace SaaS.Aggregates.Security
             return _invites.TryGetValue(invite, out result);
         }
 
-        public void Mutate(IEvent<IIdentity> e)
+        public void Mutate(IEvent e)
         {
             RedirectToWhen.InvokeEventOptional(this, e);
         }
