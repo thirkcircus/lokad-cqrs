@@ -24,11 +24,10 @@ namespace SaaS.Aggregates.User
             var state = new UserState(stream.Events);
             var agg = new UserAggregate(state);
 
-            using (var capture = Context.CaptureForThread())
-            {
+            using (Context.CaptureForThread()) {
                 agg.ThrowOnInvalidStateTransition(c);
                 action(agg);
-                _store.AppendToStream(c.Id, stream.Version, agg.Changes, capture.Log);
+                _store.AppendToStream(c.Id, stream.Version, agg.Changes);
             }
         }
 

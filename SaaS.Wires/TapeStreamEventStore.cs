@@ -41,8 +41,7 @@ namespace SaaS.Wires
                 };
         }
 
-        public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent<IIdentity>> events,
-            string explanation)
+        public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent<IIdentity>> events)
         {
 
             if (events.Count == 0)
@@ -50,10 +49,6 @@ namespace SaaS.Wires
             var stream = _factory.GetOrCreateStream(IdentityConvert.ToStream(id));
             var b = new EnvelopeBuilder("unknown");
 
-            if (!String.IsNullOrEmpty(explanation))
-            {
-                b.AddString("explain", explanation);
-            }
             foreach (var e in events)
             {
                 b.AddItem((object)e);

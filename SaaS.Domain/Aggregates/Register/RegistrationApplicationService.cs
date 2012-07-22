@@ -30,10 +30,9 @@ namespace SaaS.Aggregates.Register
             var state = new RegistrationState(stream.Events);
             var agg = new RegistrationAggregate(state);
 
-            using (var capture = Context.CaptureForThread())
-            {
+            using (Context.CaptureForThread()) {
                 action(agg);
-                _eventStore.AppendToStream(c.Id, stream.Version, agg.Changes, capture.Log);
+                _eventStore.AppendToStream(c.Id, stream.Version, agg.Changes);
             }
         }
 

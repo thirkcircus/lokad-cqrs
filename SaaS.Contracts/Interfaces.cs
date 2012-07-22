@@ -78,7 +78,7 @@ namespace SaaS
     public interface IEventStore
     {
         EventStream LoadEventStream(IIdentity id);
-        void AppendToStream(IIdentity id, long version, ICollection<IEvent<IIdentity>> events, string explanation);
+        void AppendToStream(IIdentity id, long version, ICollection<IEvent<IIdentity>> events);
     }
 
     public class EventStream

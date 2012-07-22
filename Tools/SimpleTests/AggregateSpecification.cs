@@ -357,8 +357,7 @@ namespace Sample
                 };
         }
 
-        public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent<IIdentity>> events,
-            string explanation)
+        public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent<IIdentity>> events)
         {
             foreach (var @event in events)
             {
