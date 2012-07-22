@@ -29,7 +29,7 @@ namespace SaaS.Web
         }
 
 
-        public void SendOne(ISampleCommand command, string optionalId = null)
+        public void SendOne(ICommand command, string optionalId = null)
         {
             SendMessage(command, optionalId);
         }
@@ -52,7 +52,7 @@ namespace SaaS.Web
             _writer.PutMessage(_streamer.SaveEnvelopeData(eb.Build()));
         }
 
-        public void PublishOne(ISampleEvent e, string optionalId = null)
+        public void PublishOne(IEvent e, string optionalId = null)
         {
             SendMessage(e, optionalId);
         }

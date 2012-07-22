@@ -64,7 +64,7 @@ namespace SaaS.Wires
                         services.PutMessage(data);
                         return;
                     }
-                    if (item is IFunctionalEvent || item is ISampleEvent)
+                    if (item is IFunctionalEvent || item is IEvent)
                     {
                         events.PutMessage(data);
                         return;

@@ -223,7 +223,7 @@ namespace SaaS.Engine
                 }
                 foreach (var item in env.Items)
                 {
-                    var e = item.Content as ISampleEvent;
+                    var e = item.Content as IEvent;
                     if (e != null)
                     {
                         wire.InvokeEvent(e);

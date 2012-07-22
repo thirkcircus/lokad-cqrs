@@ -213,7 +213,7 @@ namespace Audit.Views
                 }
             }
             var items = all
-                .OfType<ISampleCommand>()
+                .OfType<ICommand>()
                 .ToArray();
 
             // don`t resend set of commands
@@ -296,7 +296,7 @@ namespace Audit.Views
                                 DialogResult.No)
                         return;
 
-                    _services.SendCommand((ISampleCommand) result);
+                    _services.SendCommand((ICommand) result);
                 }
             }
             catch (Exception ex)

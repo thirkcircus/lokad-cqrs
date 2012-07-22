@@ -69,7 +69,7 @@ namespace SaaS.Wires
             PublishDomainSuccess(id, events, originalVersion);
         }
 
-        void PublishDomainSuccess(IIdentity id, IEnumerable<ISampleEvent> events, long version)
+        void PublishDomainSuccess(IIdentity id, IEnumerable<IEvent> events, long version)
         {
             var arVersion = version + 1;
             var arName = IdentityConvert.ToTransportable(id);

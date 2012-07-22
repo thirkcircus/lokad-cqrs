@@ -12,7 +12,7 @@ namespace SaaS.Wires
         }
 
 
-        public void SendCommandsAsBatch(ISampleCommand[] commands)
+        public void SendCommandsAsBatch(ICommand[] commands)
         {
             _sender.SendBatch(commands);
         }

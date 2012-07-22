@@ -11,11 +11,11 @@ namespace SaaS
 {
     public interface ISampleMessage {}
 
-    public interface ISampleCommand : ISampleMessage {}
+    public interface ICommand : ISampleMessage {}
 
-    public interface ISampleEvent : ISampleMessage {}
+    public interface IEvent : ISampleMessage {}
 
-    public interface ICommand<out TIdentity> : ISampleCommand
+    public interface ICommand<out TIdentity> : ICommand
         where TIdentity : IIdentity
     {
         TIdentity Id { get; }
@@ -27,15 +27,15 @@ namespace SaaS
     }
 
 
-    public interface IEvent<out TIdentity> : ISampleEvent
+    public interface IEvent<out TIdentity> : IEvent
         where TIdentity : IIdentity
     {
         TIdentity Id { get; }
     }
 
-    public interface IFunctionalCommand : ISampleCommand {}
+    public interface IFunctionalCommand : ICommand {}
 
-    public interface IFunctionalEvent : ISampleEvent {}
+    public interface IFunctionalEvent : IEvent {}
 
     /// <summary>The only messaging endpoint that is available to stateless services
     /// They are not allowed to send any other messages.</summary>
@@ -71,7 +71,7 @@ namespace SaaS
         /// extensions (that don't allow sending wrong command to wrong location).
         /// </summary>
         /// <param name="commands">The commands.</param>
-        void SendCommandsAsBatch(ISampleCommand[] commands);
+        void SendCommandsAsBatch(ICommand[] commands);
     }
 
 

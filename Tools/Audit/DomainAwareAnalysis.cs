@@ -17,14 +17,14 @@ namespace Audit
     {
         public static Color GetBackgroundColorForContract(ImmutableMessage message)
         {
-            var commad = message.Content as ISampleCommand;
+            var commad = message.Content as ICommand;
 
             if (commad != null)
             {
                 return CommonColors.Green;
             }
 
-            var @event = message.Content as ISampleEvent;
+            var @event = message.Content as IEvent;
 
             if (@event != null)
             {

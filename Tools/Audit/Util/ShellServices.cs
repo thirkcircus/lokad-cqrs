@@ -63,7 +63,7 @@ namespace Audit.Util
             get { return _client; }
         }
 
-        public void SendCommand(ISampleCommand message)
+        public void SendCommand(ICommand message)
         {
             Log("BUS", "Sending '{0}'\r\n{1}", message.GetType().Name, JsonSerializer.SerializeToString(message));
 

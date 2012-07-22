@@ -50,20 +50,20 @@ namespace SaaS.Processes
 
         public void ToRegistration(ICommand<RegistrationId> cmd)
         {
-            _service.SendCommandsAsBatch(new ISampleCommand[] {cmd});
+            _service.SendCommandsAsBatch(new ICommand[] {cmd});
         }
 
         public void ToUser(ICommand<UserId> cmd)
         {
-            _service.SendCommandsAsBatch(new ISampleCommand[] {cmd});
+            _service.SendCommandsAsBatch(new ICommand[] {cmd});
         }
 
         public void ToSecurity(ICommand<SecurityId> cmd)
         {
-            _service.SendCommandsAsBatch(new ISampleCommand[] {cmd});
+            _service.SendCommandsAsBatch(new ICommand[] {cmd});
         }
 
-        public void ToService(ISampleCommand cmd)
+        public void ToService(ICommand cmd)
         {
             _service.SendCommandsAsBatch(new[] {cmd});
         }
