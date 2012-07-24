@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// $ANTLR 3.4 /Users/abdullin/MessageContracts.g 2012-02-22 14:00:00
+// $ANTLR 3.4 /Users/abdullin/MessageContracts.g 2012-07-24 17:26:24
 
 // The variable 'variable' is assigned but its value is never used.
 #pragma warning disable 168, 219
@@ -18,40 +18,49 @@
 #pragma warning disable 1591
 
 
-using System.Diagnostics;
+using System.Collections.Generic;
 using Antlr.Runtime;
+using Antlr.Runtime.Misc;
+using ConditionalAttribute = System.Diagnostics.ConditionalAttribute;
 
-namespace Hub.Dsl 
+namespace  MessageContracts 
 {
 [System.CodeDom.Compiler.GeneratedCode("ANTLR", "3.4")]
 [System.CLSCompliant(false)]
 public partial class MessageContractsLexer : Antlr.Runtime.Lexer
 {
 	public const int EOF=-1;
-	public const int T__23=23;
-	public const int T__24=24;
-	public const int T__25=25;
-	public const int T__26=26;
-	public const int T__27=27;
-	public const int BlockToken=4;
-	public const int COMMENT=5;
-	public const int CommandToken=6;
-	public const int DisctionaryToken=7;
-	public const int ENTITY=8;
-	public const int EntityDefinition=9;
-	public const int EventToken=10;
-	public const int FragmentEntry=11;
-	public const int FragmentGroup=12;
-	public const int FragmentReference=13;
-	public const int ID=14;
-	public const int INT=15;
-	public const int LET=16;
-	public const int MemberToken=17;
-	public const int Modifier=18;
-	public const int ModifierDefinition=19;
-	public const int TypeToken=20;
-	public const int USING=21;
-	public const int WS=22;
+	public const int T__30=30;
+	public const int T__31=31;
+	public const int T__32=32;
+	public const int T__33=33;
+	public const int T__34=34;
+	public const int AS=4;
+	public const int BlockToken=5;
+	public const int COMMENT=6;
+	public const int CommandToken=7;
+	public const int DisctionaryToken=8;
+	public const int ENTITY=9;
+	public const int ESC_SEQ=10;
+	public const int EntityDefinition=11;
+	public const int EventToken=12;
+	public const int FragmentEntry=13;
+	public const int FragmentGroup=14;
+	public const int FragmentReference=15;
+	public const int HEX_DIGIT=16;
+	public const int ID=17;
+	public const int INT=18;
+	public const int LET=19;
+	public const int MemberToken=20;
+	public const int Modifier=21;
+	public const int ModifierDefinition=22;
+	public const int OCTAL_ESC=23;
+	public const int STRING=24;
+	public const int StringRepresentationToken=25;
+	public const int TypeToken=26;
+	public const int UNICODE_ESC=27;
+	public const int USING=28;
+	public const int WS=29;
 
     // delegates
     // delegators
@@ -84,20 +93,20 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
 	protected virtual void LeaveRule(string ruleName, int ruleIndex) {}
 
     [Conditional("ANTLR_TRACE")]
-    protected virtual void EnterRule_T__23() {}
+    protected virtual void EnterRule_T__30() {}
     [Conditional("ANTLR_TRACE")]
-    protected virtual void LeaveRule_T__23() {}
+    protected virtual void LeaveRule_T__30() {}
 
-    // $ANTLR start "T__23"
-    [GrammarRule("T__23")]
-    private void mT__23()
+    // $ANTLR start "T__30"
+    [GrammarRule("T__30")]
+    private void mT__30()
     {
-    	EnterRule_T__23();
-    	EnterRule("T__23", 1);
-    	TraceIn("T__23", 1);
+    	EnterRule_T__30();
+    	EnterRule("T__30", 1);
+    	TraceIn("T__30", 1);
     		try
     		{
-    		int _type = T__23;
+    		int _type = T__30;
     		int _channel = DefaultTokenChannel;
     		// /Users/abdullin/MessageContracts.g:9:7: ( '(' )
     		DebugEnterAlt(1);
@@ -113,28 +122,28 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("T__23", 1);
-    		LeaveRule("T__23", 1);
-    		LeaveRule_T__23();
+    		TraceOut("T__30", 1);
+    		LeaveRule("T__30", 1);
+    		LeaveRule_T__30();
         }
     }
-    // $ANTLR end "T__23"
+    // $ANTLR end "T__30"
 
     [Conditional("ANTLR_TRACE")]
-    protected virtual void EnterRule_T__24() {}
+    protected virtual void EnterRule_T__31() {}
     [Conditional("ANTLR_TRACE")]
-    protected virtual void LeaveRule_T__24() {}
+    protected virtual void LeaveRule_T__31() {}
 
-    // $ANTLR start "T__24"
-    [GrammarRule("T__24")]
-    private void mT__24()
+    // $ANTLR start "T__31"
+    [GrammarRule("T__31")]
+    private void mT__31()
     {
-    	EnterRule_T__24();
-    	EnterRule("T__24", 2);
-    	TraceIn("T__24", 2);
+    	EnterRule_T__31();
+    	EnterRule("T__31", 2);
+    	TraceIn("T__31", 2);
     		try
     		{
-    		int _type = T__24;
+    		int _type = T__31;
     		int _channel = DefaultTokenChannel;
     		// /Users/abdullin/MessageContracts.g:10:7: ( ')' )
     		DebugEnterAlt(1);
@@ -150,28 +159,28 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("T__24", 2);
-    		LeaveRule("T__24", 2);
-    		LeaveRule_T__24();
+    		TraceOut("T__31", 2);
+    		LeaveRule("T__31", 2);
+    		LeaveRule_T__31();
         }
     }
-    // $ANTLR end "T__24"
+    // $ANTLR end "T__31"
 
     [Conditional("ANTLR_TRACE")]
-    protected virtual void EnterRule_T__25() {}
+    protected virtual void EnterRule_T__32() {}
     [Conditional("ANTLR_TRACE")]
-    protected virtual void LeaveRule_T__25() {}
+    protected virtual void LeaveRule_T__32() {}
 
-    // $ANTLR start "T__25"
-    [GrammarRule("T__25")]
-    private void mT__25()
+    // $ANTLR start "T__32"
+    [GrammarRule("T__32")]
+    private void mT__32()
     {
-    	EnterRule_T__25();
-    	EnterRule("T__25", 3);
-    	TraceIn("T__25", 3);
+    	EnterRule_T__32();
+    	EnterRule("T__32", 3);
+    	TraceIn("T__32", 3);
     		try
     		{
-    		int _type = T__25;
+    		int _type = T__32;
     		int _channel = DefaultTokenChannel;
     		// /Users/abdullin/MessageContracts.g:11:7: ( ',' )
     		DebugEnterAlt(1);
@@ -187,28 +196,28 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("T__25", 3);
-    		LeaveRule("T__25", 3);
-    		LeaveRule_T__25();
+    		TraceOut("T__32", 3);
+    		LeaveRule("T__32", 3);
+    		LeaveRule_T__32();
         }
     }
-    // $ANTLR end "T__25"
+    // $ANTLR end "T__32"
 
     [Conditional("ANTLR_TRACE")]
-    protected virtual void EnterRule_T__26() {}
+    protected virtual void EnterRule_T__33() {}
     [Conditional("ANTLR_TRACE")]
-    protected virtual void LeaveRule_T__26() {}
+    protected virtual void LeaveRule_T__33() {}
 
-    // $ANTLR start "T__26"
-    [GrammarRule("T__26")]
-    private void mT__26()
+    // $ANTLR start "T__33"
+    [GrammarRule("T__33")]
+    private void mT__33()
     {
-    	EnterRule_T__26();
-    	EnterRule("T__26", 4);
-    	TraceIn("T__26", 4);
+    	EnterRule_T__33();
+    	EnterRule("T__33", 4);
+    	TraceIn("T__33", 4);
     		try
     		{
-    		int _type = T__26;
+    		int _type = T__33;
     		int _channel = DefaultTokenChannel;
     		// /Users/abdullin/MessageContracts.g:12:7: ( ';' )
     		DebugEnterAlt(1);
@@ -224,28 +233,28 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("T__26", 4);
-    		LeaveRule("T__26", 4);
-    		LeaveRule_T__26();
+    		TraceOut("T__33", 4);
+    		LeaveRule("T__33", 4);
+    		LeaveRule_T__33();
         }
     }
-    // $ANTLR end "T__26"
+    // $ANTLR end "T__33"
 
     [Conditional("ANTLR_TRACE")]
-    protected virtual void EnterRule_T__27() {}
+    protected virtual void EnterRule_T__34() {}
     [Conditional("ANTLR_TRACE")]
-    protected virtual void LeaveRule_T__27() {}
+    protected virtual void LeaveRule_T__34() {}
 
-    // $ANTLR start "T__27"
-    [GrammarRule("T__27")]
-    private void mT__27()
+    // $ANTLR start "T__34"
+    [GrammarRule("T__34")]
+    private void mT__34()
     {
-    	EnterRule_T__27();
-    	EnterRule("T__27", 5);
-    	TraceIn("T__27", 5);
+    	EnterRule_T__34();
+    	EnterRule("T__34", 5);
+    	TraceIn("T__34", 5);
     		try
     		{
-    		int _type = T__27;
+    		int _type = T__34;
     		int _channel = DefaultTokenChannel;
     		// /Users/abdullin/MessageContracts.g:13:7: ( '=' )
     		DebugEnterAlt(1);
@@ -261,12 +270,50 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("T__27", 5);
-    		LeaveRule("T__27", 5);
-    		LeaveRule_T__27();
+    		TraceOut("T__34", 5);
+    		LeaveRule("T__34", 5);
+    		LeaveRule_T__34();
         }
     }
-    // $ANTLR end "T__27"
+    // $ANTLR end "T__34"
+
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void EnterRule_AS() {}
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void LeaveRule_AS() {}
+
+    // $ANTLR start "AS"
+    [GrammarRule("AS")]
+    private void mAS()
+    {
+    	EnterRule_AS();
+    	EnterRule("AS", 6);
+    	TraceIn("AS", 6);
+    		try
+    		{
+    		int _type = AS;
+    		int _channel = DefaultTokenChannel;
+    		// /Users/abdullin/MessageContracts.g:67:4: ( 'as' )
+    		DebugEnterAlt(1);
+    		// /Users/abdullin/MessageContracts.g:67:6: 'as'
+    		{
+    		DebugLocation(67, 6);
+    		Match("as"); 
+
+
+    		}
+
+    		state.type = _type;
+    		state.channel = _channel;
+    	}
+    	finally
+    	{
+    		TraceOut("AS", 6);
+    		LeaveRule("AS", 6);
+    		LeaveRule_AS();
+        }
+    }
+    // $ANTLR end "AS"
 
     [Conditional("ANTLR_TRACE")]
     protected virtual void EnterRule_USING() {}
@@ -278,17 +325,17 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     private void mUSING()
     {
     	EnterRule_USING();
-    	EnterRule("USING", 6);
-    	TraceIn("USING", 6);
+    	EnterRule("USING", 7);
+    	TraceIn("USING", 7);
     		try
     		{
     		int _type = USING;
     		int _channel = DefaultTokenChannel;
-    		// /Users/abdullin/MessageContracts.g:65:2: ( 'using' )
+    		// /Users/abdullin/MessageContracts.g:69:2: ( 'using' )
     		DebugEnterAlt(1);
-    		// /Users/abdullin/MessageContracts.g:65:4: 'using'
+    		// /Users/abdullin/MessageContracts.g:69:4: 'using'
     		{
-    		DebugLocation(65, 4);
+    		DebugLocation(69, 4);
     		Match("using"); 
 
 
@@ -299,8 +346,8 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("USING", 6);
-    		LeaveRule("USING", 6);
+    		TraceOut("USING", 7);
+    		LeaveRule("USING", 7);
     		LeaveRule_USING();
         }
     }
@@ -316,17 +363,17 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     private void mLET()
     {
     	EnterRule_LET();
-    	EnterRule("LET", 7);
-    	TraceIn("LET", 7);
+    	EnterRule("LET", 8);
+    	TraceIn("LET", 8);
     		try
     		{
     		int _type = LET;
     		int _channel = DefaultTokenChannel;
-    		// /Users/abdullin/MessageContracts.g:67:2: ( 'let' )
+    		// /Users/abdullin/MessageContracts.g:71:2: ( 'let' )
     		DebugEnterAlt(1);
-    		// /Users/abdullin/MessageContracts.g:67:4: 'let'
+    		// /Users/abdullin/MessageContracts.g:71:4: 'let'
     		{
-    		DebugLocation(67, 4);
+    		DebugLocation(71, 4);
     		Match("let"); 
 
 
@@ -337,8 +384,8 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("LET", 7);
-    		LeaveRule("LET", 7);
+    		TraceOut("LET", 8);
+    		LeaveRule("LET", 8);
     		LeaveRule_LET();
         }
     }
@@ -354,17 +401,17 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     private void mENTITY()
     {
     	EnterRule_ENTITY();
-    	EnterRule("ENTITY", 8);
-    	TraceIn("ENTITY", 8);
+    	EnterRule("ENTITY", 9);
+    	TraceIn("ENTITY", 9);
     		try
     		{
     		int _type = ENTITY;
     		int _channel = DefaultTokenChannel;
-    		// /Users/abdullin/MessageContracts.g:68:9: ( 'entity' )
+    		// /Users/abdullin/MessageContracts.g:72:9: ( 'entity' )
     		DebugEnterAlt(1);
-    		// /Users/abdullin/MessageContracts.g:68:11: 'entity'
+    		// /Users/abdullin/MessageContracts.g:72:11: 'entity'
     		{
-    		DebugLocation(68, 11);
+    		DebugLocation(72, 11);
     		Match("entity"); 
 
 
@@ -375,8 +422,8 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("ENTITY", 8);
-    		LeaveRule("ENTITY", 8);
+    		TraceOut("ENTITY", 9);
+    		LeaveRule("ENTITY", 9);
     		LeaveRule_ENTITY();
         }
     }
@@ -392,17 +439,17 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     private void mID()
     {
     	EnterRule_ID();
-    	EnterRule("ID", 9);
-    	TraceIn("ID", 9);
+    	EnterRule("ID", 10);
+    	TraceIn("ID", 10);
     		try
     		{
     		int _type = ID;
     		int _channel = DefaultTokenChannel;
-    		// /Users/abdullin/MessageContracts.g:69:5: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '<' | '>' | '[' | ']' )* )
+    		// /Users/abdullin/MessageContracts.g:73:5: ( ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '<' | '>' | '[' | ']' )* )
     		DebugEnterAlt(1);
-    		// /Users/abdullin/MessageContracts.g:69:7: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '<' | '>' | '[' | ']' )*
+    		// /Users/abdullin/MessageContracts.g:73:7: ( 'a' .. 'z' | 'A' .. 'Z' | '_' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '<' | '>' | '[' | ']' )*
     		{
-    		DebugLocation(69, 7);
+    		DebugLocation(73, 7);
     		if ((input.LA(1)>='A' && input.LA(1)<='Z')||input.LA(1)=='_'||(input.LA(1)>='a' && input.LA(1)<='z'))
     		{
     			input.Consume();
@@ -415,8 +462,8 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     			throw mse;
     		}
 
-    		DebugLocation(69, 30);
-    		// /Users/abdullin/MessageContracts.g:69:30: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '<' | '>' | '[' | ']' )*
+    		DebugLocation(73, 30);
+    		// /Users/abdullin/MessageContracts.g:73:30: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' | '_' | '<' | '>' | '[' | ']' )*
     		try { DebugEnterSubRule(1);
     		while (true)
     		{
@@ -437,7 +484,7 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     				DebugEnterAlt(1);
     				// /Users/abdullin/MessageContracts.g:
     				{
-    				DebugLocation(69, 30);
+    				DebugLocation(73, 30);
     				input.Consume();
 
 
@@ -462,8 +509,8 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("ID", 9);
-    		LeaveRule("ID", 9);
+    		TraceOut("ID", 10);
+    		LeaveRule("ID", 10);
     		LeaveRule_ID();
         }
     }
@@ -479,18 +526,18 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     private void mModifier()
     {
     	EnterRule_Modifier();
-    	EnterRule("Modifier", 10);
-    	TraceIn("Modifier", 10);
+    	EnterRule("Modifier", 11);
+    	TraceIn("Modifier", 11);
     		try
     		{
     		int _type = Modifier;
     		int _channel = DefaultTokenChannel;
-    		// /Users/abdullin/MessageContracts.g:73:2: ( '?' | '!' | ';' | ':' | '$' | '+' | '-' | '@' )
+    		// /Users/abdullin/MessageContracts.g:77:2: ( '?' | '!' | ';' )
     		DebugEnterAlt(1);
     		// /Users/abdullin/MessageContracts.g:
     		{
-    		DebugLocation(73, 2);
-    		if (input.LA(1)=='!'||input.LA(1)=='$'||input.LA(1)=='+'||input.LA(1)=='-'||(input.LA(1)>=':' && input.LA(1)<=';')||(input.LA(1)>='?' && input.LA(1)<='@'))
+    		DebugLocation(77, 2);
+    		if (input.LA(1)=='!'||input.LA(1)==';'||input.LA(1)=='?')
     		{
     			input.Consume();
     		}
@@ -510,8 +557,8 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("Modifier", 10);
-    		LeaveRule("Modifier", 10);
+    		TraceOut("Modifier", 11);
+    		LeaveRule("Modifier", 11);
     		LeaveRule_Modifier();
         }
     }
@@ -527,18 +574,18 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     private void mINT()
     {
     	EnterRule_INT();
-    	EnterRule("INT", 11);
-    	TraceIn("INT", 11);
+    	EnterRule("INT", 12);
+    	TraceIn("INT", 12);
     		try
     		{
     		int _type = INT;
     		int _channel = DefaultTokenChannel;
-    		// /Users/abdullin/MessageContracts.g:84:5: ( ( '0' .. '9' )+ )
+    		// /Users/abdullin/MessageContracts.g:83:5: ( ( '0' .. '9' )+ )
     		DebugEnterAlt(1);
-    		// /Users/abdullin/MessageContracts.g:84:7: ( '0' .. '9' )+
+    		// /Users/abdullin/MessageContracts.g:83:7: ( '0' .. '9' )+
     		{
-    		DebugLocation(84, 7);
-    		// /Users/abdullin/MessageContracts.g:84:7: ( '0' .. '9' )+
+    		DebugLocation(83, 7);
+    		// /Users/abdullin/MessageContracts.g:83:7: ( '0' .. '9' )+
     		int cnt2=0;
     		try { DebugEnterSubRule(2);
     		while (true)
@@ -560,7 +607,7 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     				DebugEnterAlt(1);
     				// /Users/abdullin/MessageContracts.g:
     				{
-    				DebugLocation(84, 7);
+    				DebugLocation(83, 7);
     				input.Consume();
 
 
@@ -590,12 +637,433 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("INT", 11);
-    		LeaveRule("INT", 11);
+    		TraceOut("INT", 12);
+    		LeaveRule("INT", 12);
     		LeaveRule_INT();
         }
     }
     // $ANTLR end "INT"
+
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void EnterRule_STRING() {}
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void LeaveRule_STRING() {}
+
+    // $ANTLR start "STRING"
+    [GrammarRule("STRING")]
+    private void mSTRING()
+    {
+    	EnterRule_STRING();
+    	EnterRule("STRING", 13);
+    	TraceIn("STRING", 13);
+    		try
+    		{
+    		int _type = STRING;
+    		int _channel = DefaultTokenChannel;
+    		// /Users/abdullin/MessageContracts.g:87:5: ( '\"' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\"' )
+    		DebugEnterAlt(1);
+    		// /Users/abdullin/MessageContracts.g:87:8: '\"' ( ESC_SEQ |~ ( '\\\\' | '\"' ) )* '\"'
+    		{
+    		DebugLocation(87, 8);
+    		Match('\"'); 
+    		DebugLocation(87, 12);
+    		// /Users/abdullin/MessageContracts.g:87:12: ( ESC_SEQ |~ ( '\\\\' | '\"' ) )*
+    		try { DebugEnterSubRule(3);
+    		while (true)
+    		{
+    			int alt3=3;
+    			try { DebugEnterDecision(3, decisionCanBacktrack[3]);
+    			int LA3_0 = input.LA(1);
+
+    			if ((LA3_0=='\\'))
+    			{
+    				alt3 = 1;
+    			}
+    			else if (((LA3_0>='\u0000' && LA3_0<='!')||(LA3_0>='#' && LA3_0<='[')||(LA3_0>=']' && LA3_0<='\uFFFF')))
+    			{
+    				alt3 = 2;
+    			}
+
+
+    			} finally { DebugExitDecision(3); }
+    			switch ( alt3 )
+    			{
+    			case 1:
+    				DebugEnterAlt(1);
+    				// /Users/abdullin/MessageContracts.g:87:14: ESC_SEQ
+    				{
+    				DebugLocation(87, 14);
+    				mESC_SEQ(); 
+
+    				}
+    				break;
+    			case 2:
+    				DebugEnterAlt(2);
+    				// /Users/abdullin/MessageContracts.g:87:24: ~ ( '\\\\' | '\"' )
+    				{
+    				DebugLocation(87, 24);
+    				input.Consume();
+
+
+    				}
+    				break;
+
+    			default:
+    				goto loop3;
+    			}
+    		}
+
+    		loop3:
+    			;
+
+    		} finally { DebugExitSubRule(3); }
+
+    		DebugLocation(87, 39);
+    		Match('\"'); 
+
+    		}
+
+    		state.type = _type;
+    		state.channel = _channel;
+    	}
+    	finally
+    	{
+    		TraceOut("STRING", 13);
+    		LeaveRule("STRING", 13);
+    		LeaveRule_STRING();
+        }
+    }
+    // $ANTLR end "STRING"
+
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void EnterRule_HEX_DIGIT() {}
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void LeaveRule_HEX_DIGIT() {}
+
+    // $ANTLR start "HEX_DIGIT"
+    [GrammarRule("HEX_DIGIT")]
+    private void mHEX_DIGIT()
+    {
+    	EnterRule_HEX_DIGIT();
+    	EnterRule("HEX_DIGIT", 14);
+    	TraceIn("HEX_DIGIT", 14);
+    		try
+    		{
+    		// /Users/abdullin/MessageContracts.g:93:11: ( ( '0' .. '9' | 'a' .. 'f' | 'A' .. 'F' ) )
+    		DebugEnterAlt(1);
+    		// /Users/abdullin/MessageContracts.g:
+    		{
+    		DebugLocation(93, 11);
+    		if ((input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='F')||(input.LA(1)>='a' && input.LA(1)<='f'))
+    		{
+    			input.Consume();
+    		}
+    		else
+    		{
+    			MismatchedSetException mse = new MismatchedSetException(null,input);
+    			DebugRecognitionException(mse);
+    			Recover(mse);
+    			throw mse;
+    		}
+
+
+    		}
+
+    	}
+    	finally
+    	{
+    		TraceOut("HEX_DIGIT", 14);
+    		LeaveRule("HEX_DIGIT", 14);
+    		LeaveRule_HEX_DIGIT();
+        }
+    }
+    // $ANTLR end "HEX_DIGIT"
+
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void EnterRule_ESC_SEQ() {}
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void LeaveRule_ESC_SEQ() {}
+
+    // $ANTLR start "ESC_SEQ"
+    [GrammarRule("ESC_SEQ")]
+    private void mESC_SEQ()
+    {
+    	EnterRule_ESC_SEQ();
+    	EnterRule("ESC_SEQ", 15);
+    	TraceIn("ESC_SEQ", 15);
+    		try
+    		{
+    		// /Users/abdullin/MessageContracts.g:97:5: ( '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' ) | UNICODE_ESC | OCTAL_ESC )
+    		int alt4=3;
+    		try { DebugEnterDecision(4, decisionCanBacktrack[4]);
+    		int LA4_0 = input.LA(1);
+
+    		if ((LA4_0=='\\'))
+    		{
+    			switch (input.LA(2))
+    			{
+    			case '\"':
+    			case '\'':
+    			case '\\':
+    			case 'b':
+    			case 'f':
+    			case 'n':
+    			case 'r':
+    			case 't':
+    				{
+    				alt4 = 1;
+    				}
+    				break;
+    			case 'u':
+    				{
+    				alt4 = 2;
+    				}
+    				break;
+    			case '0':
+    			case '1':
+    			case '2':
+    			case '3':
+    			case '4':
+    			case '5':
+    			case '6':
+    			case '7':
+    				{
+    				alt4 = 3;
+    				}
+    				break;
+    			default:
+    				{
+    					NoViableAltException nvae = new NoViableAltException("", 4, 1, input);
+    					DebugRecognitionException(nvae);
+    					throw nvae;
+    				}
+    			}
+
+    		}
+    		else
+    		{
+    			NoViableAltException nvae = new NoViableAltException("", 4, 0, input);
+    			DebugRecognitionException(nvae);
+    			throw nvae;
+    		}
+    		} finally { DebugExitDecision(4); }
+    		switch (alt4)
+    		{
+    		case 1:
+    			DebugEnterAlt(1);
+    			// /Users/abdullin/MessageContracts.g:97:9: '\\\\' ( 'b' | 't' | 'n' | 'f' | 'r' | '\\\"' | '\\'' | '\\\\' )
+    			{
+    			DebugLocation(97, 9);
+    			Match('\\'); 
+    			DebugLocation(97, 14);
+    			input.Consume();
+
+
+    			}
+    			break;
+    		case 2:
+    			DebugEnterAlt(2);
+    			// /Users/abdullin/MessageContracts.g:98:9: UNICODE_ESC
+    			{
+    			DebugLocation(98, 9);
+    			mUNICODE_ESC(); 
+
+    			}
+    			break;
+    		case 3:
+    			DebugEnterAlt(3);
+    			// /Users/abdullin/MessageContracts.g:99:9: OCTAL_ESC
+    			{
+    			DebugLocation(99, 9);
+    			mOCTAL_ESC(); 
+
+    			}
+    			break;
+
+    		}
+    	}
+    	finally
+    	{
+    		TraceOut("ESC_SEQ", 15);
+    		LeaveRule("ESC_SEQ", 15);
+    		LeaveRule_ESC_SEQ();
+        }
+    }
+    // $ANTLR end "ESC_SEQ"
+
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void EnterRule_OCTAL_ESC() {}
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void LeaveRule_OCTAL_ESC() {}
+
+    // $ANTLR start "OCTAL_ESC"
+    [GrammarRule("OCTAL_ESC")]
+    private void mOCTAL_ESC()
+    {
+    	EnterRule_OCTAL_ESC();
+    	EnterRule("OCTAL_ESC", 16);
+    	TraceIn("OCTAL_ESC", 16);
+    		try
+    		{
+    		// /Users/abdullin/MessageContracts.g:104:5: ( '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) ( '0' .. '7' ) | '\\\\' ( '0' .. '7' ) )
+    		int alt5=3;
+    		try { DebugEnterDecision(5, decisionCanBacktrack[5]);
+    		int LA5_0 = input.LA(1);
+
+    		if ((LA5_0=='\\'))
+    		{
+    			int LA5_1 = input.LA(2);
+
+    			if (((LA5_1>='0' && LA5_1<='3')))
+    			{
+    				int LA5_2 = input.LA(3);
+
+    				if (((LA5_2>='0' && LA5_2<='7')))
+    				{
+    					int LA5_4 = input.LA(4);
+
+    					if (((LA5_4>='0' && LA5_4<='7')))
+    					{
+    						alt5 = 1;
+    					}
+    					else
+    					{
+    						alt5 = 2;
+    					}
+    				}
+    				else
+    				{
+    					alt5 = 3;
+    				}
+    			}
+    			else if (((LA5_1>='4' && LA5_1<='7')))
+    			{
+    				int LA5_3 = input.LA(3);
+
+    				if (((LA5_3>='0' && LA5_3<='7')))
+    				{
+    					alt5 = 2;
+    				}
+    				else
+    				{
+    					alt5 = 3;
+    				}
+    			}
+    			else
+    			{
+    				NoViableAltException nvae = new NoViableAltException("", 5, 1, input);
+    				DebugRecognitionException(nvae);
+    				throw nvae;
+    			}
+    		}
+    		else
+    		{
+    			NoViableAltException nvae = new NoViableAltException("", 5, 0, input);
+    			DebugRecognitionException(nvae);
+    			throw nvae;
+    		}
+    		} finally { DebugExitDecision(5); }
+    		switch (alt5)
+    		{
+    		case 1:
+    			DebugEnterAlt(1);
+    			// /Users/abdullin/MessageContracts.g:104:9: '\\\\' ( '0' .. '3' ) ( '0' .. '7' ) ( '0' .. '7' )
+    			{
+    			DebugLocation(104, 9);
+    			Match('\\'); 
+    			DebugLocation(104, 14);
+    			input.Consume();
+
+    			DebugLocation(104, 25);
+    			input.Consume();
+
+    			DebugLocation(104, 36);
+    			input.Consume();
+
+
+    			}
+    			break;
+    		case 2:
+    			DebugEnterAlt(2);
+    			// /Users/abdullin/MessageContracts.g:105:9: '\\\\' ( '0' .. '7' ) ( '0' .. '7' )
+    			{
+    			DebugLocation(105, 9);
+    			Match('\\'); 
+    			DebugLocation(105, 14);
+    			input.Consume();
+
+    			DebugLocation(105, 25);
+    			input.Consume();
+
+
+    			}
+    			break;
+    		case 3:
+    			DebugEnterAlt(3);
+    			// /Users/abdullin/MessageContracts.g:106:9: '\\\\' ( '0' .. '7' )
+    			{
+    			DebugLocation(106, 9);
+    			Match('\\'); 
+    			DebugLocation(106, 14);
+    			input.Consume();
+
+
+    			}
+    			break;
+
+    		}
+    	}
+    	finally
+    	{
+    		TraceOut("OCTAL_ESC", 16);
+    		LeaveRule("OCTAL_ESC", 16);
+    		LeaveRule_OCTAL_ESC();
+        }
+    }
+    // $ANTLR end "OCTAL_ESC"
+
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void EnterRule_UNICODE_ESC() {}
+    [Conditional("ANTLR_TRACE")]
+    protected virtual void LeaveRule_UNICODE_ESC() {}
+
+    // $ANTLR start "UNICODE_ESC"
+    [GrammarRule("UNICODE_ESC")]
+    private void mUNICODE_ESC()
+    {
+    	EnterRule_UNICODE_ESC();
+    	EnterRule("UNICODE_ESC", 17);
+    	TraceIn("UNICODE_ESC", 17);
+    		try
+    		{
+    		// /Users/abdullin/MessageContracts.g:111:5: ( '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT )
+    		DebugEnterAlt(1);
+    		// /Users/abdullin/MessageContracts.g:111:9: '\\\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+    		{
+    		DebugLocation(111, 9);
+    		Match('\\'); 
+    		DebugLocation(111, 14);
+    		Match('u'); 
+    		DebugLocation(111, 18);
+    		mHEX_DIGIT(); 
+    		DebugLocation(111, 28);
+    		mHEX_DIGIT(); 
+    		DebugLocation(111, 38);
+    		mHEX_DIGIT(); 
+    		DebugLocation(111, 48);
+    		mHEX_DIGIT(); 
+
+    		}
+
+    	}
+    	finally
+    	{
+    		TraceOut("UNICODE_ESC", 17);
+    		LeaveRule("UNICODE_ESC", 17);
+    		LeaveRule_UNICODE_ESC();
+        }
+    }
+    // $ANTLR end "UNICODE_ESC"
 
     [Conditional("ANTLR_TRACE")]
     protected virtual void EnterRule_COMMENT() {}
@@ -607,75 +1075,75 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     private void mCOMMENT()
     {
     	EnterRule_COMMENT();
-    	EnterRule("COMMENT", 12);
-    	TraceIn("COMMENT", 12);
+    	EnterRule("COMMENT", 18);
+    	TraceIn("COMMENT", 18);
     		try
     		{
     		int _type = COMMENT;
     		int _channel = DefaultTokenChannel;
-    		// /Users/abdullin/MessageContracts.g:88:5: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '/*' ( options {greedy=false; } : . )* '*/' )
-    		int alt6=2;
-    		try { DebugEnterDecision(6, decisionCanBacktrack[6]);
-    		int LA6_0 = input.LA(1);
+    		// /Users/abdullin/MessageContracts.g:114:5: ( '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n' | '/*' ( options {greedy=false; } : . )* '*/' )
+    		int alt9=2;
+    		try { DebugEnterDecision(9, decisionCanBacktrack[9]);
+    		int LA9_0 = input.LA(1);
 
-    		if ((LA6_0=='/'))
+    		if ((LA9_0=='/'))
     		{
-    			int LA6_1 = input.LA(2);
+    			int LA9_1 = input.LA(2);
 
-    			if ((LA6_1=='/'))
+    			if ((LA9_1=='/'))
     			{
-    				alt6 = 1;
+    				alt9 = 1;
     			}
-    			else if ((LA6_1=='*'))
+    			else if ((LA9_1=='*'))
     			{
-    				alt6 = 2;
+    				alt9 = 2;
     			}
     			else
     			{
-    				NoViableAltException nvae = new NoViableAltException("", 6, 1, input);
+    				NoViableAltException nvae = new NoViableAltException("", 9, 1, input);
     				DebugRecognitionException(nvae);
     				throw nvae;
     			}
     		}
     		else
     		{
-    			NoViableAltException nvae = new NoViableAltException("", 6, 0, input);
+    			NoViableAltException nvae = new NoViableAltException("", 9, 0, input);
     			DebugRecognitionException(nvae);
     			throw nvae;
     		}
-    		} finally { DebugExitDecision(6); }
-    		switch (alt6)
+    		} finally { DebugExitDecision(9); }
+    		switch (alt9)
     		{
     		case 1:
     			DebugEnterAlt(1);
-    			// /Users/abdullin/MessageContracts.g:88:9: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
+    			// /Users/abdullin/MessageContracts.g:114:9: '//' (~ ( '\\n' | '\\r' ) )* ( '\\r' )? '\\n'
     			{
-    			DebugLocation(88, 9);
+    			DebugLocation(114, 9);
     			Match("//"); 
 
-    			DebugLocation(88, 14);
-    			// /Users/abdullin/MessageContracts.g:88:14: (~ ( '\\n' | '\\r' ) )*
-    			try { DebugEnterSubRule(3);
+    			DebugLocation(114, 14);
+    			// /Users/abdullin/MessageContracts.g:114:14: (~ ( '\\n' | '\\r' ) )*
+    			try { DebugEnterSubRule(6);
     			while (true)
     			{
-    				int alt3=2;
-    				try { DebugEnterDecision(3, decisionCanBacktrack[3]);
-    				int LA3_0 = input.LA(1);
+    				int alt6=2;
+    				try { DebugEnterDecision(6, decisionCanBacktrack[6]);
+    				int LA6_0 = input.LA(1);
 
-    				if (((LA3_0>='\u0000' && LA3_0<='\t')||(LA3_0>='\u000B' && LA3_0<='\f')||(LA3_0>='\u000E' && LA3_0<='\uFFFF')))
+    				if (((LA6_0>='\u0000' && LA6_0<='\t')||(LA6_0>='\u000B' && LA6_0<='\f')||(LA6_0>='\u000E' && LA6_0<='\uFFFF')))
     				{
-    					alt3 = 1;
+    					alt6 = 1;
     				}
 
 
-    				} finally { DebugExitDecision(3); }
-    				switch ( alt3 )
+    				} finally { DebugExitDecision(6); }
+    				switch ( alt6 )
     				{
     				case 1:
     					DebugEnterAlt(1);
     					// /Users/abdullin/MessageContracts.g:
     					{
-    					DebugLocation(88, 14);
+    					DebugLocation(114, 14);
     					input.Consume();
 
 
@@ -683,113 +1151,113 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     					break;
 
     				default:
-    					goto loop3;
+    					goto loop6;
     				}
     			}
 
-    			loop3:
+    			loop6:
     				;
 
-    			} finally { DebugExitSubRule(3); }
+    			} finally { DebugExitSubRule(6); }
 
-    			DebugLocation(88, 28);
-    			// /Users/abdullin/MessageContracts.g:88:28: ( '\\r' )?
-    			int alt4=2;
-    			try { DebugEnterSubRule(4);
-    			try { DebugEnterDecision(4, decisionCanBacktrack[4]);
-    			int LA4_0 = input.LA(1);
+    			DebugLocation(114, 28);
+    			// /Users/abdullin/MessageContracts.g:114:28: ( '\\r' )?
+    			int alt7=2;
+    			try { DebugEnterSubRule(7);
+    			try { DebugEnterDecision(7, decisionCanBacktrack[7]);
+    			int LA7_0 = input.LA(1);
 
-    			if ((LA4_0=='\r'))
+    			if ((LA7_0=='\r'))
     			{
-    				alt4 = 1;
+    				alt7 = 1;
     			}
-    			} finally { DebugExitDecision(4); }
-    			switch (alt4)
+    			} finally { DebugExitDecision(7); }
+    			switch (alt7)
     			{
     			case 1:
     				DebugEnterAlt(1);
-    				// /Users/abdullin/MessageContracts.g:88:28: '\\r'
+    				// /Users/abdullin/MessageContracts.g:114:28: '\\r'
     				{
-    				DebugLocation(88, 28);
+    				DebugLocation(114, 28);
     				Match('\r'); 
 
     				}
     				break;
 
     			}
-    			} finally { DebugExitSubRule(4); }
+    			} finally { DebugExitSubRule(7); }
 
-    			DebugLocation(88, 34);
+    			DebugLocation(114, 34);
     			Match('\n'); 
-    			DebugLocation(88, 39);
+    			DebugLocation(114, 39);
     			_channel=HIDDEN;
 
     			}
     			break;
     		case 2:
     			DebugEnterAlt(2);
-    			// /Users/abdullin/MessageContracts.g:89:9: '/*' ( options {greedy=false; } : . )* '*/'
+    			// /Users/abdullin/MessageContracts.g:115:9: '/*' ( options {greedy=false; } : . )* '*/'
     			{
-    			DebugLocation(89, 9);
+    			DebugLocation(115, 9);
     			Match("/*"); 
 
-    			DebugLocation(89, 14);
-    			// /Users/abdullin/MessageContracts.g:89:14: ( options {greedy=false; } : . )*
-    			try { DebugEnterSubRule(5);
+    			DebugLocation(115, 14);
+    			// /Users/abdullin/MessageContracts.g:115:14: ( options {greedy=false; } : . )*
+    			try { DebugEnterSubRule(8);
     			while (true)
     			{
-    				int alt5=2;
-    				try { DebugEnterDecision(5, decisionCanBacktrack[5]);
-    				int LA5_0 = input.LA(1);
+    				int alt8=2;
+    				try { DebugEnterDecision(8, decisionCanBacktrack[8]);
+    				int LA8_0 = input.LA(1);
 
-    				if ((LA5_0=='*'))
+    				if ((LA8_0=='*'))
     				{
-    					int LA5_1 = input.LA(2);
+    					int LA8_1 = input.LA(2);
 
-    					if ((LA5_1=='/'))
+    					if ((LA8_1=='/'))
     					{
-    						alt5 = 2;
+    						alt8 = 2;
     					}
-    					else if (((LA5_1>='\u0000' && LA5_1<='.')||(LA5_1>='0' && LA5_1<='\uFFFF')))
+    					else if (((LA8_1>='\u0000' && LA8_1<='.')||(LA8_1>='0' && LA8_1<='\uFFFF')))
     					{
-    						alt5 = 1;
+    						alt8 = 1;
     					}
 
 
     				}
-    				else if (((LA5_0>='\u0000' && LA5_0<=')')||(LA5_0>='+' && LA5_0<='\uFFFF')))
+    				else if (((LA8_0>='\u0000' && LA8_0<=')')||(LA8_0>='+' && LA8_0<='\uFFFF')))
     				{
-    					alt5 = 1;
+    					alt8 = 1;
     				}
 
 
-    				} finally { DebugExitDecision(5); }
-    				switch ( alt5 )
+    				} finally { DebugExitDecision(8); }
+    				switch ( alt8 )
     				{
     				case 1:
     					DebugEnterAlt(1);
-    					// /Users/abdullin/MessageContracts.g:89:42: .
+    					// /Users/abdullin/MessageContracts.g:115:42: .
     					{
-    					DebugLocation(89, 42);
+    					DebugLocation(115, 42);
     					MatchAny(); 
 
     					}
     					break;
 
     				default:
-    					goto loop5;
+    					goto loop8;
     				}
     			}
 
-    			loop5:
+    			loop8:
     				;
 
-    			} finally { DebugExitSubRule(5); }
+    			} finally { DebugExitSubRule(8); }
 
-    			DebugLocation(89, 47);
+    			DebugLocation(115, 47);
     			Match("*/"); 
 
-    			DebugLocation(89, 52);
+    			DebugLocation(115, 52);
     			_channel=HIDDEN;
 
     			}
@@ -801,8 +1269,8 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("COMMENT", 12);
-    		LeaveRule("COMMENT", 12);
+    		TraceOut("COMMENT", 18);
+    		LeaveRule("COMMENT", 18);
     		LeaveRule_COMMENT();
         }
     }
@@ -818,17 +1286,17 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     private void mWS()
     {
     	EnterRule_WS();
-    	EnterRule("WS", 13);
-    	TraceIn("WS", 13);
+    	EnterRule("WS", 19);
+    	TraceIn("WS", 19);
     		try
     		{
     		int _type = WS;
     		int _channel = DefaultTokenChannel;
-    		// /Users/abdullin/MessageContracts.g:92:5: ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
+    		// /Users/abdullin/MessageContracts.g:118:5: ( ( ' ' | '\\t' | '\\r' | '\\n' ) )
     		DebugEnterAlt(1);
-    		// /Users/abdullin/MessageContracts.g:92:9: ( ' ' | '\\t' | '\\r' | '\\n' )
+    		// /Users/abdullin/MessageContracts.g:118:9: ( ' ' | '\\t' | '\\r' | '\\n' )
     		{
-    		DebugLocation(92, 9);
+    		DebugLocation(118, 9);
     		if ((input.LA(1)>='\t' && input.LA(1)<='\n')||input.LA(1)=='\r'||input.LA(1)==' ')
     		{
     			input.Consume();
@@ -841,7 +1309,7 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     			throw mse;
     		}
 
-    		DebugLocation(96, 11);
+    		DebugLocation(122, 11);
     		_channel=HIDDEN;
 
     		}
@@ -851,8 +1319,8 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	}
     	finally
     	{
-    		TraceOut("WS", 13);
-    		LeaveRule("WS", 13);
+    		TraceOut("WS", 19);
+    		LeaveRule("WS", 19);
     		LeaveRule_WS();
         }
     }
@@ -860,174 +1328,197 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
 
     public override void mTokens()
     {
-    	// /Users/abdullin/MessageContracts.g:1:8: ( T__23 | T__24 | T__25 | T__26 | T__27 | USING | LET | ENTITY | ID | Modifier | INT | COMMENT | WS )
-    	int alt7=13;
-    	try { DebugEnterDecision(7, decisionCanBacktrack[7]);
+    	// /Users/abdullin/MessageContracts.g:1:8: ( T__30 | T__31 | T__32 | T__33 | T__34 | AS | USING | LET | ENTITY | ID | Modifier | INT | STRING | COMMENT | WS )
+    	int alt10=15;
+    	try { DebugEnterDecision(10, decisionCanBacktrack[10]);
     	switch (input.LA(1))
     	{
     	case '(':
     		{
-    		alt7 = 1;
+    		alt10 = 1;
     		}
     		break;
     	case ')':
     		{
-    		alt7 = 2;
+    		alt10 = 2;
     		}
     		break;
     	case ',':
     		{
-    		alt7 = 3;
+    		alt10 = 3;
     		}
     		break;
     	case ';':
     		{
-    		alt7 = 4;
+    		alt10 = 4;
     		}
     		break;
     	case '=':
     		{
-    		alt7 = 5;
+    		alt10 = 5;
     		}
     		break;
-    	case 'u':
+    	case 'a':
     		{
-    		int LA7_6 = input.LA(2);
+    		int LA10_6 = input.LA(2);
 
-    		if ((LA7_6=='s'))
+    		if ((LA10_6=='s'))
     		{
-    			int LA7_15 = input.LA(3);
+    			int LA10_17 = input.LA(3);
 
-    			if ((LA7_15=='i'))
+    			if (((LA10_17>='0' && LA10_17<='9')||LA10_17=='<'||LA10_17=='>'||(LA10_17>='A' && LA10_17<='[')||LA10_17==']'||LA10_17=='_'||(LA10_17>='a' && LA10_17<='z')))
     			{
-    				int LA7_18 = input.LA(4);
-
-    				if ((LA7_18=='n'))
-    				{
-    					int LA7_21 = input.LA(5);
-
-    					if ((LA7_21=='g'))
-    					{
-    						int LA7_24 = input.LA(6);
-
-    						if (((LA7_24>='0' && LA7_24<='9')||LA7_24=='<'||LA7_24=='>'||(LA7_24>='A' && LA7_24<='[')||LA7_24==']'||LA7_24=='_'||(LA7_24>='a' && LA7_24<='z')))
-    						{
-    							alt7 = 9;
-    						}
-    						else
-    						{
-    							alt7 = 6;
-    						}
-    					}
-    					else
-    					{
-    						alt7 = 9;
-    					}
-    				}
-    				else
-    				{
-    					alt7 = 9;
-    				}
+    				alt10 = 10;
     			}
     			else
     			{
-    				alt7 = 9;
+    				alt10 = 6;
     			}
     		}
     		else
     		{
-    			alt7 = 9;
+    			alt10 = 10;
+    		}
+    		}
+    		break;
+    	case 'u':
+    		{
+    		int LA10_7 = input.LA(2);
+
+    		if ((LA10_7=='s'))
+    		{
+    			int LA10_18 = input.LA(3);
+
+    			if ((LA10_18=='i'))
+    			{
+    				int LA10_22 = input.LA(4);
+
+    				if ((LA10_22=='n'))
+    				{
+    					int LA10_25 = input.LA(5);
+
+    					if ((LA10_25=='g'))
+    					{
+    						int LA10_28 = input.LA(6);
+
+    						if (((LA10_28>='0' && LA10_28<='9')||LA10_28=='<'||LA10_28=='>'||(LA10_28>='A' && LA10_28<='[')||LA10_28==']'||LA10_28=='_'||(LA10_28>='a' && LA10_28<='z')))
+    						{
+    							alt10 = 10;
+    						}
+    						else
+    						{
+    							alt10 = 7;
+    						}
+    					}
+    					else
+    					{
+    						alt10 = 10;
+    					}
+    				}
+    				else
+    				{
+    					alt10 = 10;
+    				}
+    			}
+    			else
+    			{
+    				alt10 = 10;
+    			}
+    		}
+    		else
+    		{
+    			alt10 = 10;
     		}
     		}
     		break;
     	case 'l':
     		{
-    		int LA7_7 = input.LA(2);
+    		int LA10_8 = input.LA(2);
 
-    		if ((LA7_7=='e'))
+    		if ((LA10_8=='e'))
     		{
-    			int LA7_16 = input.LA(3);
+    			int LA10_19 = input.LA(3);
 
-    			if ((LA7_16=='t'))
+    			if ((LA10_19=='t'))
     			{
-    				int LA7_19 = input.LA(4);
+    				int LA10_23 = input.LA(4);
 
-    				if (((LA7_19>='0' && LA7_19<='9')||LA7_19=='<'||LA7_19=='>'||(LA7_19>='A' && LA7_19<='[')||LA7_19==']'||LA7_19=='_'||(LA7_19>='a' && LA7_19<='z')))
+    				if (((LA10_23>='0' && LA10_23<='9')||LA10_23=='<'||LA10_23=='>'||(LA10_23>='A' && LA10_23<='[')||LA10_23==']'||LA10_23=='_'||(LA10_23>='a' && LA10_23<='z')))
     				{
-    					alt7 = 9;
+    					alt10 = 10;
     				}
     				else
     				{
-    					alt7 = 7;
+    					alt10 = 8;
     				}
     			}
     			else
     			{
-    				alt7 = 9;
+    				alt10 = 10;
     			}
     		}
     		else
     		{
-    			alt7 = 9;
+    			alt10 = 10;
     		}
     		}
     		break;
     	case 'e':
     		{
-    		int LA7_8 = input.LA(2);
+    		int LA10_9 = input.LA(2);
 
-    		if ((LA7_8=='n'))
+    		if ((LA10_9=='n'))
     		{
-    			int LA7_17 = input.LA(3);
+    			int LA10_20 = input.LA(3);
 
-    			if ((LA7_17=='t'))
+    			if ((LA10_20=='t'))
     			{
-    				int LA7_20 = input.LA(4);
+    				int LA10_24 = input.LA(4);
 
-    				if ((LA7_20=='i'))
+    				if ((LA10_24=='i'))
     				{
-    					int LA7_23 = input.LA(5);
+    					int LA10_27 = input.LA(5);
 
-    					if ((LA7_23=='t'))
+    					if ((LA10_27=='t'))
     					{
-    						int LA7_25 = input.LA(6);
+    						int LA10_29 = input.LA(6);
 
-    						if ((LA7_25=='y'))
+    						if ((LA10_29=='y'))
     						{
-    							int LA7_27 = input.LA(7);
+    							int LA10_31 = input.LA(7);
 
-    							if (((LA7_27>='0' && LA7_27<='9')||LA7_27=='<'||LA7_27=='>'||(LA7_27>='A' && LA7_27<='[')||LA7_27==']'||LA7_27=='_'||(LA7_27>='a' && LA7_27<='z')))
+    							if (((LA10_31>='0' && LA10_31<='9')||LA10_31=='<'||LA10_31=='>'||(LA10_31>='A' && LA10_31<='[')||LA10_31==']'||LA10_31=='_'||(LA10_31>='a' && LA10_31<='z')))
     							{
-    								alt7 = 9;
+    								alt10 = 10;
     							}
     							else
     							{
-    								alt7 = 8;
+    								alt10 = 9;
     							}
     						}
     						else
     						{
-    							alt7 = 9;
+    							alt10 = 10;
     						}
     					}
     					else
     					{
-    						alt7 = 9;
+    						alt10 = 10;
     					}
     				}
     				else
     				{
-    					alt7 = 9;
+    					alt10 = 10;
     				}
     			}
     			else
     			{
-    				alt7 = 9;
+    				alt10 = 10;
     			}
     		}
     		else
     		{
-    			alt7 = 9;
+    			alt10 = 10;
     		}
     		}
     		break;
@@ -1058,7 +1549,6 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	case 'Y':
     	case 'Z':
     	case '_':
-    	case 'a':
     	case 'b':
     	case 'c':
     	case 'd':
@@ -1082,18 +1572,13 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	case 'y':
     	case 'z':
     		{
-    		alt7 = 9;
+    		alt10 = 10;
     		}
     		break;
     	case '!':
-    	case '$':
-    	case '+':
-    	case '-':
-    	case ':':
     	case '?':
-    	case '@':
     		{
-    		alt7 = 10;
+    		alt10 = 11;
     		}
     		break;
     	case '0':
@@ -1107,12 +1592,17 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	case '8':
     	case '9':
     		{
-    		alt7 = 11;
+    		alt10 = 12;
+    		}
+    		break;
+    	case '\"':
+    		{
+    		alt10 = 13;
     		}
     		break;
     	case '/':
     		{
-    		alt7 = 12;
+    		alt10 = 14;
     		}
     		break;
     	case '\t':
@@ -1120,133 +1610,151 @@ public partial class MessageContractsLexer : Antlr.Runtime.Lexer
     	case '\r':
     	case ' ':
     		{
-    		alt7 = 13;
+    		alt10 = 15;
     		}
     		break;
     	default:
     		{
-    			NoViableAltException nvae = new NoViableAltException("", 7, 0, input);
+    			NoViableAltException nvae = new NoViableAltException("", 10, 0, input);
     			DebugRecognitionException(nvae);
     			throw nvae;
     		}
     	}
 
-    	} finally { DebugExitDecision(7); }
-    	switch (alt7)
+    	} finally { DebugExitDecision(10); }
+    	switch (alt10)
     	{
     	case 1:
     		DebugEnterAlt(1);
-    		// /Users/abdullin/MessageContracts.g:1:10: T__23
+    		// /Users/abdullin/MessageContracts.g:1:10: T__30
     		{
     		DebugLocation(1, 10);
-    		mT__23(); 
+    		mT__30(); 
 
     		}
     		break;
     	case 2:
     		DebugEnterAlt(2);
-    		// /Users/abdullin/MessageContracts.g:1:16: T__24
+    		// /Users/abdullin/MessageContracts.g:1:16: T__31
     		{
     		DebugLocation(1, 16);
-    		mT__24(); 
+    		mT__31(); 
 
     		}
     		break;
     	case 3:
     		DebugEnterAlt(3);
-    		// /Users/abdullin/MessageContracts.g:1:22: T__25
+    		// /Users/abdullin/MessageContracts.g:1:22: T__32
     		{
     		DebugLocation(1, 22);
-    		mT__25(); 
+    		mT__32(); 
 
     		}
     		break;
     	case 4:
     		DebugEnterAlt(4);
-    		// /Users/abdullin/MessageContracts.g:1:28: T__26
+    		// /Users/abdullin/MessageContracts.g:1:28: T__33
     		{
     		DebugLocation(1, 28);
-    		mT__26(); 
+    		mT__33(); 
 
     		}
     		break;
     	case 5:
     		DebugEnterAlt(5);
-    		// /Users/abdullin/MessageContracts.g:1:34: T__27
+    		// /Users/abdullin/MessageContracts.g:1:34: T__34
     		{
     		DebugLocation(1, 34);
-    		mT__27(); 
+    		mT__34(); 
 
     		}
     		break;
     	case 6:
     		DebugEnterAlt(6);
-    		// /Users/abdullin/MessageContracts.g:1:40: USING
+    		// /Users/abdullin/MessageContracts.g:1:40: AS
     		{
     		DebugLocation(1, 40);
-    		mUSING(); 
+    		mAS(); 
 
     		}
     		break;
     	case 7:
     		DebugEnterAlt(7);
-    		// /Users/abdullin/MessageContracts.g:1:46: LET
+    		// /Users/abdullin/MessageContracts.g:1:43: USING
     		{
-    		DebugLocation(1, 46);
-    		mLET(); 
+    		DebugLocation(1, 43);
+    		mUSING(); 
 
     		}
     		break;
     	case 8:
     		DebugEnterAlt(8);
-    		// /Users/abdullin/MessageContracts.g:1:50: ENTITY
+    		// /Users/abdullin/MessageContracts.g:1:49: LET
     		{
-    		DebugLocation(1, 50);
-    		mENTITY(); 
+    		DebugLocation(1, 49);
+    		mLET(); 
 
     		}
     		break;
     	case 9:
     		DebugEnterAlt(9);
-    		// /Users/abdullin/MessageContracts.g:1:57: ID
+    		// /Users/abdullin/MessageContracts.g:1:53: ENTITY
     		{
-    		DebugLocation(1, 57);
-    		mID(); 
+    		DebugLocation(1, 53);
+    		mENTITY(); 
 
     		}
     		break;
     	case 10:
     		DebugEnterAlt(10);
-    		// /Users/abdullin/MessageContracts.g:1:60: Modifier
+    		// /Users/abdullin/MessageContracts.g:1:60: ID
     		{
     		DebugLocation(1, 60);
-    		mModifier(); 
+    		mID(); 
 
     		}
     		break;
     	case 11:
     		DebugEnterAlt(11);
-    		// /Users/abdullin/MessageContracts.g:1:69: INT
+    		// /Users/abdullin/MessageContracts.g:1:63: Modifier
     		{
-    		DebugLocation(1, 69);
-    		mINT(); 
+    		DebugLocation(1, 63);
+    		mModifier(); 
 
     		}
     		break;
     	case 12:
     		DebugEnterAlt(12);
-    		// /Users/abdullin/MessageContracts.g:1:73: COMMENT
+    		// /Users/abdullin/MessageContracts.g:1:72: INT
     		{
-    		DebugLocation(1, 73);
-    		mCOMMENT(); 
+    		DebugLocation(1, 72);
+    		mINT(); 
 
     		}
     		break;
     	case 13:
     		DebugEnterAlt(13);
-    		// /Users/abdullin/MessageContracts.g:1:81: WS
+    		// /Users/abdullin/MessageContracts.g:1:76: STRING
     		{
-    		DebugLocation(1, 81);
+    		DebugLocation(1, 76);
+    		mSTRING(); 
+
+    		}
+    		break;
+    	case 14:
+    		DebugEnterAlt(14);
+    		// /Users/abdullin/MessageContracts.g:1:83: COMMENT
+    		{
+    		DebugLocation(1, 83);
+    		mCOMMENT(); 
+
+    		}
+    		break;
+    	case 15:
+    		DebugEnterAlt(15);
+    		// /Users/abdullin/MessageContracts.g:1:91: WS
+    		{
+    		DebugLocation(1, 91);
     		mWS(); 
 
     		}

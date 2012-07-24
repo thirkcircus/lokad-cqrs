@@ -35,7 +35,7 @@ using ! = IEvent<SecurityId>;
 let display = string displayName;
 let token = string token;
 
-CreateSecurityAggregate? ()
+CreateSecurityAggregate? () 
 CreateSecurityFromRegistration? (registration, string login, string pwd, display, string optionalIdentity)
 SecurityAggregateCreated! ()
 

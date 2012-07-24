@@ -19,6 +19,7 @@ tokens
 	FragmentReference;
 	ModifierDefinition;
 	EntityDefinition;
+	StringRepresentationToken;
 }
 
 @lexer::namespace { MessageContracts }
@@ -39,7 +40,7 @@ frag_declaration
 	: LET ID '=' ID ID ';' -> ^(FragmentEntry ID ID ID);  
     
 modifier_declaration
-	: USING Modifier '=' ID ';' -> ^(ModifierDefinition ID Modifier);
+	: USING Modifier '=' ID ';' -> ^(ModifierDefinition Modifier ID);
     
 	
 entity_declaration
@@ -57,10 +58,13 @@ member
 block
     :   lc='('
             (member (',' member)*)?
-        ')'
-        -> ^(BlockToken[$lc,"Block"] member*)
+        ')' representation?
+        -> ^(BlockToken[$lc,"Block"] member* representation?)
     ;    
-
+    
+representation
+	:	AS STRING -> ^(StringRepresentationToken STRING);
+AS	:	'as';
 USING
 	: 'using';
 LET
@@ -78,6 +82,33 @@ Modifier
 
 INT :	'0'..'9'+;   
 
+
+STRING
+    :  '"' ( ESC_SEQ | ~('\\'|'"') )* '"'
+    ;
+
+
+fragment
+HEX_DIGIT : ('0'..'9'|'a'..'f'|'A'..'F') ;
+
+fragment
+ESC_SEQ
+    :   '\\' ('b'|'t'|'n'|'f'|'r'|'\"'|'\''|'\\')
+    |   UNICODE_ESC
+    |   OCTAL_ESC
+    ;
+
+fragment
+OCTAL_ESC
+    :   '\\' ('0'..'3') ('0'..'7') ('0'..'7')
+    |   '\\' ('0'..'7') ('0'..'7')
+    |   '\\' ('0'..'7')
+    ;
+
+fragment
+UNICODE_ESC
+    :   '\\' 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
+    ;
 
 COMMENT
     :   '//' ~('\n'|'\r')* '\r'? '\n' {$channel=HIDDEN;}

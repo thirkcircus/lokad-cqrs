@@ -1,4 +1,6 @@
+
 using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 
 namespace SaaS
@@ -7,7 +9,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class InstanceStarted : IFunctionalEvent
     {
         [DataMember(Order = 1)] public string CodeVersion { get; private set; }
@@ -25,7 +27,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class SendMailMessage : IFunctionalCommand
     {
         [DataMember(Order = 1)] public Email[] To { get; private set; }
@@ -55,7 +57,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class MailMessageSent : IFunctionalEvent
     {
         [DataMember(Order = 1)] public Email[] To { get; private set; }
@@ -85,7 +87,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class CreateSecurityAggregate : ICommand<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -99,7 +101,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class CreateSecurityFromRegistration : ICommand<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -123,7 +125,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class SecurityAggregateCreated : IEvent<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -137,7 +139,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class AddSecurityPassword : ICommand<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -157,7 +159,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class SecurityPasswordAdded : IEvent<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -183,7 +185,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class AddSecurityIdentity : ICommand<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -201,7 +203,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class SecurityIdentityAdded : IEvent<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -223,7 +225,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class RemoveSecurityItem : ICommand<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -239,7 +241,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class SecurityItemRemoved : IEvent<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -259,7 +261,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class UpdateSecurityItemDisplayName : ICommand<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -277,7 +279,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class SecurityItemDisplayNameUpdated : IEvent<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -295,7 +297,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class SecurityRegistrationProcessCompleted : IEvent<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -317,7 +319,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class AddPermissionToSecurityItem : ICommand<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -335,7 +337,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class PermissionAddedToSecurityItem : IEvent<SecurityId>
     {
         [DataMember(Order = 1)] public SecurityId Id { get; private set; }
@@ -357,7 +359,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class CreateUser : ICommand<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -373,7 +375,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class UserCreated : IEvent<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -391,7 +393,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class ReportUserLoginFailure : ICommand<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -409,7 +411,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class UserLoginFailureReported : IEvent<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -429,7 +431,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class ReportUserLoginSuccess : ICommand<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -447,7 +449,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class UserLoginSuccessReported : IEvent<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -467,7 +469,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class LockUser : ICommand<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -483,7 +485,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class UserLocked : IEvent<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -503,7 +505,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class UnlockUser : ICommand<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -519,7 +521,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class UserUnlocked : IEvent<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -537,7 +539,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class DeleteUser : ICommand<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -551,7 +553,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class UserDeleted : IEvent<UserId>
     {
         [DataMember(Order = 1)] public UserId Id { get; private set; }
@@ -567,7 +569,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class RegistrationHttpHeader
     {
         [DataMember(Order = 1)] public string Key { get; private set; }
@@ -583,7 +585,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class RegistrationInfo
     {
         [DataMember(Order = 1)] public string ContactEmail { get; private set; }
@@ -616,7 +618,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class CreateRegistration : ICommand<RegistrationId>
     {
         [DataMember(Order = 1)] public RegistrationId Id { get; private set; }
@@ -632,7 +634,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class RegistrationFailed : IEvent<RegistrationId>
     {
         [DataMember(Order = 1)] public RegistrationId Id { get; private set; }
@@ -653,7 +655,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class RegistrationCreated : IEvent<RegistrationId>
     {
         [DataMember(Order = 1)] public RegistrationId Id { get; private set; }
@@ -673,7 +675,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class CustomerInfo
     {
         [DataMember(Order = 1)] public CustomerId CustomerId { get; private set; }
@@ -697,7 +699,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class SecurityInfo
     {
         [DataMember(Order = 1)] public SecurityId SecurityId { get; private set; }
@@ -719,7 +721,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class AttachUserToRegistration : ICommand<RegistrationId>
     {
         [DataMember(Order = 1)] public RegistrationId Id { get; private set; }
@@ -739,7 +741,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class UserAttachedToRegistration : IEvent<RegistrationId>
     {
         [DataMember(Order = 1)] public RegistrationId Id { get; private set; }
@@ -759,7 +761,7 @@ namespace SaaS
     
         
     
-    [DataContract(Namespace = "Sample")]
+    [DataContract(Namespace = "SaaS")]
     public partial class RegistrationSucceeded : IEvent<RegistrationId>
     {
         [DataMember(Order = 1)] public RegistrationId Id { get; private set; }

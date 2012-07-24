@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Specialized;
 
-namespace Hub.Dsl
+namespace Lokad.CodeDsl
 {
 	public sealed class Context
 	{
@@ -59,11 +59,18 @@ namespace Hub.Dsl
     {
         public readonly string Name;
         public readonly string Type;
-
-        public Member(string type, string name)
+        public readonly Kinds Kind;
+        
+        public Member(string type, string name, Kinds kind = Kinds.Field)
         {
             Name = name;
             Type = type;
+            Kind = kind;
+        }
+
+        public enum Kinds
+        {
+            Field,StringRepresentation
         }
     }
 
@@ -77,6 +84,8 @@ namespace Hub.Dsl
             Name = name;
             Modifiers = modifiers;
         }
+
+        public string StringRepresentation;
 
         public List<Member> Members = new List<Member>();
     }

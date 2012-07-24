@@ -8,8 +8,8 @@
     <ProjectGuid>{2CD8DF0F-5CEF-4938-BC26-B3446D2B3044}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Hub.Dsl</RootNamespace>
-    <AssemblyName>Hub.Dsl</AssemblyName>
+    <RootNamespace>Lokad.CodeDsl</RootNamespace>
+    <AssemblyName>Dsl</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>

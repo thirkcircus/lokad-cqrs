@@ -10,7 +10,7 @@ using System.Collections.Concurrent;
 using System.IO;
 using System.Media;
 
-namespace Hub.Dsl
+namespace Lokad.CodeDsl
 {
     class Program
     {

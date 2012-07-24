@@ -10,8 +10,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Antlr.Runtime;
 using Antlr.Runtime.Tree;
+using MessageContracts;
 
-namespace Hub.Dsl
+namespace Lokad.CodeDsl
 {
     public sealed class MessageContractAssembler
     {
@@ -48,6 +49,12 @@ namespace Hub.Dsl
                     throw new InvalidOperationException(string.Format("Unknown include '{0}'", name));
                 }
                 yield return (new Member(type, name));
+                yield break;
+            }
+            if (tree.Type == MessageContractsLexer.StringRepresentationToken)
+            {
+                var text = tree.GetChild(0).Text;
+                yield return new Member(null, text,  Member.Kinds.StringRepresentation);
                 yield break;
             }
             throw new InvalidOperationException("Unexpected token: " + tree.Text);
@@ -106,7 +113,21 @@ namespace Hub.Dsl
 
                     for (int i = 0; i < block.ChildCount; i++)
                     {
-                        message.Members.AddRange(WalkContractMember(block.GetChild(i), context));
+                        var members = WalkContractMember(block.GetChild(i), context).ToArray();
+                        message.Members.AddRange(members.Where(m => m.Kind ==Member.Kinds.Field));
+
+                        var stringRepresentations =
+                            members.Where(m => m.Kind == Member.Kinds.StringRepresentation).ToArray();
+                        switch (stringRepresentations.Length)
+                        {
+                            case 0:
+                                break;
+                            case 1:
+                                message.StringRepresentation = stringRepresentations[0].Name;
+                                break;
+                            default: 
+                                throw new InvalidOperationException("Only one string representation per message");
+                        }
                     }
 
                     context.Contracts.Add(message);
@@ -166,7 +187,10 @@ namespace Hub.Dsl
             return ctx;
         }
     }
+}
 
+namespace MessageContracts
+{
     public partial class MessageContractsParser
     {
         public AstParserRuleReturnScope<object, IToken> GetProgram()

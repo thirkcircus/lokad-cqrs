@@ -36,7 +36,7 @@ namespace SaaS
             var type = e.GetType();
             if (!Dict.TryGetValue(type, out info))
             {
-                return type.Name;
+                return e.ToString();
             }
             try
             {
