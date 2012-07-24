@@ -3,28 +3,28 @@ using System.Collections.Specialized;
 
 namespace Lokad.CodeDsl
 {
-	public sealed class Context
-	{
-		public IDictionary<string,Fragment> Fragments = new Dictionary<string, Fragment>();
-		public IList<Message> Contracts = new List<Message>();
+    public sealed class Context
+    {
+        public IDictionary<string, Fragment> Fragments = new Dictionary<string, Fragment>();
+        public IList<Message> Contracts = new List<Message>();
         //public IDictionary<string,string> Modifiers = new Dictionary<string, string>();
 
         public Stack<Entity> Entities { get; set; }
 
         public Entity CurrentEntity { get { return Entities.Peek(); } }
 
-	    public Context()
-	    {
+        public Context()
+        {
             Entities = new Stack<Entity>();
-	        var entity = new Entity("default");
+            var entity = new Entity("default");
             entity.Modifiers.Add("?", "ICommand");
             entity.Modifiers.Add("!", "IEvent");
 
 
 
-	        Entities.Push(entity);
-	    }
-	}
+            Entities.Push(entity);
+        }
+    }
 
     public sealed class Entity
     {
@@ -60,17 +60,18 @@ namespace Lokad.CodeDsl
         public readonly string Name;
         public readonly string Type;
         public readonly Kinds Kind;
-        
-        public Member(string type, string name, Kinds kind = Kinds.Field)
+        public readonly string DslName;
+        public Member(string type, string name, string dslName, Kinds kind = Kinds.Field)
         {
             Name = name;
             Type = type;
             Kind = kind;
+            DslName = dslName;
         }
 
         public enum Kinds
         {
-            Field,StringRepresentation
+            Field, StringRepresentation
         }
     }
 

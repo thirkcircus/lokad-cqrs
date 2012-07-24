@@ -148,12 +148,15 @@ public sealed class {0}";
             var active = new List<string>();
             foreach (var member in contract.Members)
             {
-                var value = "@" + member.Name;
-                if (text.IndexOf(value, StringComparison.InvariantCultureIgnoreCase) >= 0)
+                text = ReplaceAdd(text, "@{" + member.DslName + ":", "{" + active.Count + ":", active, member);
+                text = ReplaceAdd(text, "@{" + member.DslName + "}", "{" + active.Count + "}", active, member);
+                text = ReplaceAdd(text, "@" + member.DslName + "", "{" + active.Count + "}", active, member);
+
+                if (member.DslName != member.Name)
                 {
-                    text = ReplaceString(text, value, "{" + active.Count + "}",
-                        StringComparison.InvariantCultureIgnoreCase);
-                    active.Add(GeneratorUtil.MemberCase(member.Name));
+                    text = ReplaceAdd(text, "@{" + member.Name + ":", "{" + active.Count + ":", active, member);
+                    text = ReplaceAdd(text, "@{" + member.Name + "}", "{" + active.Count + "}", active, member);
+                    text = ReplaceAdd(text, "@" + member.Name + "", "{" + active.Count + "}", active, member);
                 }
             }
 
@@ -161,15 +164,26 @@ public sealed class {0}";
 
             foreach (var variable in active)
             {
-                writer.Write(", " + variable);
+                writer.Write(", " + GeneratorUtil.MemberCase(variable));
             }
             writer.WriteLine(");");
             writer.Indent -= 1;
             writer.WriteLine("}");
         }
 
-        static public string ReplaceString(string str, string oldValue, string newValue, StringComparison comparison)
+        static string ReplaceAdd(string text, string v1, string to1, List<string> active, Member member)
         {
+            if (text.IndexOf(v1, StringComparison.InvariantCultureIgnoreCase) >= 0)
+            {
+                text = ReplaceString(text, v1, to1);
+                active.Add(member.Name);
+            }
+            return text;
+        }
+
+        static public string ReplaceString(string str, string oldValue, string newValue)
+        {
+            var comparison = StringComparison.InvariantCultureIgnoreCase;
             StringBuilder sb = new StringBuilder();
 
             int previousIndex = 0;

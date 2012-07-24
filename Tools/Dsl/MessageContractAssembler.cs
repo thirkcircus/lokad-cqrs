@@ -28,7 +28,7 @@ namespace Lokad.CodeDsl
                 }
 
                 var fragment = context.Fragments[fragmentId];
-                yield return new Member(fragment.Type, fragment.Name);
+                yield return new Member(fragment.Type, fragment.Name, fragmentId);
                 yield break;
             }
             if (tree.Type == MessageContractsLexer.MemberToken)
@@ -48,13 +48,13 @@ namespace Lokad.CodeDsl
                     }
                     throw new InvalidOperationException(string.Format("Unknown include '{0}'", name));
                 }
-                yield return (new Member(type, name));
+                yield return (new Member(type, name, name));
                 yield break;
             }
             if (tree.Type == MessageContractsLexer.StringRepresentationToken)
             {
                 var text = tree.GetChild(0).Text;
-                yield return new Member(null, text,  Member.Kinds.StringRepresentation);
+                yield return new Member(null, text, null, Member.Kinds.StringRepresentation);
                 yield break;
             }
             throw new InvalidOperationException("Unexpected token: " + tree.Text);
@@ -62,7 +62,7 @@ namespace Lokad.CodeDsl
 
         public void WalkDeclarations(object tree, Context context)
         {
-            var t = (CommonTree) tree;
+            var t = (CommonTree)tree;
             switch (t.Type)
             {
                 case MessageContractsLexer.FragmentEntry:
@@ -99,7 +99,7 @@ namespace Lokad.CodeDsl
                             modifiers.Add(new Modifier(mod, s));
                         }
                     }
-                    
+
 
                     var message = new Message(name, modifiers);
                     if (modifiers.Any())
@@ -114,7 +114,7 @@ namespace Lokad.CodeDsl
                     for (int i = 0; i < block.ChildCount; i++)
                     {
                         var members = WalkContractMember(block.GetChild(i), context).ToArray();
-                        message.Members.AddRange(members.Where(m => m.Kind ==Member.Kinds.Field));
+                        message.Members.AddRange(members.Where(m => m.Kind == Member.Kinds.Field));
 
                         var stringRepresentations =
                             members.Where(m => m.Kind == Member.Kinds.StringRepresentation).ToArray();
@@ -125,7 +125,7 @@ namespace Lokad.CodeDsl
                             case 1:
                                 message.StringRepresentation = stringRepresentations[0].Name;
                                 break;
-                            default: 
+                            default:
                                 throw new InvalidOperationException("Only one string representation per message");
                         }
                     }
@@ -163,13 +163,13 @@ namespace Lokad.CodeDsl
             var tokens = new CommonTokenStream(lexer);
 
             var parser = new MessageContractsParser(tokens)
-                {
-                    TreeAdaptor = new CommonTreeAdaptor()
-                };
+            {
+                TreeAdaptor = new CommonTreeAdaptor()
+            };
 
             var program = parser.GetProgram();
 
-            var commonTree = (CommonTree) program.Tree;
+            var commonTree = (CommonTree)program.Tree;
 
             var node = commonTree as CommonErrorNode;
 
