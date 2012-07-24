@@ -34,6 +34,11 @@ public sealed class {0}";
         public void Generate(Context context, IndentedTextWriter outer)
         {
             var writer = new CodeWriter(outer);
+
+            writer.WriteLine(@"
+// ReSharper disable PartialTypeWithSinglePart
+// ReSharper disable UnusedMember.Local");
+
             if (!string.IsNullOrEmpty(Namespace))
             {
                 writer.WriteLine("namespace {0}", Namespace);
@@ -148,15 +153,14 @@ public sealed class {0}";
             var active = new List<string>();
             foreach (var member in contract.Members)
             {
-                text = ReplaceAdd(text, "@{" + member.DslName + ":", "{" + active.Count + ":", active, member);
-                text = ReplaceAdd(text, "@{" + member.DslName + "}", "{" + active.Count + "}", active, member);
-                text = ReplaceAdd(text, "@" + member.DslName + "", "{" + active.Count + "}", active, member);
+                text = ReplaceAdd(text, "{" + member.DslName + ":", "{" + active.Count + ":", active, member);
+                text = ReplaceAdd(text, "{" + member.DslName + "}", "{" + active.Count + "}", active, member);
+                
 
                 if (member.DslName != member.Name)
                 {
-                    text = ReplaceAdd(text, "@{" + member.Name + ":", "{" + active.Count + ":", active, member);
-                    text = ReplaceAdd(text, "@{" + member.Name + "}", "{" + active.Count + "}", active, member);
-                    text = ReplaceAdd(text, "@" + member.Name + "", "{" + active.Count + "}", active, member);
+                    text = ReplaceAdd(text, "{" + member.Name + ":", "{" + active.Count + ":", active, member);
+                    text = ReplaceAdd(text, "{" + member.Name + "}", "{" + active.Count + "}", active, member);
                 }
             }
 

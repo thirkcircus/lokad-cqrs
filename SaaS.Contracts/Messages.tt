@@ -36,15 +36,23 @@ let display = string displayName;
 let token = string token;
 
 CreateSecurityAggregate? () 
+  as "Create security group"
+
 CreateSecurityFromRegistration? (registration, string login, string pwd, display, string optionalIdentity)
+
 SecurityAggregateCreated! ()
+  as "Security group created"
 
 
 AddSecurityPassword? (display, string login, string password)
+  as "Add login '{DisplayName}': {Login}/{Password}"
 SecurityPasswordAdded! (user, display, string login, string passwordHash, string passwordSalt, string token)
+  as "Added login '{DisplayName}' as {UserId} with encrypted pass and salt"
 
 AddSecurityIdentity? (display, string identity)
+  as "Add identity '{DisplayName}': {Identity}"
 SecurityIdentityAdded! (user, display, string identity, string token)
+  as "Added identity '{DisplayName}' as {UserId}"
 
  
 RemoveSecurityItem? (user)
@@ -67,22 +75,33 @@ using ? = ICommand<UserId>;
 using ! = IEvent<UserId>;
 
 CreateUser? (security)
-UserCreated! (security, TimeSpan activityThreshold)
+    as "Create user {Id} for security {SecurityId}"
+
+    UserCreated! (security, TimeSpan activityThreshold)
+        as "Created user {Id} ({security}) with threshold {activityThreshold}"
 
 ReportUserLoginFailure? (DateTime timeUtc, string ip)
+  as "Report login failure for user {Id} at {timeUtc}"
+
 UserLoginFailureReported! (DateTime timeUtc, security, string ip)
+    as "User {id} login failed at {timeUtc} (via IP '{ip}')"
 
 ReportUserLoginSuccess? (DateTime timeUtc, string ip)
-UserLoginSuccessReported! (DateTime timeUtc, security, string ip)
+    UserLoginSuccessReported! (DateTime timeUtc, security, string ip)
+        as "User {Id} logged in at {timeUtc} (via IP '{ip}')"
 
 LockUser? (string lockReason)
-UserLocked! (string lockReason, security, DateTime lockedTillUtc)
+    as "Lock user {Id} with reason '{LockReason}'"
+
+    UserLocked! (string lockReason, security, DateTime lockedTillUtc)
+        as "User {Id} locked with reason '{LockReason}'."
 
 UnlockUser? (string unlockReason)
 UserUnlocked! (string unlockReason, security)
 
 DeleteUser? ()
-UserDeleted! (security)
+    UserDeleted! (security)
+        as "Deleted user {Id} from security {SecurityId}"
 
 
 entity Registration (RegistrationId id);
