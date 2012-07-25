@@ -113,10 +113,10 @@ interface User (UserId id)
     if ! = IEvent<UserId>;
 
     CreateUser? (security)
-        explicit "Create user {Id} for security {SecurityId}"
+        explicit "Create user {id} for security {security}."
 
         UserCreated! (security, TimeSpan activityThreshold)
-            explicit "Created user {Id} ({security}) with threshold {activityThreshold}"
+            explicit "Created user {id} ({security}) with threshold {activityThreshold}"
 
     ReportUserLoginFailure? (DateTime timeUtc, string ip)
       explicit "Report login failure for user {Id} at {timeUtc}"

@@ -8,6 +8,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Media;
 
 namespace Lokad.CodeDsl
@@ -18,7 +19,7 @@ namespace Lokad.CodeDsl
 
         static void Main(string[] args)
         {
-            var info = new DirectoryInfo("..\\..\\..\\..\\SaaS.Contracts");
+            var info = new DirectoryInfo("..\\..\\..\\..");
 
             var files = info.GetFiles("*.ddd", SearchOption.AllDirectories);
 
@@ -29,10 +30,17 @@ namespace Lokad.CodeDsl
                 Rebuild(text, fileInfo.FullName);
             }
 
-            var notifier = new FileSystemWatcher(info.FullName, "*.ddd");
-            notifier.Changed += NotifierOnChanged;
+            var notifiers = files
+                .Select(f => f.DirectoryName)
+                .Distinct()
+                .Select(d => new FileSystemWatcher(d, "*.ddd"))
+                .ToArray();
 
-            notifier.EnableRaisingEvents = true;
+            foreach (var notifier in notifiers)
+            {
+                notifier.Changed += NotifierOnChanged;
+                notifier.EnableRaisingEvents = true;
+            }
 
 
             Console.ReadLine();

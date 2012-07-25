@@ -410,7 +410,7 @@ namespace SaaS
         
         public override string ToString()
         {
-            return string.Format(@"Create user {0} for security {1}", Id, SecurityId);
+            return string.Format(@"Create user {0} for security {1}.", Id, SecurityId);
         }
     }
     
