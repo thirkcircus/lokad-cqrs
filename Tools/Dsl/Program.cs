@@ -20,7 +20,7 @@ namespace Lokad.CodeDsl
         {
             var info = new DirectoryInfo("..\\..\\..\\..\\SaaS.Contracts");
 
-            var files = info.GetFiles("*.tt", SearchOption.AllDirectories);
+            var files = info.GetFiles("*.ddd", SearchOption.AllDirectories);
 
             foreach (var fileInfo in files)
             {
@@ -29,7 +29,7 @@ namespace Lokad.CodeDsl
                 Rebuild(text, fileInfo.FullName);
             }
 
-            var notifier = new FileSystemWatcher(info.FullName, "*.tt");
+            var notifier = new FileSystemWatcher(info.FullName, "*.ddd");
             notifier.Changed += NotifierOnChanged;
 
             notifier.EnableRaisingEvents = true;
@@ -82,14 +82,13 @@ namespace Lokad.CodeDsl
             var dsl = text;
             var generator = new TemplatedGenerator()
                 {
-                    Namespace = "SaaS",
                     GenerateInterfaceForEntityWithModifiers = "?",
                     TemplateForInterfaceName = "public interface I{0}Aggregate",
                     TemplateForInterfaceMember = "void When({0} c);",
                     ClassNameTemplate = @"
     
 
-[DataContract(Namespace = ""SaaS"")]
+[DataContract(Namespace = {1})]
 public partial class {0}",
                     MemberTemplate = "[DataMember(Order = {0})] public {1} {2} {{ get; private set; }}",
                     

@@ -11,7 +11,16 @@ namespace Lokad.CodeDsl
 
         public Stack<Entity> Entities { get; set; }
 
+        public void PushEntity(Entity entity)
+        {
+            Entities.Push(entity);
+
+        }
+
         public Entity CurrentEntity { get { return Entities.Peek(); } }
+
+        public string CurrentNamespace = "Lokad.Contracts";
+        public string CurrentExtern = "Lokad.Contracts";
 
         public Context()
         {
@@ -32,6 +41,8 @@ namespace Lokad.CodeDsl
         public List<Member> FixedMembers { get; set; }
         public List<Message> Messages { get; set; }
         public NameValueCollection Modifiers { get; set; }
+        public string Namespace;
+        
 
         public Entity(string name)
         {

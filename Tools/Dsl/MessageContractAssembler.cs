@@ -60,9 +60,9 @@ namespace Lokad.CodeDsl
             throw new InvalidOperationException("Unexpected token: " + tree.Text);
         }
 
-        public void WalkDeclarations(object tree, Context context)
+        public void WalkDeclarations(ITree tree, Context context)
         {
-            var t = (CommonTree)tree;
+            var t = tree;
             switch (t.Type)
             {
                 case MessageContractsLexer.FragmentEntry:
@@ -146,11 +146,23 @@ namespace Lokad.CodeDsl
                     {
                         entity.FixedMembers.AddRange(WalkContractMember(entityBlock.GetChild(i), context));
                     }
+                    context.PushEntity(entity);
 
-                    context.Entities.Push(entity);
-
+                    for (int i = 2; i < t.ChildCount; i++)
+                    {
+                        WalkDeclarations(t.GetChild(i), context);
+                    }
+                    break;
+                case MessageContractsLexer.NamespaceToken:
+                    var ns = string.Join(".", t.Children().Select(s => s.Text));
+                    context.CurrentNamespace = ns;
+                    break;
+                case MessageContractsLexer.ExternToken:
+                    var text = t.GetChild(0).Text;
+                    context.CurrentExtern = text;
                     break;
                 default:
+                
                     throw new InvalidOperationException("Unexpected token: " + t.Text);
             }
         }
@@ -186,6 +198,18 @@ namespace Lokad.CodeDsl
             }
             return ctx;
         }
+    
+    }
+
+    public static class Extend
+    {
+        public static IEnumerable<ITree> Children(this ITree self)
+        {
+            for (int i = 0; i < self.ChildCount; i++)
+            {
+                yield return self.GetChild(i);
+            }
+        } 
     }
 }
 

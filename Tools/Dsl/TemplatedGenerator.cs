@@ -10,8 +10,7 @@ namespace Lokad.CodeDsl
     {
         public string ClassNameTemplate { get; set; }
         public string MemberTemplate { get; set; }
-
-        public string Namespace { get; set; }
+        
         public string Region { get; set; }
         public string GenerateInterfaceForEntityWithModifiers { get; set; }
         public string TemplateForInterfaceName { get; set; }
@@ -39,11 +38,9 @@ public sealed class {0}";
 // ReSharper disable PartialTypeWithSinglePart
 // ReSharper disable UnusedMember.Local");
 
-            if (!string.IsNullOrEmpty(Namespace))
-            {
-                writer.WriteLine("namespace {0}", Namespace);
-                writer.WriteLine("{");
-            }
+            writer.WriteLine("namespace {0}", context.CurrentNamespace);
+            writer.WriteLine("{");
+
             writer.Indent += 1;
 
             if (!string.IsNullOrEmpty(Region))
@@ -60,18 +57,14 @@ public sealed class {0}";
             }
 
             writer.Indent -= 1;
-
-            if (!string.IsNullOrEmpty(Namespace))
-            {
-                writer.WriteLine("}");
-            }
+            writer.WriteLine("}");
         }
 
         private void WriteContext(CodeWriter writer, Context context)
         {
             foreach (var contract in context.Contracts)
             {
-                writer.Write(ClassNameTemplate, contract.Name);
+                writer.Write(ClassNameTemplate, contract.Name, context.CurrentExtern);
 
                 if (contract.Modifiers.Any())
                 {

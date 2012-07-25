@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// $ANTLR 3.4 /Users/abdullin/MessageContracts.g 2012-07-24 17:26:24
+// $ANTLR 3.4 /Users/abdullin/MessageContracts.g 2012-07-25 12:53:18
 
 // The variable 'variable' is assigned but its value is never used.
 #pragma warning disable 168, 219
@@ -34,47 +34,54 @@ namespace  MessageContracts
 public partial class MessageContractsParser : Antlr.Runtime.Parser
 {
 	internal static readonly string[] tokenNames = new string[] {
-		"<invalid>", "<EOR>", "<DOWN>", "<UP>", "AS", "BlockToken", "COMMENT", "CommandToken", "DisctionaryToken", "ENTITY", "ESC_SEQ", "EntityDefinition", "EventToken", "FragmentEntry", "FragmentGroup", "FragmentReference", "HEX_DIGIT", "ID", "INT", "LET", "MemberToken", "Modifier", "ModifierDefinition", "OCTAL_ESC", "STRING", "StringRepresentationToken", "TypeToken", "UNICODE_ESC", "USING", "WS", "'('", "')'", "','", "';'", "'='"
+		"<invalid>", "<EOR>", "<DOWN>", "<UP>", "BlockToken", "COMMENT", "CONST", "CommandToken", "DisctionaryToken", "ESC_SEQ", "EXPLICIT", "EXTERN", "EntityDefinition", "EventToken", "ExternToken", "FragmentEntry", "FragmentGroup", "FragmentReference", "HEX_DIGIT", "ID", "INT", "INTERFACE", "MemberToken", "Modifier", "ModifierDefinition", "NAMESPACE", "NamespaceToken", "OCTAL_ESC", "STRING", "StringRepresentationToken", "TypeToken", "UNICODE_ESC", "USING", "WS", "'('", "')'", "','", "'.'", "';'", "'='", "'{'", "'}'"
 	};
 	public const int EOF=-1;
-	public const int T__30=30;
-	public const int T__31=31;
-	public const int T__32=32;
-	public const int T__33=33;
 	public const int T__34=34;
-	public const int AS=4;
-	public const int BlockToken=5;
-	public const int COMMENT=6;
+	public const int T__35=35;
+	public const int T__36=36;
+	public const int T__37=37;
+	public const int T__38=38;
+	public const int T__39=39;
+	public const int T__40=40;
+	public const int T__41=41;
+	public const int BlockToken=4;
+	public const int COMMENT=5;
+	public const int CONST=6;
 	public const int CommandToken=7;
 	public const int DisctionaryToken=8;
-	public const int ENTITY=9;
-	public const int ESC_SEQ=10;
-	public const int EntityDefinition=11;
-	public const int EventToken=12;
-	public const int FragmentEntry=13;
-	public const int FragmentGroup=14;
-	public const int FragmentReference=15;
-	public const int HEX_DIGIT=16;
-	public const int ID=17;
-	public const int INT=18;
-	public const int LET=19;
-	public const int MemberToken=20;
-	public const int Modifier=21;
-	public const int ModifierDefinition=22;
-	public const int OCTAL_ESC=23;
-	public const int STRING=24;
-	public const int StringRepresentationToken=25;
-	public const int TypeToken=26;
-	public const int UNICODE_ESC=27;
-	public const int USING=28;
-	public const int WS=29;
+	public const int ESC_SEQ=9;
+	public const int EXPLICIT=10;
+	public const int EXTERN=11;
+	public const int EntityDefinition=12;
+	public const int EventToken=13;
+	public const int ExternToken=14;
+	public const int FragmentEntry=15;
+	public const int FragmentGroup=16;
+	public const int FragmentReference=17;
+	public const int HEX_DIGIT=18;
+	public const int ID=19;
+	public const int INT=20;
+	public const int INTERFACE=21;
+	public const int MemberToken=22;
+	public const int Modifier=23;
+	public const int ModifierDefinition=24;
+	public const int NAMESPACE=25;
+	public const int NamespaceToken=26;
+	public const int OCTAL_ESC=27;
+	public const int STRING=28;
+	public const int StringRepresentationToken=29;
+	public const int TypeToken=30;
+	public const int UNICODE_ESC=31;
+	public const int USING=32;
+	public const int WS=33;
 
 	#if ANTLR_DEBUG
 		private static readonly bool[] decisionCanBacktrack =
 			new bool[]
 			{
 				false, // invalid decision
-				false, false, false, false, false, false, false
+				false, false, false, false, false, false, false, false, false
 			};
 	#else
 		private static readonly bool[] decisionCanBacktrack = new bool[0];
@@ -122,7 +129,7 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 	protected virtual void LeaveRule_program() {}
 
 	// $ANTLR start "program"
-	// /Users/abdullin/MessageContracts.g:28:1: program : ( declaration )+ ;
+	// /Users/abdullin/MessageContracts.g:30:1: program : ( declaration )+ ;
 	[GrammarRule("program")]
 	private AstParserRuleReturnScope<object, IToken> program()
 	{
@@ -138,17 +145,17 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 
 
 		try { DebugEnterRule(GrammarFileName, "program");
-		DebugLocation(28, 1);
+		DebugLocation(30, 1);
 		try
 		{
-			// /Users/abdullin/MessageContracts.g:29:2: ( ( declaration )+ )
+			// /Users/abdullin/MessageContracts.g:31:2: ( ( declaration )+ )
 			DebugEnterAlt(1);
-			// /Users/abdullin/MessageContracts.g:29:4: ( declaration )+
+			// /Users/abdullin/MessageContracts.g:31:4: ( declaration )+
 			{
 			root_0 = (object)adaptor.Nil();
 
-			DebugLocation(29, 4);
-			// /Users/abdullin/MessageContracts.g:29:4: ( declaration )+
+			DebugLocation(31, 4);
+			// /Users/abdullin/MessageContracts.g:31:4: ( declaration )+
 			int cnt1=0;
 			try { DebugEnterSubRule(1);
 			while (true)
@@ -157,7 +164,7 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 				try { DebugEnterDecision(1, decisionCanBacktrack[1]);
 				int LA1_0 = input.LA(1);
 
-				if ((LA1_0==ENTITY||LA1_0==ID||LA1_0==LET||LA1_0==USING))
+				if ((LA1_0==CONST||LA1_0==EXTERN||LA1_0==ID||LA1_0==INTERFACE||LA1_0==NAMESPACE||LA1_0==USING))
 				{
 					alt1 = 1;
 				}
@@ -168,10 +175,10 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 				{
 				case 1:
 					DebugEnterAlt(1);
-					// /Users/abdullin/MessageContracts.g:29:4: declaration
+					// /Users/abdullin/MessageContracts.g:31:4: declaration
 					{
-					DebugLocation(29, 4);
-					PushFollow(Follow._declaration_in_program105);
+					DebugLocation(31, 4);
+					PushFollow(Follow._declaration_in_program113);
 					declaration1=declaration();
 					PopFollow();
 
@@ -217,7 +224,7 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 			LeaveRule("program", 1);
 			LeaveRule_program();
 	    }
-	 	DebugLocation(30, 1);
+	 	DebugLocation(32, 1);
 		} finally { DebugExitRule(GrammarFileName, "program"); }
 		return retval;
 
@@ -231,7 +238,7 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 	protected virtual void LeaveRule_declaration() {}
 
 	// $ANTLR start "declaration"
-	// /Users/abdullin/MessageContracts.g:32:1: declaration : ( modifier_declaration | frag_declaration | type_declaration | entity_declaration );
+	// /Users/abdullin/MessageContracts.g:34:1: declaration : ( modifier_declaration | frag_declaration | type_declaration | entity_declaration | namespace_declaration | extern_declaration );
 	[GrammarRule("declaration")]
 	private AstParserRuleReturnScope<object, IToken> declaration()
 	{
@@ -247,14 +254,16 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 	    AstParserRuleReturnScope<object, IToken> frag_declaration3 = default(AstParserRuleReturnScope<object, IToken>);
 	    AstParserRuleReturnScope<object, IToken> type_declaration4 = default(AstParserRuleReturnScope<object, IToken>);
 	    AstParserRuleReturnScope<object, IToken> entity_declaration5 = default(AstParserRuleReturnScope<object, IToken>);
+	    AstParserRuleReturnScope<object, IToken> namespace_declaration6 = default(AstParserRuleReturnScope<object, IToken>);
+	    AstParserRuleReturnScope<object, IToken> extern_declaration7 = default(AstParserRuleReturnScope<object, IToken>);
 
 
 		try { DebugEnterRule(GrammarFileName, "declaration");
-		DebugLocation(32, 1);
+		DebugLocation(34, 1);
 		try
 		{
-			// /Users/abdullin/MessageContracts.g:33:2: ( modifier_declaration | frag_declaration | type_declaration | entity_declaration )
-			int alt2=4;
+			// /Users/abdullin/MessageContracts.g:35:2: ( modifier_declaration | frag_declaration | type_declaration | entity_declaration | namespace_declaration | extern_declaration )
+			int alt2=6;
 			try { DebugEnterDecision(2, decisionCanBacktrack[2]);
 			switch (input.LA(1))
 			{
@@ -263,7 +272,7 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 				alt2 = 1;
 				}
 				break;
-			case LET:
+			case CONST:
 				{
 				alt2 = 2;
 				}
@@ -273,9 +282,19 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 				alt2 = 3;
 				}
 				break;
-			case ENTITY:
+			case INTERFACE:
 				{
 				alt2 = 4;
+				}
+				break;
+			case NAMESPACE:
+				{
+				alt2 = 5;
+				}
+				break;
+			case EXTERN:
+				{
+				alt2 = 6;
 				}
 				break;
 			default:
@@ -291,12 +310,12 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 			{
 			case 1:
 				DebugEnterAlt(1);
-				// /Users/abdullin/MessageContracts.g:33:4: modifier_declaration
+				// /Users/abdullin/MessageContracts.g:35:4: modifier_declaration
 				{
 				root_0 = (object)adaptor.Nil();
 
-				DebugLocation(33, 4);
-				PushFollow(Follow._modifier_declaration_in_declaration118);
+				DebugLocation(35, 4);
+				PushFollow(Follow._modifier_declaration_in_declaration126);
 				modifier_declaration2=modifier_declaration();
 				PopFollow();
 
@@ -306,12 +325,12 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 				break;
 			case 2:
 				DebugEnterAlt(2);
-				// /Users/abdullin/MessageContracts.g:34:4: frag_declaration
+				// /Users/abdullin/MessageContracts.g:36:4: frag_declaration
 				{
 				root_0 = (object)adaptor.Nil();
 
-				DebugLocation(34, 4);
-				PushFollow(Follow._frag_declaration_in_declaration123);
+				DebugLocation(36, 4);
+				PushFollow(Follow._frag_declaration_in_declaration131);
 				frag_declaration3=frag_declaration();
 				PopFollow();
 
@@ -321,12 +340,12 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 				break;
 			case 3:
 				DebugEnterAlt(3);
-				// /Users/abdullin/MessageContracts.g:35:4: type_declaration
+				// /Users/abdullin/MessageContracts.g:37:4: type_declaration
 				{
 				root_0 = (object)adaptor.Nil();
 
-				DebugLocation(35, 4);
-				PushFollow(Follow._type_declaration_in_declaration128);
+				DebugLocation(37, 4);
+				PushFollow(Follow._type_declaration_in_declaration136);
 				type_declaration4=type_declaration();
 				PopFollow();
 
@@ -336,16 +355,46 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 				break;
 			case 4:
 				DebugEnterAlt(4);
-				// /Users/abdullin/MessageContracts.g:36:4: entity_declaration
+				// /Users/abdullin/MessageContracts.g:38:4: entity_declaration
 				{
 				root_0 = (object)adaptor.Nil();
 
-				DebugLocation(36, 4);
-				PushFollow(Follow._entity_declaration_in_declaration133);
+				DebugLocation(38, 4);
+				PushFollow(Follow._entity_declaration_in_declaration141);
 				entity_declaration5=entity_declaration();
 				PopFollow();
 
 				adaptor.AddChild(root_0, entity_declaration5.Tree);
+
+				}
+				break;
+			case 5:
+				DebugEnterAlt(5);
+				// /Users/abdullin/MessageContracts.g:39:4: namespace_declaration
+				{
+				root_0 = (object)adaptor.Nil();
+
+				DebugLocation(39, 4);
+				PushFollow(Follow._namespace_declaration_in_declaration146);
+				namespace_declaration6=namespace_declaration();
+				PopFollow();
+
+				adaptor.AddChild(root_0, namespace_declaration6.Tree);
+
+				}
+				break;
+			case 6:
+				DebugEnterAlt(6);
+				// /Users/abdullin/MessageContracts.g:40:4: extern_declaration
+				{
+				root_0 = (object)adaptor.Nil();
+
+				DebugLocation(40, 4);
+				PushFollow(Follow._extern_declaration_in_declaration152);
+				extern_declaration7=extern_declaration();
+				PopFollow();
+
+				adaptor.AddChild(root_0, extern_declaration7.Tree);
 
 				}
 				break;
@@ -370,7 +419,7 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 			LeaveRule("declaration", 2);
 			LeaveRule_declaration();
 	    }
-	 	DebugLocation(37, 1);
+	 	DebugLocation(41, 1);
 		} finally { DebugExitRule(GrammarFileName, "declaration"); }
 		return retval;
 
@@ -379,72 +428,248 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 
 
 	[Conditional("ANTLR_TRACE")]
-	protected virtual void EnterRule_frag_declaration() {}
+	protected virtual void EnterRule_namespace_declaration() {}
 	[Conditional("ANTLR_TRACE")]
-	protected virtual void LeaveRule_frag_declaration() {}
+	protected virtual void LeaveRule_namespace_declaration() {}
 
-	// $ANTLR start "frag_declaration"
-	// /Users/abdullin/MessageContracts.g:39:1: frag_declaration : LET ID '=' ID ID ';' -> ^( FragmentEntry ID ID ID ) ;
-	[GrammarRule("frag_declaration")]
-	private AstParserRuleReturnScope<object, IToken> frag_declaration()
+	// $ANTLR start "namespace_declaration"
+	// /Users/abdullin/MessageContracts.g:43:1: namespace_declaration : NAMESPACE ( ID ( '.' ID )* ) ';' -> ^( NamespaceToken ( ID )* ) ;
+	[GrammarRule("namespace_declaration")]
+	private AstParserRuleReturnScope<object, IToken> namespace_declaration()
 	{
-		EnterRule_frag_declaration();
-		EnterRule("frag_declaration", 3);
-		TraceIn("frag_declaration", 3);
+		EnterRule_namespace_declaration();
+		EnterRule("namespace_declaration", 3);
+		TraceIn("namespace_declaration", 3);
 	    AstParserRuleReturnScope<object, IToken> retval = new AstParserRuleReturnScope<object, IToken>();
 	    retval.Start = (IToken)input.LT(1);
 
 	    object root_0 = default(object);
 
-	    IToken LET6 = default(IToken);
-	    IToken ID7 = default(IToken);
-	    IToken char_literal8 = default(IToken);
+	    IToken NAMESPACE8 = default(IToken);
 	    IToken ID9 = default(IToken);
-	    IToken ID10 = default(IToken);
-	    IToken char_literal11 = default(IToken);
+	    IToken char_literal10 = default(IToken);
+	    IToken ID11 = default(IToken);
+	    IToken char_literal12 = default(IToken);
 
-	    object LET6_tree = default(object);
-	    object ID7_tree = default(object);
-	    object char_literal8_tree = default(object);
+	    object NAMESPACE8_tree = default(object);
 	    object ID9_tree = default(object);
-	    object ID10_tree = default(object);
-	    object char_literal11_tree = default(object);
+	    object char_literal10_tree = default(object);
+	    object ID11_tree = default(object);
+	    object char_literal12_tree = default(object);
 	    RewriteRuleITokenStream stream_ID=new RewriteRuleITokenStream(adaptor,"token ID");
-	    RewriteRuleITokenStream stream_33=new RewriteRuleITokenStream(adaptor,"token 33");
-	    RewriteRuleITokenStream stream_34=new RewriteRuleITokenStream(adaptor,"token 34");
-	    RewriteRuleITokenStream stream_LET=new RewriteRuleITokenStream(adaptor,"token LET");
+	    RewriteRuleITokenStream stream_NAMESPACE=new RewriteRuleITokenStream(adaptor,"token NAMESPACE");
+	    RewriteRuleITokenStream stream_37=new RewriteRuleITokenStream(adaptor,"token 37");
+	    RewriteRuleITokenStream stream_38=new RewriteRuleITokenStream(adaptor,"token 38");
 
-		try { DebugEnterRule(GrammarFileName, "frag_declaration");
-		DebugLocation(39, 52);
+		try { DebugEnterRule(GrammarFileName, "namespace_declaration");
+		DebugLocation(43, 28);
 		try
 		{
-			// /Users/abdullin/MessageContracts.g:40:2: ( LET ID '=' ID ID ';' -> ^( FragmentEntry ID ID ID ) )
+			// /Users/abdullin/MessageContracts.g:44:5: ( NAMESPACE ( ID ( '.' ID )* ) ';' -> ^( NamespaceToken ( ID )* ) )
 			DebugEnterAlt(1);
-			// /Users/abdullin/MessageContracts.g:40:4: LET ID '=' ID ID ';'
+			// /Users/abdullin/MessageContracts.g:44:7: NAMESPACE ( ID ( '.' ID )* ) ';'
 			{
-			DebugLocation(40, 4);
-			LET6=(IToken)Match(input,LET,Follow._LET_in_frag_declaration145);  
-			stream_LET.Add(LET6);
+			DebugLocation(44, 7);
+			NAMESPACE8=(IToken)Match(input,NAMESPACE,Follow._NAMESPACE_in_namespace_declaration166);  
+			stream_NAMESPACE.Add(NAMESPACE8);
 
-			DebugLocation(40, 8);
-			ID7=(IToken)Match(input,ID,Follow._ID_in_frag_declaration147);  
-			stream_ID.Add(ID7);
-
-			DebugLocation(40, 11);
-			char_literal8=(IToken)Match(input,34,Follow._34_in_frag_declaration149);  
-			stream_34.Add(char_literal8);
-
-			DebugLocation(40, 15);
-			ID9=(IToken)Match(input,ID,Follow._ID_in_frag_declaration151);  
+			DebugLocation(44, 17);
+			// /Users/abdullin/MessageContracts.g:44:17: ( ID ( '.' ID )* )
+			DebugEnterAlt(1);
+			// /Users/abdullin/MessageContracts.g:44:18: ID ( '.' ID )*
+			{
+			DebugLocation(44, 18);
+			ID9=(IToken)Match(input,ID,Follow._ID_in_namespace_declaration169);  
 			stream_ID.Add(ID9);
 
-			DebugLocation(40, 18);
-			ID10=(IToken)Match(input,ID,Follow._ID_in_frag_declaration153);  
-			stream_ID.Add(ID10);
+			DebugLocation(44, 21);
+			// /Users/abdullin/MessageContracts.g:44:21: ( '.' ID )*
+			try { DebugEnterSubRule(3);
+			while (true)
+			{
+				int alt3=2;
+				try { DebugEnterDecision(3, decisionCanBacktrack[3]);
+				int LA3_0 = input.LA(1);
 
-			DebugLocation(40, 21);
-			char_literal11=(IToken)Match(input,33,Follow._33_in_frag_declaration155);  
-			stream_33.Add(char_literal11);
+				if ((LA3_0==37))
+				{
+					alt3 = 1;
+				}
+
+
+				} finally { DebugExitDecision(3); }
+				switch ( alt3 )
+				{
+				case 1:
+					DebugEnterAlt(1);
+					// /Users/abdullin/MessageContracts.g:44:22: '.' ID
+					{
+					DebugLocation(44, 22);
+					char_literal10=(IToken)Match(input,37,Follow._37_in_namespace_declaration172);  
+					stream_37.Add(char_literal10);
+
+					DebugLocation(44, 26);
+					ID11=(IToken)Match(input,ID,Follow._ID_in_namespace_declaration174);  
+					stream_ID.Add(ID11);
+
+
+					}
+					break;
+
+				default:
+					goto loop3;
+				}
+			}
+
+			loop3:
+				;
+
+			} finally { DebugExitSubRule(3); }
+
+
+			}
+
+			DebugLocation(44, 32);
+			char_literal12=(IToken)Match(input,38,Follow._38_in_namespace_declaration179);  
+			stream_38.Add(char_literal12);
+
+
+
+			{
+			// AST REWRITE
+			// elements: ID
+			// token labels: 
+			// rule labels: retval
+			// token list labels: 
+			// rule list labels: 
+			// wildcard labels: 
+			retval.Tree = root_0;
+			RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.Tree:null);
+
+			root_0 = (object)adaptor.Nil();
+			// 45:5: -> ^( NamespaceToken ( ID )* )
+			{
+				DebugLocation(45, 8);
+				// /Users/abdullin/MessageContracts.g:45:8: ^( NamespaceToken ( ID )* )
+				{
+				object root_1 = (object)adaptor.Nil();
+				DebugLocation(45, 10);
+				root_1 = (object)adaptor.BecomeRoot((object)adaptor.Create(NamespaceToken, "NamespaceToken"), root_1);
+
+				DebugLocation(45, 25);
+				// /Users/abdullin/MessageContracts.g:45:25: ( ID )*
+				while ( stream_ID.HasNext )
+				{
+					DebugLocation(45, 25);
+					adaptor.AddChild(root_1, stream_ID.NextNode());
+
+				}
+				stream_ID.Reset();
+
+				adaptor.AddChild(root_0, root_1);
+				}
+
+			}
+
+			retval.Tree = root_0;
+			}
+
+			}
+
+			retval.Stop = (IToken)input.LT(-1);
+
+			retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+			adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+
+		}
+		catch (RecognitionException re)
+		{
+			ReportError(re);
+			Recover(input,re);
+		retval.Tree = (object)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
+
+		}
+		finally
+		{
+			TraceOut("namespace_declaration", 3);
+			LeaveRule("namespace_declaration", 3);
+			LeaveRule_namespace_declaration();
+	    }
+	 	DebugLocation(45, 28);
+		} finally { DebugExitRule(GrammarFileName, "namespace_declaration"); }
+		return retval;
+
+	}
+	// $ANTLR end "namespace_declaration"
+
+
+	[Conditional("ANTLR_TRACE")]
+	protected virtual void EnterRule_frag_declaration() {}
+	[Conditional("ANTLR_TRACE")]
+	protected virtual void LeaveRule_frag_declaration() {}
+
+	// $ANTLR start "frag_declaration"
+	// /Users/abdullin/MessageContracts.g:49:1: frag_declaration : CONST ID '=' ID ID ';' -> ^( FragmentEntry ID ID ID ) ;
+	[GrammarRule("frag_declaration")]
+	private AstParserRuleReturnScope<object, IToken> frag_declaration()
+	{
+		EnterRule_frag_declaration();
+		EnterRule("frag_declaration", 4);
+		TraceIn("frag_declaration", 4);
+	    AstParserRuleReturnScope<object, IToken> retval = new AstParserRuleReturnScope<object, IToken>();
+	    retval.Start = (IToken)input.LT(1);
+
+	    object root_0 = default(object);
+
+	    IToken CONST13 = default(IToken);
+	    IToken ID14 = default(IToken);
+	    IToken char_literal15 = default(IToken);
+	    IToken ID16 = default(IToken);
+	    IToken ID17 = default(IToken);
+	    IToken char_literal18 = default(IToken);
+
+	    object CONST13_tree = default(object);
+	    object ID14_tree = default(object);
+	    object char_literal15_tree = default(object);
+	    object ID16_tree = default(object);
+	    object ID17_tree = default(object);
+	    object char_literal18_tree = default(object);
+	    RewriteRuleITokenStream stream_ID=new RewriteRuleITokenStream(adaptor,"token ID");
+	    RewriteRuleITokenStream stream_CONST=new RewriteRuleITokenStream(adaptor,"token CONST");
+	    RewriteRuleITokenStream stream_39=new RewriteRuleITokenStream(adaptor,"token 39");
+	    RewriteRuleITokenStream stream_38=new RewriteRuleITokenStream(adaptor,"token 38");
+
+		try { DebugEnterRule(GrammarFileName, "frag_declaration");
+		DebugLocation(49, 54);
+		try
+		{
+			// /Users/abdullin/MessageContracts.g:50:2: ( CONST ID '=' ID ID ';' -> ^( FragmentEntry ID ID ID ) )
+			DebugEnterAlt(1);
+			// /Users/abdullin/MessageContracts.g:50:4: CONST ID '=' ID ID ';'
+			{
+			DebugLocation(50, 4);
+			CONST13=(IToken)Match(input,CONST,Follow._CONST_in_frag_declaration213);  
+			stream_CONST.Add(CONST13);
+
+			DebugLocation(50, 10);
+			ID14=(IToken)Match(input,ID,Follow._ID_in_frag_declaration215);  
+			stream_ID.Add(ID14);
+
+			DebugLocation(50, 13);
+			char_literal15=(IToken)Match(input,39,Follow._39_in_frag_declaration217);  
+			stream_39.Add(char_literal15);
+
+			DebugLocation(50, 17);
+			ID16=(IToken)Match(input,ID,Follow._ID_in_frag_declaration219);  
+			stream_ID.Add(ID16);
+
+			DebugLocation(50, 20);
+			ID17=(IToken)Match(input,ID,Follow._ID_in_frag_declaration221);  
+			stream_ID.Add(ID17);
+
+			DebugLocation(50, 23);
+			char_literal18=(IToken)Match(input,38,Follow._38_in_frag_declaration223);  
+			stream_38.Add(char_literal18);
 
 
 
@@ -460,20 +685,20 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 			RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.Tree:null);
 
 			root_0 = (object)adaptor.Nil();
-			// 40:25: -> ^( FragmentEntry ID ID ID )
+			// 50:27: -> ^( FragmentEntry ID ID ID )
 			{
-				DebugLocation(40, 28);
-				// /Users/abdullin/MessageContracts.g:40:28: ^( FragmentEntry ID ID ID )
+				DebugLocation(50, 30);
+				// /Users/abdullin/MessageContracts.g:50:30: ^( FragmentEntry ID ID ID )
 				{
 				object root_1 = (object)adaptor.Nil();
-				DebugLocation(40, 30);
+				DebugLocation(50, 32);
 				root_1 = (object)adaptor.BecomeRoot((object)adaptor.Create(FragmentEntry, "FragmentEntry"), root_1);
 
-				DebugLocation(40, 44);
+				DebugLocation(50, 46);
 				adaptor.AddChild(root_1, stream_ID.NextNode());
-				DebugLocation(40, 47);
+				DebugLocation(50, 49);
 				adaptor.AddChild(root_1, stream_ID.NextNode());
-				DebugLocation(40, 50);
+				DebugLocation(50, 52);
 				adaptor.AddChild(root_1, stream_ID.NextNode());
 
 				adaptor.AddChild(root_0, root_1);
@@ -501,11 +726,11 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("frag_declaration", 3);
-			LeaveRule("frag_declaration", 3);
+			TraceOut("frag_declaration", 4);
+			LeaveRule("frag_declaration", 4);
 			LeaveRule_frag_declaration();
 	    }
-	 	DebugLocation(40, 52);
+	 	DebugLocation(50, 54);
 		} finally { DebugExitRule(GrammarFileName, "frag_declaration"); }
 		return retval;
 
@@ -519,68 +744,68 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 	protected virtual void LeaveRule_modifier_declaration() {}
 
 	// $ANTLR start "modifier_declaration"
-	// /Users/abdullin/MessageContracts.g:42:1: modifier_declaration : USING Modifier '=' ID ';' -> ^( ModifierDefinition Modifier ID ) ;
+	// /Users/abdullin/MessageContracts.g:52:1: modifier_declaration : USING Modifier '=' ID ';' -> ^( ModifierDefinition Modifier ID ) ;
 	[GrammarRule("modifier_declaration")]
 	private AstParserRuleReturnScope<object, IToken> modifier_declaration()
 	{
 		EnterRule_modifier_declaration();
-		EnterRule("modifier_declaration", 4);
-		TraceIn("modifier_declaration", 4);
+		EnterRule("modifier_declaration", 5);
+		TraceIn("modifier_declaration", 5);
 	    AstParserRuleReturnScope<object, IToken> retval = new AstParserRuleReturnScope<object, IToken>();
 	    retval.Start = (IToken)input.LT(1);
 
 	    object root_0 = default(object);
 
-	    IToken USING12 = default(IToken);
-	    IToken Modifier13 = default(IToken);
-	    IToken char_literal14 = default(IToken);
-	    IToken ID15 = default(IToken);
-	    IToken char_literal16 = default(IToken);
+	    IToken USING19 = default(IToken);
+	    IToken Modifier20 = default(IToken);
+	    IToken char_literal21 = default(IToken);
+	    IToken ID22 = default(IToken);
+	    IToken char_literal23 = default(IToken);
 
-	    object USING12_tree = default(object);
-	    object Modifier13_tree = default(object);
-	    object char_literal14_tree = default(object);
-	    object ID15_tree = default(object);
-	    object char_literal16_tree = default(object);
+	    object USING19_tree = default(object);
+	    object Modifier20_tree = default(object);
+	    object char_literal21_tree = default(object);
+	    object ID22_tree = default(object);
+	    object char_literal23_tree = default(object);
 	    RewriteRuleITokenStream stream_USING=new RewriteRuleITokenStream(adaptor,"token USING");
 	    RewriteRuleITokenStream stream_ID=new RewriteRuleITokenStream(adaptor,"token ID");
 	    RewriteRuleITokenStream stream_Modifier=new RewriteRuleITokenStream(adaptor,"token Modifier");
-	    RewriteRuleITokenStream stream_33=new RewriteRuleITokenStream(adaptor,"token 33");
-	    RewriteRuleITokenStream stream_34=new RewriteRuleITokenStream(adaptor,"token 34");
+	    RewriteRuleITokenStream stream_39=new RewriteRuleITokenStream(adaptor,"token 39");
+	    RewriteRuleITokenStream stream_38=new RewriteRuleITokenStream(adaptor,"token 38");
 
 		try { DebugEnterRule(GrammarFileName, "modifier_declaration");
-		DebugLocation(42, 65);
+		DebugLocation(52, 65);
 		try
 		{
-			// /Users/abdullin/MessageContracts.g:43:2: ( USING Modifier '=' ID ';' -> ^( ModifierDefinition Modifier ID ) )
+			// /Users/abdullin/MessageContracts.g:53:2: ( USING Modifier '=' ID ';' -> ^( ModifierDefinition Modifier ID ) )
 			DebugEnterAlt(1);
-			// /Users/abdullin/MessageContracts.g:43:4: USING Modifier '=' ID ';'
+			// /Users/abdullin/MessageContracts.g:53:4: USING Modifier '=' ID ';'
 			{
-			DebugLocation(43, 4);
-			USING12=(IToken)Match(input,USING,Follow._USING_in_modifier_declaration182);  
-			stream_USING.Add(USING12);
+			DebugLocation(53, 4);
+			USING19=(IToken)Match(input,USING,Follow._USING_in_modifier_declaration250);  
+			stream_USING.Add(USING19);
 
-			DebugLocation(43, 10);
-			Modifier13=(IToken)Match(input,Modifier,Follow._Modifier_in_modifier_declaration184);  
-			stream_Modifier.Add(Modifier13);
+			DebugLocation(53, 10);
+			Modifier20=(IToken)Match(input,Modifier,Follow._Modifier_in_modifier_declaration252);  
+			stream_Modifier.Add(Modifier20);
 
-			DebugLocation(43, 19);
-			char_literal14=(IToken)Match(input,34,Follow._34_in_modifier_declaration186);  
-			stream_34.Add(char_literal14);
+			DebugLocation(53, 19);
+			char_literal21=(IToken)Match(input,39,Follow._39_in_modifier_declaration254);  
+			stream_39.Add(char_literal21);
 
-			DebugLocation(43, 23);
-			ID15=(IToken)Match(input,ID,Follow._ID_in_modifier_declaration188);  
-			stream_ID.Add(ID15);
+			DebugLocation(53, 23);
+			ID22=(IToken)Match(input,ID,Follow._ID_in_modifier_declaration256);  
+			stream_ID.Add(ID22);
 
-			DebugLocation(43, 26);
-			char_literal16=(IToken)Match(input,33,Follow._33_in_modifier_declaration190);  
-			stream_33.Add(char_literal16);
+			DebugLocation(53, 26);
+			char_literal23=(IToken)Match(input,38,Follow._38_in_modifier_declaration258);  
+			stream_38.Add(char_literal23);
 
 
 
 			{
 			// AST REWRITE
-			// elements: Modifier, ID
+			// elements: ID, Modifier
 			// token labels: 
 			// rule labels: retval
 			// token list labels: 
@@ -590,18 +815,18 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 			RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.Tree:null);
 
 			root_0 = (object)adaptor.Nil();
-			// 43:30: -> ^( ModifierDefinition Modifier ID )
+			// 53:30: -> ^( ModifierDefinition Modifier ID )
 			{
-				DebugLocation(43, 33);
-				// /Users/abdullin/MessageContracts.g:43:33: ^( ModifierDefinition Modifier ID )
+				DebugLocation(53, 33);
+				// /Users/abdullin/MessageContracts.g:53:33: ^( ModifierDefinition Modifier ID )
 				{
 				object root_1 = (object)adaptor.Nil();
-				DebugLocation(43, 35);
+				DebugLocation(53, 35);
 				root_1 = (object)adaptor.BecomeRoot((object)adaptor.Create(ModifierDefinition, "ModifierDefinition"), root_1);
 
-				DebugLocation(43, 54);
+				DebugLocation(53, 54);
 				adaptor.AddChild(root_1, stream_Modifier.NextNode());
-				DebugLocation(43, 63);
+				DebugLocation(53, 63);
 				adaptor.AddChild(root_1, stream_ID.NextNode());
 
 				adaptor.AddChild(root_0, root_1);
@@ -629,11 +854,11 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("modifier_declaration", 4);
-			LeaveRule("modifier_declaration", 4);
+			TraceOut("modifier_declaration", 5);
+			LeaveRule("modifier_declaration", 5);
 			LeaveRule_modifier_declaration();
 	    }
-	 	DebugLocation(43, 65);
+	 	DebugLocation(53, 65);
 		} finally { DebugExitRule(GrammarFileName, "modifier_declaration"); }
 		return retval;
 
@@ -642,66 +867,59 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 
 
 	[Conditional("ANTLR_TRACE")]
-	protected virtual void EnterRule_entity_declaration() {}
+	protected virtual void EnterRule_extern_declaration() {}
 	[Conditional("ANTLR_TRACE")]
-	protected virtual void LeaveRule_entity_declaration() {}
+	protected virtual void LeaveRule_extern_declaration() {}
 
-	// $ANTLR start "entity_declaration"
-	// /Users/abdullin/MessageContracts.g:46:1: entity_declaration : ENTITY ID block ';' -> ^( EntityDefinition ID block ) ;
-	[GrammarRule("entity_declaration")]
-	private AstParserRuleReturnScope<object, IToken> entity_declaration()
+	// $ANTLR start "extern_declaration"
+	// /Users/abdullin/MessageContracts.g:54:1: extern_declaration : EXTERN STRING ';' -> ^( ExternToken STRING ) ;
+	[GrammarRule("extern_declaration")]
+	private AstParserRuleReturnScope<object, IToken> extern_declaration()
 	{
-		EnterRule_entity_declaration();
-		EnterRule("entity_declaration", 5);
-		TraceIn("entity_declaration", 5);
+		EnterRule_extern_declaration();
+		EnterRule("extern_declaration", 6);
+		TraceIn("extern_declaration", 6);
 	    AstParserRuleReturnScope<object, IToken> retval = new AstParserRuleReturnScope<object, IToken>();
 	    retval.Start = (IToken)input.LT(1);
 
 	    object root_0 = default(object);
 
-	    IToken ENTITY17 = default(IToken);
-	    IToken ID18 = default(IToken);
-	    IToken char_literal20 = default(IToken);
-	    AstParserRuleReturnScope<object, IToken> block19 = default(AstParserRuleReturnScope<object, IToken>);
+	    IToken EXTERN24 = default(IToken);
+	    IToken STRING25 = default(IToken);
+	    IToken char_literal26 = default(IToken);
 
-	    object ENTITY17_tree = default(object);
-	    object ID18_tree = default(object);
-	    object char_literal20_tree = default(object);
-	    RewriteRuleITokenStream stream_ID=new RewriteRuleITokenStream(adaptor,"token ID");
-	    RewriteRuleITokenStream stream_33=new RewriteRuleITokenStream(adaptor,"token 33");
-	    RewriteRuleITokenStream stream_ENTITY=new RewriteRuleITokenStream(adaptor,"token ENTITY");
-	    RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
-		try { DebugEnterRule(GrammarFileName, "entity_declaration");
-		DebugLocation(46, 54);
+	    object EXTERN24_tree = default(object);
+	    object STRING25_tree = default(object);
+	    object char_literal26_tree = default(object);
+	    RewriteRuleITokenStream stream_EXTERN=new RewriteRuleITokenStream(adaptor,"token EXTERN");
+	    RewriteRuleITokenStream stream_STRING=new RewriteRuleITokenStream(adaptor,"token STRING");
+	    RewriteRuleITokenStream stream_38=new RewriteRuleITokenStream(adaptor,"token 38");
+
+		try { DebugEnterRule(GrammarFileName, "extern_declaration");
+		DebugLocation(54, 48);
 		try
 		{
-			// /Users/abdullin/MessageContracts.g:47:2: ( ENTITY ID block ';' -> ^( EntityDefinition ID block ) )
+			// /Users/abdullin/MessageContracts.g:55:5: ( EXTERN STRING ';' -> ^( ExternToken STRING ) )
 			DebugEnterAlt(1);
-			// /Users/abdullin/MessageContracts.g:47:4: ENTITY ID block ';'
+			// /Users/abdullin/MessageContracts.g:55:7: EXTERN STRING ';'
 			{
-			DebugLocation(47, 4);
-			ENTITY17=(IToken)Match(input,ENTITY,Follow._ENTITY_in_entity_declaration215);  
-			stream_ENTITY.Add(ENTITY17);
+			DebugLocation(55, 7);
+			EXTERN24=(IToken)Match(input,EXTERN,Follow._EXTERN_in_extern_declaration279);  
+			stream_EXTERN.Add(EXTERN24);
 
-			DebugLocation(47, 11);
-			ID18=(IToken)Match(input,ID,Follow._ID_in_entity_declaration217);  
-			stream_ID.Add(ID18);
+			DebugLocation(55, 14);
+			STRING25=(IToken)Match(input,STRING,Follow._STRING_in_extern_declaration281);  
+			stream_STRING.Add(STRING25);
 
-			DebugLocation(47, 14);
-			PushFollow(Follow._block_in_entity_declaration219);
-			block19=block();
-			PopFollow();
-
-			stream_block.Add(block19.Tree);
-			DebugLocation(47, 20);
-			char_literal20=(IToken)Match(input,33,Follow._33_in_entity_declaration221);  
-			stream_33.Add(char_literal20);
+			DebugLocation(55, 21);
+			char_literal26=(IToken)Match(input,38,Follow._38_in_extern_declaration283);  
+			stream_38.Add(char_literal26);
 
 
 
 			{
 			// AST REWRITE
-			// elements: ID, block
+			// elements: STRING
 			// token labels: 
 			// rule labels: retval
 			// token list labels: 
@@ -711,19 +929,17 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 			RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.Tree:null);
 
 			root_0 = (object)adaptor.Nil();
-			// 47:24: -> ^( EntityDefinition ID block )
+			// 55:25: -> ^( ExternToken STRING )
 			{
-				DebugLocation(47, 27);
-				// /Users/abdullin/MessageContracts.g:47:27: ^( EntityDefinition ID block )
+				DebugLocation(55, 28);
+				// /Users/abdullin/MessageContracts.g:55:28: ^( ExternToken STRING )
 				{
 				object root_1 = (object)adaptor.Nil();
-				DebugLocation(47, 29);
-				root_1 = (object)adaptor.BecomeRoot((object)adaptor.Create(EntityDefinition, "EntityDefinition"), root_1);
+				DebugLocation(55, 30);
+				root_1 = (object)adaptor.BecomeRoot((object)adaptor.Create(ExternToken, "ExternToken"), root_1);
 
-				DebugLocation(47, 46);
-				adaptor.AddChild(root_1, stream_ID.NextNode());
-				DebugLocation(47, 49);
-				adaptor.AddChild(root_1, stream_block.NextTree());
+				DebugLocation(55, 42);
+				adaptor.AddChild(root_1, stream_STRING.NextNode());
 
 				adaptor.AddChild(root_0, root_1);
 				}
@@ -750,11 +966,192 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("entity_declaration", 5);
-			LeaveRule("entity_declaration", 5);
+			TraceOut("extern_declaration", 6);
+			LeaveRule("extern_declaration", 6);
+			LeaveRule_extern_declaration();
+	    }
+	 	DebugLocation(55, 48);
+		} finally { DebugExitRule(GrammarFileName, "extern_declaration"); }
+		return retval;
+
+	}
+	// $ANTLR end "extern_declaration"
+
+
+	[Conditional("ANTLR_TRACE")]
+	protected virtual void EnterRule_entity_declaration() {}
+	[Conditional("ANTLR_TRACE")]
+	protected virtual void LeaveRule_entity_declaration() {}
+
+	// $ANTLR start "entity_declaration"
+	// /Users/abdullin/MessageContracts.g:57:1: entity_declaration : lc= INTERFACE ID block '{' ( declaration )* '}' -> ^( EntityDefinition[$lc,\"Block\"] ID block ( declaration )* ) ;
+	[GrammarRule("entity_declaration")]
+	private AstParserRuleReturnScope<object, IToken> entity_declaration()
+	{
+		EnterRule_entity_declaration();
+		EnterRule("entity_declaration", 7);
+		TraceIn("entity_declaration", 7);
+	    AstParserRuleReturnScope<object, IToken> retval = new AstParserRuleReturnScope<object, IToken>();
+	    retval.Start = (IToken)input.LT(1);
+
+	    object root_0 = default(object);
+
+	    IToken lc = default(IToken);
+	    IToken ID27 = default(IToken);
+	    IToken char_literal29 = default(IToken);
+	    IToken char_literal31 = default(IToken);
+	    AstParserRuleReturnScope<object, IToken> block28 = default(AstParserRuleReturnScope<object, IToken>);
+	    AstParserRuleReturnScope<object, IToken> declaration30 = default(AstParserRuleReturnScope<object, IToken>);
+
+	    object lc_tree = default(object);
+	    object ID27_tree = default(object);
+	    object char_literal29_tree = default(object);
+	    object char_literal31_tree = default(object);
+	    RewriteRuleITokenStream stream_INTERFACE=new RewriteRuleITokenStream(adaptor,"token INTERFACE");
+	    RewriteRuleITokenStream stream_41=new RewriteRuleITokenStream(adaptor,"token 41");
+	    RewriteRuleITokenStream stream_40=new RewriteRuleITokenStream(adaptor,"token 40");
+	    RewriteRuleITokenStream stream_ID=new RewriteRuleITokenStream(adaptor,"token ID");
+	    RewriteRuleSubtreeStream stream_declaration=new RewriteRuleSubtreeStream(adaptor,"rule declaration");
+	    RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
+		try { DebugEnterRule(GrammarFileName, "entity_declaration");
+		DebugLocation(57, 58);
+		try
+		{
+			// /Users/abdullin/MessageContracts.g:58:2: (lc= INTERFACE ID block '{' ( declaration )* '}' -> ^( EntityDefinition[$lc,\"Block\"] ID block ( declaration )* ) )
+			DebugEnterAlt(1);
+			// /Users/abdullin/MessageContracts.g:58:4: lc= INTERFACE ID block '{' ( declaration )* '}'
+			{
+			DebugLocation(58, 6);
+			lc=(IToken)Match(input,INTERFACE,Follow._INTERFACE_in_entity_declaration304);  
+			stream_INTERFACE.Add(lc);
+
+			DebugLocation(58, 18);
+			ID27=(IToken)Match(input,ID,Follow._ID_in_entity_declaration306);  
+			stream_ID.Add(ID27);
+
+			DebugLocation(58, 21);
+			PushFollow(Follow._block_in_entity_declaration308);
+			block28=block();
+			PopFollow();
+
+			stream_block.Add(block28.Tree);
+			DebugLocation(58, 27);
+			char_literal29=(IToken)Match(input,40,Follow._40_in_entity_declaration310);  
+			stream_40.Add(char_literal29);
+
+			DebugLocation(58, 31);
+			// /Users/abdullin/MessageContracts.g:58:31: ( declaration )*
+			try { DebugEnterSubRule(4);
+			while (true)
+			{
+				int alt4=2;
+				try { DebugEnterDecision(4, decisionCanBacktrack[4]);
+				int LA4_0 = input.LA(1);
+
+				if ((LA4_0==CONST||LA4_0==EXTERN||LA4_0==ID||LA4_0==INTERFACE||LA4_0==NAMESPACE||LA4_0==USING))
+				{
+					alt4 = 1;
+				}
+
+
+				} finally { DebugExitDecision(4); }
+				switch ( alt4 )
+				{
+				case 1:
+					DebugEnterAlt(1);
+					// /Users/abdullin/MessageContracts.g:58:31: declaration
+					{
+					DebugLocation(58, 31);
+					PushFollow(Follow._declaration_in_entity_declaration312);
+					declaration30=declaration();
+					PopFollow();
+
+					stream_declaration.Add(declaration30.Tree);
+
+					}
+					break;
+
+				default:
+					goto loop4;
+				}
+			}
+
+			loop4:
+				;
+
+			} finally { DebugExitSubRule(4); }
+
+			DebugLocation(58, 44);
+			char_literal31=(IToken)Match(input,41,Follow._41_in_entity_declaration315);  
+			stream_41.Add(char_literal31);
+
+
+
+			{
+			// AST REWRITE
+			// elements: block, declaration, ID
+			// token labels: 
+			// rule labels: retval
+			// token list labels: 
+			// rule list labels: 
+			// wildcard labels: 
+			retval.Tree = root_0;
+			RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.Tree:null);
+
+			root_0 = (object)adaptor.Nil();
+			// 59:2: -> ^( EntityDefinition[$lc,\"Block\"] ID block ( declaration )* )
+			{
+				DebugLocation(59, 5);
+				// /Users/abdullin/MessageContracts.g:59:5: ^( EntityDefinition[$lc,\"Block\"] ID block ( declaration )* )
+				{
+				object root_1 = (object)adaptor.Nil();
+				DebugLocation(59, 7);
+				root_1 = (object)adaptor.BecomeRoot((object)adaptor.Create(EntityDefinition, lc, "Block"), root_1);
+
+				DebugLocation(59, 37);
+				adaptor.AddChild(root_1, stream_ID.NextNode());
+				DebugLocation(59, 40);
+				adaptor.AddChild(root_1, stream_block.NextTree());
+				DebugLocation(59, 46);
+				// /Users/abdullin/MessageContracts.g:59:46: ( declaration )*
+				while ( stream_declaration.HasNext )
+				{
+					DebugLocation(59, 46);
+					adaptor.AddChild(root_1, stream_declaration.NextTree());
+
+				}
+				stream_declaration.Reset();
+
+				adaptor.AddChild(root_0, root_1);
+				}
+
+			}
+
+			retval.Tree = root_0;
+			}
+
+			}
+
+			retval.Stop = (IToken)input.LT(-1);
+
+			retval.Tree = (object)adaptor.RulePostProcessing(root_0);
+			adaptor.SetTokenBoundaries(retval.Tree, retval.Start, retval.Stop);
+
+		}
+		catch (RecognitionException re)
+		{
+			ReportError(re);
+			Recover(input,re);
+		retval.Tree = (object)adaptor.ErrorNode(input, retval.Start, input.LT(-1), re);
+
+		}
+		finally
+		{
+			TraceOut("entity_declaration", 7);
+			LeaveRule("entity_declaration", 7);
 			LeaveRule_entity_declaration();
 	    }
-	 	DebugLocation(47, 54);
+	 	DebugLocation(59, 58);
 		} finally { DebugExitRule(GrammarFileName, "entity_declaration"); }
 		return retval;
 
@@ -768,79 +1165,79 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 	protected virtual void LeaveRule_type_declaration() {}
 
 	// $ANTLR start "type_declaration"
-	// /Users/abdullin/MessageContracts.g:49:1: type_declaration : ID ( Modifier )? block -> ^( TypeToken ID block ( Modifier )? ) ;
+	// /Users/abdullin/MessageContracts.g:61:1: type_declaration : ID ( Modifier )? block -> ^( TypeToken ID block ( Modifier )? ) ;
 	[GrammarRule("type_declaration")]
 	private AstParserRuleReturnScope<object, IToken> type_declaration()
 	{
 		EnterRule_type_declaration();
-		EnterRule("type_declaration", 6);
-		TraceIn("type_declaration", 6);
+		EnterRule("type_declaration", 8);
+		TraceIn("type_declaration", 8);
 	    AstParserRuleReturnScope<object, IToken> retval = new AstParserRuleReturnScope<object, IToken>();
 	    retval.Start = (IToken)input.LT(1);
 
 	    object root_0 = default(object);
 
-	    IToken ID21 = default(IToken);
-	    IToken Modifier22 = default(IToken);
-	    AstParserRuleReturnScope<object, IToken> block23 = default(AstParserRuleReturnScope<object, IToken>);
+	    IToken ID32 = default(IToken);
+	    IToken Modifier33 = default(IToken);
+	    AstParserRuleReturnScope<object, IToken> block34 = default(AstParserRuleReturnScope<object, IToken>);
 
-	    object ID21_tree = default(object);
-	    object Modifier22_tree = default(object);
+	    object ID32_tree = default(object);
+	    object Modifier33_tree = default(object);
 	    RewriteRuleITokenStream stream_ID=new RewriteRuleITokenStream(adaptor,"token ID");
 	    RewriteRuleITokenStream stream_Modifier=new RewriteRuleITokenStream(adaptor,"token Modifier");
 	    RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
 		try { DebugEnterRule(GrammarFileName, "type_declaration");
-		DebugLocation(49, 56);
+		DebugLocation(61, 56);
 		try
 		{
-			// /Users/abdullin/MessageContracts.g:50:2: ( ID ( Modifier )? block -> ^( TypeToken ID block ( Modifier )? ) )
+			// /Users/abdullin/MessageContracts.g:62:2: ( ID ( Modifier )? block -> ^( TypeToken ID block ( Modifier )? ) )
 			DebugEnterAlt(1);
-			// /Users/abdullin/MessageContracts.g:50:4: ID ( Modifier )? block
+			// /Users/abdullin/MessageContracts.g:62:4: ID ( Modifier )? block
 			{
-			DebugLocation(50, 4);
-			ID21=(IToken)Match(input,ID,Follow._ID_in_type_declaration241);  
-			stream_ID.Add(ID21);
+			DebugLocation(62, 4);
+			ID32=(IToken)Match(input,ID,Follow._ID_in_type_declaration341);  
+			stream_ID.Add(ID32);
 
-			DebugLocation(50, 7);
-			// /Users/abdullin/MessageContracts.g:50:7: ( Modifier )?
-			int alt3=2;
-			try { DebugEnterSubRule(3);
-			try { DebugEnterDecision(3, decisionCanBacktrack[3]);
-			int LA3_0 = input.LA(1);
+			DebugLocation(62, 7);
+			// /Users/abdullin/MessageContracts.g:62:7: ( Modifier )?
+			int alt5=2;
+			try { DebugEnterSubRule(5);
+			try { DebugEnterDecision(5, decisionCanBacktrack[5]);
+			int LA5_0 = input.LA(1);
 
-			if ((LA3_0==Modifier))
+			if ((LA5_0==Modifier))
 			{
-				alt3 = 1;
+				alt5 = 1;
 			}
-			} finally { DebugExitDecision(3); }
-			switch (alt3)
+			} finally { DebugExitDecision(5); }
+			switch (alt5)
 			{
 			case 1:
 				DebugEnterAlt(1);
-				// /Users/abdullin/MessageContracts.g:50:7: Modifier
+				// /Users/abdullin/MessageContracts.g:62:7: Modifier
 				{
-				DebugLocation(50, 7);
-				Modifier22=(IToken)Match(input,Modifier,Follow._Modifier_in_type_declaration243);  
-				stream_Modifier.Add(Modifier22);
+				DebugLocation(62, 7);
+				Modifier33=(IToken)Match(input,Modifier,Follow._Modifier_in_type_declaration343);  
+				stream_Modifier.Add(Modifier33);
 
 
 				}
 				break;
 
 			}
-			} finally { DebugExitSubRule(3); }
+			} finally { DebugExitSubRule(5); }
 
-			DebugLocation(50, 17);
-			PushFollow(Follow._block_in_type_declaration246);
-			block23=block();
+			DebugLocation(62, 17);
+			PushFollow(Follow._block_in_type_declaration346);
+			block34=block();
 			PopFollow();
 
-			stream_block.Add(block23.Tree);
+			stream_block.Add(block34.Tree);
 
 
 			{
 			// AST REWRITE
-			// elements: ID, block, Modifier
+			// elements: block, ID, Modifier
 			// token labels: 
 			// rule labels: retval
 			// token list labels: 
@@ -850,24 +1247,24 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 			RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.Tree:null);
 
 			root_0 = (object)adaptor.Nil();
-			// 50:23: -> ^( TypeToken ID block ( Modifier )? )
+			// 62:23: -> ^( TypeToken ID block ( Modifier )? )
 			{
-				DebugLocation(50, 26);
-				// /Users/abdullin/MessageContracts.g:50:26: ^( TypeToken ID block ( Modifier )? )
+				DebugLocation(62, 26);
+				// /Users/abdullin/MessageContracts.g:62:26: ^( TypeToken ID block ( Modifier )? )
 				{
 				object root_1 = (object)adaptor.Nil();
-				DebugLocation(50, 28);
+				DebugLocation(62, 28);
 				root_1 = (object)adaptor.BecomeRoot((object)adaptor.Create(TypeToken, "TypeToken"), root_1);
 
-				DebugLocation(50, 38);
+				DebugLocation(62, 38);
 				adaptor.AddChild(root_1, stream_ID.NextNode());
-				DebugLocation(50, 41);
+				DebugLocation(62, 41);
 				adaptor.AddChild(root_1, stream_block.NextTree());
-				DebugLocation(50, 47);
-				// /Users/abdullin/MessageContracts.g:50:47: ( Modifier )?
+				DebugLocation(62, 47);
+				// /Users/abdullin/MessageContracts.g:62:47: ( Modifier )?
 				if (stream_Modifier.HasNext)
 				{
-					DebugLocation(50, 47);
+					DebugLocation(62, 47);
 					adaptor.AddChild(root_1, stream_Modifier.NextNode());
 
 				}
@@ -898,11 +1295,11 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("type_declaration", 6);
-			LeaveRule("type_declaration", 6);
+			TraceOut("type_declaration", 8);
+			LeaveRule("type_declaration", 8);
 			LeaveRule_type_declaration();
 	    }
-	 	DebugLocation(50, 56);
+	 	DebugLocation(62, 56);
 		} finally { DebugExitRule(GrammarFileName, "type_declaration"); }
 		return retval;
 
@@ -916,75 +1313,75 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 	protected virtual void LeaveRule_member() {}
 
 	// $ANTLR start "member"
-	// /Users/abdullin/MessageContracts.g:52:1: member : ( ID ID -> ^( MemberToken ID ID ) | ID -> ^( FragmentReference ID ) );
+	// /Users/abdullin/MessageContracts.g:64:1: member : ( ID ID -> ^( MemberToken ID ID ) | ID -> ^( FragmentReference ID ) );
 	[GrammarRule("member")]
 	private AstParserRuleReturnScope<object, IToken> member()
 	{
 		EnterRule_member();
-		EnterRule("member", 7);
-		TraceIn("member", 7);
+		EnterRule("member", 9);
+		TraceIn("member", 9);
 	    AstParserRuleReturnScope<object, IToken> retval = new AstParserRuleReturnScope<object, IToken>();
 	    retval.Start = (IToken)input.LT(1);
 
 	    object root_0 = default(object);
 
-	    IToken ID24 = default(IToken);
-	    IToken ID25 = default(IToken);
-	    IToken ID26 = default(IToken);
+	    IToken ID35 = default(IToken);
+	    IToken ID36 = default(IToken);
+	    IToken ID37 = default(IToken);
 
-	    object ID24_tree = default(object);
-	    object ID25_tree = default(object);
-	    object ID26_tree = default(object);
+	    object ID35_tree = default(object);
+	    object ID36_tree = default(object);
+	    object ID37_tree = default(object);
 	    RewriteRuleITokenStream stream_ID=new RewriteRuleITokenStream(adaptor,"token ID");
 
 		try { DebugEnterRule(GrammarFileName, "member");
-		DebugLocation(52, 1);
+		DebugLocation(64, 1);
 		try
 		{
-			// /Users/abdullin/MessageContracts.g:53:2: ( ID ID -> ^( MemberToken ID ID ) | ID -> ^( FragmentReference ID ) )
-			int alt4=2;
-			try { DebugEnterDecision(4, decisionCanBacktrack[4]);
-			int LA4_0 = input.LA(1);
+			// /Users/abdullin/MessageContracts.g:65:2: ( ID ID -> ^( MemberToken ID ID ) | ID -> ^( FragmentReference ID ) )
+			int alt6=2;
+			try { DebugEnterDecision(6, decisionCanBacktrack[6]);
+			int LA6_0 = input.LA(1);
 
-			if ((LA4_0==ID))
+			if ((LA6_0==ID))
 			{
-				int LA4_1 = input.LA(2);
+				int LA6_1 = input.LA(2);
 
-				if ((LA4_1==ID))
+				if ((LA6_1==ID))
 				{
-					alt4 = 1;
+					alt6 = 1;
 				}
-				else if (((LA4_1>=31 && LA4_1<=32)))
+				else if (((LA6_1>=35 && LA6_1<=36)))
 				{
-					alt4 = 2;
+					alt6 = 2;
 				}
 				else
 				{
-					NoViableAltException nvae = new NoViableAltException("", 4, 1, input);
+					NoViableAltException nvae = new NoViableAltException("", 6, 1, input);
 					DebugRecognitionException(nvae);
 					throw nvae;
 				}
 			}
 			else
 			{
-				NoViableAltException nvae = new NoViableAltException("", 4, 0, input);
+				NoViableAltException nvae = new NoViableAltException("", 6, 0, input);
 				DebugRecognitionException(nvae);
 				throw nvae;
 			}
-			} finally { DebugExitDecision(4); }
-			switch (alt4)
+			} finally { DebugExitDecision(6); }
+			switch (alt6)
 			{
 			case 1:
 				DebugEnterAlt(1);
-				// /Users/abdullin/MessageContracts.g:53:4: ID ID
+				// /Users/abdullin/MessageContracts.g:65:4: ID ID
 				{
-				DebugLocation(53, 4);
-				ID24=(IToken)Match(input,ID,Follow._ID_in_member271);  
-				stream_ID.Add(ID24);
+				DebugLocation(65, 4);
+				ID35=(IToken)Match(input,ID,Follow._ID_in_member371);  
+				stream_ID.Add(ID35);
 
-				DebugLocation(53, 7);
-				ID25=(IToken)Match(input,ID,Follow._ID_in_member273);  
-				stream_ID.Add(ID25);
+				DebugLocation(65, 7);
+				ID36=(IToken)Match(input,ID,Follow._ID_in_member373);  
+				stream_ID.Add(ID36);
 
 
 
@@ -1000,18 +1397,18 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 				RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.Tree:null);
 
 				root_0 = (object)adaptor.Nil();
-				// 53:10: -> ^( MemberToken ID ID )
+				// 65:10: -> ^( MemberToken ID ID )
 				{
-					DebugLocation(53, 13);
-					// /Users/abdullin/MessageContracts.g:53:13: ^( MemberToken ID ID )
+					DebugLocation(65, 13);
+					// /Users/abdullin/MessageContracts.g:65:13: ^( MemberToken ID ID )
 					{
 					object root_1 = (object)adaptor.Nil();
-					DebugLocation(53, 15);
+					DebugLocation(65, 15);
 					root_1 = (object)adaptor.BecomeRoot((object)adaptor.Create(MemberToken, "MemberToken"), root_1);
 
-					DebugLocation(53, 27);
+					DebugLocation(65, 27);
 					adaptor.AddChild(root_1, stream_ID.NextNode());
-					DebugLocation(53, 30);
+					DebugLocation(65, 30);
 					adaptor.AddChild(root_1, stream_ID.NextNode());
 
 					adaptor.AddChild(root_0, root_1);
@@ -1026,11 +1423,11 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 				break;
 			case 2:
 				DebugEnterAlt(2);
-				// /Users/abdullin/MessageContracts.g:54:4: ID
+				// /Users/abdullin/MessageContracts.g:66:4: ID
 				{
-				DebugLocation(54, 4);
-				ID26=(IToken)Match(input,ID,Follow._ID_in_member288);  
-				stream_ID.Add(ID26);
+				DebugLocation(66, 4);
+				ID37=(IToken)Match(input,ID,Follow._ID_in_member388);  
+				stream_ID.Add(ID37);
 
 
 
@@ -1046,16 +1443,16 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 				RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.Tree:null);
 
 				root_0 = (object)adaptor.Nil();
-				// 54:7: -> ^( FragmentReference ID )
+				// 66:7: -> ^( FragmentReference ID )
 				{
-					DebugLocation(54, 10);
-					// /Users/abdullin/MessageContracts.g:54:10: ^( FragmentReference ID )
+					DebugLocation(66, 10);
+					// /Users/abdullin/MessageContracts.g:66:10: ^( FragmentReference ID )
 					{
 					object root_1 = (object)adaptor.Nil();
-					DebugLocation(54, 12);
+					DebugLocation(66, 12);
 					root_1 = (object)adaptor.BecomeRoot((object)adaptor.Create(FragmentReference, "FragmentReference"), root_1);
 
-					DebugLocation(54, 30);
+					DebugLocation(66, 30);
 					adaptor.AddChild(root_1, stream_ID.NextNode());
 
 					adaptor.AddChild(root_0, root_1);
@@ -1085,11 +1482,11 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("member", 7);
-			LeaveRule("member", 7);
+			TraceOut("member", 9);
+			LeaveRule("member", 9);
 			LeaveRule_member();
 	    }
-	 	DebugLocation(55, 1);
+	 	DebugLocation(67, 1);
 		} finally { DebugExitRule(GrammarFileName, "member"); }
 		return retval;
 
@@ -1103,162 +1500,162 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 	protected virtual void LeaveRule_block() {}
 
 	// $ANTLR start "block"
-	// /Users/abdullin/MessageContracts.g:58:1: block : lc= '(' ( member ( ',' member )* )? ')' ( representation )? -> ^( BlockToken[$lc,\"Block\"] ( member )* ( representation )? ) ;
+	// /Users/abdullin/MessageContracts.g:70:1: block : lc= '(' ( member ( ',' member )* )? ')' ( representation )? -> ^( BlockToken[$lc,\"Block\"] ( member )* ( representation )? ) ;
 	[GrammarRule("block")]
 	private AstParserRuleReturnScope<object, IToken> block()
 	{
 		EnterRule_block();
-		EnterRule("block", 8);
-		TraceIn("block", 8);
+		EnterRule("block", 10);
+		TraceIn("block", 10);
 	    AstParserRuleReturnScope<object, IToken> retval = new AstParserRuleReturnScope<object, IToken>();
 	    retval.Start = (IToken)input.LT(1);
 
 	    object root_0 = default(object);
 
 	    IToken lc = default(IToken);
-	    IToken char_literal28 = default(IToken);
-	    IToken char_literal30 = default(IToken);
-	    AstParserRuleReturnScope<object, IToken> member27 = default(AstParserRuleReturnScope<object, IToken>);
-	    AstParserRuleReturnScope<object, IToken> member29 = default(AstParserRuleReturnScope<object, IToken>);
-	    AstParserRuleReturnScope<object, IToken> representation31 = default(AstParserRuleReturnScope<object, IToken>);
+	    IToken char_literal39 = default(IToken);
+	    IToken char_literal41 = default(IToken);
+	    AstParserRuleReturnScope<object, IToken> member38 = default(AstParserRuleReturnScope<object, IToken>);
+	    AstParserRuleReturnScope<object, IToken> member40 = default(AstParserRuleReturnScope<object, IToken>);
+	    AstParserRuleReturnScope<object, IToken> representation42 = default(AstParserRuleReturnScope<object, IToken>);
 
 	    object lc_tree = default(object);
-	    object char_literal28_tree = default(object);
-	    object char_literal30_tree = default(object);
-	    RewriteRuleITokenStream stream_30=new RewriteRuleITokenStream(adaptor,"token 30");
-	    RewriteRuleITokenStream stream_32=new RewriteRuleITokenStream(adaptor,"token 32");
-	    RewriteRuleITokenStream stream_31=new RewriteRuleITokenStream(adaptor,"token 31");
+	    object char_literal39_tree = default(object);
+	    object char_literal41_tree = default(object);
+	    RewriteRuleITokenStream stream_35=new RewriteRuleITokenStream(adaptor,"token 35");
+	    RewriteRuleITokenStream stream_36=new RewriteRuleITokenStream(adaptor,"token 36");
+	    RewriteRuleITokenStream stream_34=new RewriteRuleITokenStream(adaptor,"token 34");
 	    RewriteRuleSubtreeStream stream_member=new RewriteRuleSubtreeStream(adaptor,"rule member");
 	    RewriteRuleSubtreeStream stream_representation=new RewriteRuleSubtreeStream(adaptor,"rule representation");
 		try { DebugEnterRule(GrammarFileName, "block");
-		DebugLocation(58, 4);
+		DebugLocation(70, 4);
 		try
 		{
-			// /Users/abdullin/MessageContracts.g:59:5: (lc= '(' ( member ( ',' member )* )? ')' ( representation )? -> ^( BlockToken[$lc,\"Block\"] ( member )* ( representation )? ) )
+			// /Users/abdullin/MessageContracts.g:71:5: (lc= '(' ( member ( ',' member )* )? ')' ( representation )? -> ^( BlockToken[$lc,\"Block\"] ( member )* ( representation )? ) )
 			DebugEnterAlt(1);
-			// /Users/abdullin/MessageContracts.g:59:9: lc= '(' ( member ( ',' member )* )? ')' ( representation )?
+			// /Users/abdullin/MessageContracts.g:71:9: lc= '(' ( member ( ',' member )* )? ')' ( representation )?
 			{
-			DebugLocation(59, 11);
-			lc=(IToken)Match(input,30,Follow._30_in_block316);  
-			stream_30.Add(lc);
+			DebugLocation(71, 11);
+			lc=(IToken)Match(input,34,Follow._34_in_block416);  
+			stream_34.Add(lc);
 
-			DebugLocation(60, 13);
-			// /Users/abdullin/MessageContracts.g:60:13: ( member ( ',' member )* )?
-			int alt6=2;
-			try { DebugEnterSubRule(6);
-			try { DebugEnterDecision(6, decisionCanBacktrack[6]);
-			int LA6_0 = input.LA(1);
+			DebugLocation(72, 13);
+			// /Users/abdullin/MessageContracts.g:72:13: ( member ( ',' member )* )?
+			int alt8=2;
+			try { DebugEnterSubRule(8);
+			try { DebugEnterDecision(8, decisionCanBacktrack[8]);
+			int LA8_0 = input.LA(1);
 
-			if ((LA6_0==ID))
+			if ((LA8_0==ID))
 			{
-				alt6 = 1;
+				alt8 = 1;
 			}
-			} finally { DebugExitDecision(6); }
-			switch (alt6)
+			} finally { DebugExitDecision(8); }
+			switch (alt8)
 			{
 			case 1:
 				DebugEnterAlt(1);
-				// /Users/abdullin/MessageContracts.g:60:14: member ( ',' member )*
+				// /Users/abdullin/MessageContracts.g:72:14: member ( ',' member )*
 				{
-				DebugLocation(60, 14);
-				PushFollow(Follow._member_in_block331);
-				member27=member();
+				DebugLocation(72, 14);
+				PushFollow(Follow._member_in_block431);
+				member38=member();
 				PopFollow();
 
-				stream_member.Add(member27.Tree);
-				DebugLocation(60, 21);
-				// /Users/abdullin/MessageContracts.g:60:21: ( ',' member )*
-				try { DebugEnterSubRule(5);
+				stream_member.Add(member38.Tree);
+				DebugLocation(72, 21);
+				// /Users/abdullin/MessageContracts.g:72:21: ( ',' member )*
+				try { DebugEnterSubRule(7);
 				while (true)
 				{
-					int alt5=2;
-					try { DebugEnterDecision(5, decisionCanBacktrack[5]);
-					int LA5_0 = input.LA(1);
+					int alt7=2;
+					try { DebugEnterDecision(7, decisionCanBacktrack[7]);
+					int LA7_0 = input.LA(1);
 
-					if ((LA5_0==32))
+					if ((LA7_0==36))
 					{
-						alt5 = 1;
+						alt7 = 1;
 					}
 
 
-					} finally { DebugExitDecision(5); }
-					switch ( alt5 )
+					} finally { DebugExitDecision(7); }
+					switch ( alt7 )
 					{
 					case 1:
 						DebugEnterAlt(1);
-						// /Users/abdullin/MessageContracts.g:60:22: ',' member
+						// /Users/abdullin/MessageContracts.g:72:22: ',' member
 						{
-						DebugLocation(60, 22);
-						char_literal28=(IToken)Match(input,32,Follow._32_in_block334);  
-						stream_32.Add(char_literal28);
+						DebugLocation(72, 22);
+						char_literal39=(IToken)Match(input,36,Follow._36_in_block434);  
+						stream_36.Add(char_literal39);
 
-						DebugLocation(60, 26);
-						PushFollow(Follow._member_in_block336);
-						member29=member();
+						DebugLocation(72, 26);
+						PushFollow(Follow._member_in_block436);
+						member40=member();
 						PopFollow();
 
-						stream_member.Add(member29.Tree);
+						stream_member.Add(member40.Tree);
 
 						}
 						break;
 
 					default:
-						goto loop5;
+						goto loop7;
 					}
 				}
 
-				loop5:
+				loop7:
 					;
 
-				} finally { DebugExitSubRule(5); }
+				} finally { DebugExitSubRule(7); }
 
 
 				}
 				break;
 
 			}
-			} finally { DebugExitSubRule(6); }
+			} finally { DebugExitSubRule(8); }
 
-			DebugLocation(61, 9);
-			char_literal30=(IToken)Match(input,31,Follow._31_in_block350);  
-			stream_31.Add(char_literal30);
+			DebugLocation(73, 9);
+			char_literal41=(IToken)Match(input,35,Follow._35_in_block450);  
+			stream_35.Add(char_literal41);
 
-			DebugLocation(61, 13);
-			// /Users/abdullin/MessageContracts.g:61:13: ( representation )?
-			int alt7=2;
-			try { DebugEnterSubRule(7);
-			try { DebugEnterDecision(7, decisionCanBacktrack[7]);
-			int LA7_0 = input.LA(1);
+			DebugLocation(73, 13);
+			// /Users/abdullin/MessageContracts.g:73:13: ( representation )?
+			int alt9=2;
+			try { DebugEnterSubRule(9);
+			try { DebugEnterDecision(9, decisionCanBacktrack[9]);
+			int LA9_0 = input.LA(1);
 
-			if ((LA7_0==AS))
+			if ((LA9_0==EXPLICIT))
 			{
-				alt7 = 1;
+				alt9 = 1;
 			}
-			} finally { DebugExitDecision(7); }
-			switch (alt7)
+			} finally { DebugExitDecision(9); }
+			switch (alt9)
 			{
 			case 1:
 				DebugEnterAlt(1);
-				// /Users/abdullin/MessageContracts.g:61:13: representation
+				// /Users/abdullin/MessageContracts.g:73:13: representation
 				{
-				DebugLocation(61, 13);
-				PushFollow(Follow._representation_in_block352);
-				representation31=representation();
+				DebugLocation(73, 13);
+				PushFollow(Follow._representation_in_block452);
+				representation42=representation();
 				PopFollow();
 
-				stream_representation.Add(representation31.Tree);
+				stream_representation.Add(representation42.Tree);
 
 				}
 				break;
 
 			}
-			} finally { DebugExitSubRule(7); }
+			} finally { DebugExitSubRule(9); }
 
 
 
 			{
 			// AST REWRITE
-			// elements: representation, member
+			// elements: member, representation
 			// token labels: 
 			// rule labels: retval
 			// token list labels: 
@@ -1268,29 +1665,29 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 			RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.Tree:null);
 
 			root_0 = (object)adaptor.Nil();
-			// 62:9: -> ^( BlockToken[$lc,\"Block\"] ( member )* ( representation )? )
+			// 74:9: -> ^( BlockToken[$lc,\"Block\"] ( member )* ( representation )? )
 			{
-				DebugLocation(62, 12);
-				// /Users/abdullin/MessageContracts.g:62:12: ^( BlockToken[$lc,\"Block\"] ( member )* ( representation )? )
+				DebugLocation(74, 12);
+				// /Users/abdullin/MessageContracts.g:74:12: ^( BlockToken[$lc,\"Block\"] ( member )* ( representation )? )
 				{
 				object root_1 = (object)adaptor.Nil();
-				DebugLocation(62, 14);
+				DebugLocation(74, 14);
 				root_1 = (object)adaptor.BecomeRoot((object)adaptor.Create(BlockToken, lc, "Block"), root_1);
 
-				DebugLocation(62, 38);
-				// /Users/abdullin/MessageContracts.g:62:38: ( member )*
+				DebugLocation(74, 38);
+				// /Users/abdullin/MessageContracts.g:74:38: ( member )*
 				while ( stream_member.HasNext )
 				{
-					DebugLocation(62, 38);
+					DebugLocation(74, 38);
 					adaptor.AddChild(root_1, stream_member.NextTree());
 
 				}
 				stream_member.Reset();
-				DebugLocation(62, 46);
-				// /Users/abdullin/MessageContracts.g:62:46: ( representation )?
+				DebugLocation(74, 46);
+				// /Users/abdullin/MessageContracts.g:74:46: ( representation )?
 				if (stream_representation.HasNext)
 				{
-					DebugLocation(62, 46);
+					DebugLocation(74, 46);
 					adaptor.AddChild(root_1, stream_representation.NextTree());
 
 				}
@@ -1321,11 +1718,11 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("block", 8);
-			LeaveRule("block", 8);
+			TraceOut("block", 10);
+			LeaveRule("block", 10);
 			LeaveRule_block();
 	    }
-	 	DebugLocation(63, 4);
+	 	DebugLocation(75, 4);
 		} finally { DebugExitRule(GrammarFileName, "block"); }
 		return retval;
 
@@ -1339,41 +1736,41 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 	protected virtual void LeaveRule_representation() {}
 
 	// $ANTLR start "representation"
-	// /Users/abdullin/MessageContracts.g:65:1: representation : AS STRING -> ^( StringRepresentationToken STRING ) ;
+	// /Users/abdullin/MessageContracts.g:77:1: representation : EXPLICIT STRING -> ^( StringRepresentationToken STRING ) ;
 	[GrammarRule("representation")]
 	private AstParserRuleReturnScope<object, IToken> representation()
 	{
 		EnterRule_representation();
-		EnterRule("representation", 9);
-		TraceIn("representation", 9);
+		EnterRule("representation", 11);
+		TraceIn("representation", 11);
 	    AstParserRuleReturnScope<object, IToken> retval = new AstParserRuleReturnScope<object, IToken>();
 	    retval.Start = (IToken)input.LT(1);
 
 	    object root_0 = default(object);
 
-	    IToken AS32 = default(IToken);
-	    IToken STRING33 = default(IToken);
+	    IToken EXPLICIT43 = default(IToken);
+	    IToken STRING44 = default(IToken);
 
-	    object AS32_tree = default(object);
-	    object STRING33_tree = default(object);
-	    RewriteRuleITokenStream stream_AS=new RewriteRuleITokenStream(adaptor,"token AS");
+	    object EXPLICIT43_tree = default(object);
+	    object STRING44_tree = default(object);
+	    RewriteRuleITokenStream stream_EXPLICIT=new RewriteRuleITokenStream(adaptor,"token EXPLICIT");
 	    RewriteRuleITokenStream stream_STRING=new RewriteRuleITokenStream(adaptor,"token STRING");
 
 		try { DebugEnterRule(GrammarFileName, "representation");
-		DebugLocation(65, 51);
+		DebugLocation(77, 57);
 		try
 		{
-			// /Users/abdullin/MessageContracts.g:66:2: ( AS STRING -> ^( StringRepresentationToken STRING ) )
+			// /Users/abdullin/MessageContracts.g:78:2: ( EXPLICIT STRING -> ^( StringRepresentationToken STRING ) )
 			DebugEnterAlt(1);
-			// /Users/abdullin/MessageContracts.g:66:4: AS STRING
+			// /Users/abdullin/MessageContracts.g:78:4: EXPLICIT STRING
 			{
-			DebugLocation(66, 4);
-			AS32=(IToken)Match(input,AS,Follow._AS_in_representation396);  
-			stream_AS.Add(AS32);
+			DebugLocation(78, 4);
+			EXPLICIT43=(IToken)Match(input,EXPLICIT,Follow._EXPLICIT_in_representation496);  
+			stream_EXPLICIT.Add(EXPLICIT43);
 
-			DebugLocation(66, 7);
-			STRING33=(IToken)Match(input,STRING,Follow._STRING_in_representation398);  
-			stream_STRING.Add(STRING33);
+			DebugLocation(78, 13);
+			STRING44=(IToken)Match(input,STRING,Follow._STRING_in_representation498);  
+			stream_STRING.Add(STRING44);
 
 
 
@@ -1389,16 +1786,16 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 			RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.Tree:null);
 
 			root_0 = (object)adaptor.Nil();
-			// 66:14: -> ^( StringRepresentationToken STRING )
+			// 78:20: -> ^( StringRepresentationToken STRING )
 			{
-				DebugLocation(66, 17);
-				// /Users/abdullin/MessageContracts.g:66:17: ^( StringRepresentationToken STRING )
+				DebugLocation(78, 23);
+				// /Users/abdullin/MessageContracts.g:78:23: ^( StringRepresentationToken STRING )
 				{
 				object root_1 = (object)adaptor.Nil();
-				DebugLocation(66, 19);
+				DebugLocation(78, 25);
 				root_1 = (object)adaptor.BecomeRoot((object)adaptor.Create(StringRepresentationToken, "StringRepresentationToken"), root_1);
 
-				DebugLocation(66, 45);
+				DebugLocation(78, 51);
 				adaptor.AddChild(root_1, stream_STRING.NextNode());
 
 				adaptor.AddChild(root_0, root_1);
@@ -1426,11 +1823,11 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 		}
 		finally
 		{
-			TraceOut("representation", 9);
-			LeaveRule("representation", 9);
+			TraceOut("representation", 11);
+			LeaveRule("representation", 11);
 			LeaveRule_representation();
 	    }
-	 	DebugLocation(66, 51);
+	 	DebugLocation(78, 57);
 		} finally { DebugExitRule(GrammarFileName, "representation"); }
 		return retval;
 
@@ -1442,40 +1839,52 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 	#region Follow sets
 	private static class Follow
 	{
-		public static readonly BitSet _declaration_in_program105 = new BitSet(new ulong[]{0x100A0202UL});
-		public static readonly BitSet _modifier_declaration_in_declaration118 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _frag_declaration_in_declaration123 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _type_declaration_in_declaration128 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _entity_declaration_in_declaration133 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _LET_in_frag_declaration145 = new BitSet(new ulong[]{0x20000UL});
-		public static readonly BitSet _ID_in_frag_declaration147 = new BitSet(new ulong[]{0x400000000UL});
-		public static readonly BitSet _34_in_frag_declaration149 = new BitSet(new ulong[]{0x20000UL});
-		public static readonly BitSet _ID_in_frag_declaration151 = new BitSet(new ulong[]{0x20000UL});
-		public static readonly BitSet _ID_in_frag_declaration153 = new BitSet(new ulong[]{0x200000000UL});
-		public static readonly BitSet _33_in_frag_declaration155 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _USING_in_modifier_declaration182 = new BitSet(new ulong[]{0x200000UL});
-		public static readonly BitSet _Modifier_in_modifier_declaration184 = new BitSet(new ulong[]{0x400000000UL});
-		public static readonly BitSet _34_in_modifier_declaration186 = new BitSet(new ulong[]{0x20000UL});
-		public static readonly BitSet _ID_in_modifier_declaration188 = new BitSet(new ulong[]{0x200000000UL});
-		public static readonly BitSet _33_in_modifier_declaration190 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _ENTITY_in_entity_declaration215 = new BitSet(new ulong[]{0x20000UL});
-		public static readonly BitSet _ID_in_entity_declaration217 = new BitSet(new ulong[]{0x40000000UL});
-		public static readonly BitSet _block_in_entity_declaration219 = new BitSet(new ulong[]{0x200000000UL});
-		public static readonly BitSet _33_in_entity_declaration221 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _ID_in_type_declaration241 = new BitSet(new ulong[]{0x40200000UL});
-		public static readonly BitSet _Modifier_in_type_declaration243 = new BitSet(new ulong[]{0x40000000UL});
-		public static readonly BitSet _block_in_type_declaration246 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _ID_in_member271 = new BitSet(new ulong[]{0x20000UL});
-		public static readonly BitSet _ID_in_member273 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _ID_in_member288 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _30_in_block316 = new BitSet(new ulong[]{0x80020000UL});
-		public static readonly BitSet _member_in_block331 = new BitSet(new ulong[]{0x180000000UL});
-		public static readonly BitSet _32_in_block334 = new BitSet(new ulong[]{0x20000UL});
-		public static readonly BitSet _member_in_block336 = new BitSet(new ulong[]{0x180000000UL});
-		public static readonly BitSet _31_in_block350 = new BitSet(new ulong[]{0x12UL});
-		public static readonly BitSet _representation_in_block352 = new BitSet(new ulong[]{0x2UL});
-		public static readonly BitSet _AS_in_representation396 = new BitSet(new ulong[]{0x1000000UL});
-		public static readonly BitSet _STRING_in_representation398 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _declaration_in_program113 = new BitSet(new ulong[]{0x102280842UL});
+		public static readonly BitSet _modifier_declaration_in_declaration126 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _frag_declaration_in_declaration131 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _type_declaration_in_declaration136 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _entity_declaration_in_declaration141 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _namespace_declaration_in_declaration146 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _extern_declaration_in_declaration152 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _NAMESPACE_in_namespace_declaration166 = new BitSet(new ulong[]{0x80000UL});
+		public static readonly BitSet _ID_in_namespace_declaration169 = new BitSet(new ulong[]{0x6000000000UL});
+		public static readonly BitSet _37_in_namespace_declaration172 = new BitSet(new ulong[]{0x80000UL});
+		public static readonly BitSet _ID_in_namespace_declaration174 = new BitSet(new ulong[]{0x6000000000UL});
+		public static readonly BitSet _38_in_namespace_declaration179 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _CONST_in_frag_declaration213 = new BitSet(new ulong[]{0x80000UL});
+		public static readonly BitSet _ID_in_frag_declaration215 = new BitSet(new ulong[]{0x8000000000UL});
+		public static readonly BitSet _39_in_frag_declaration217 = new BitSet(new ulong[]{0x80000UL});
+		public static readonly BitSet _ID_in_frag_declaration219 = new BitSet(new ulong[]{0x80000UL});
+		public static readonly BitSet _ID_in_frag_declaration221 = new BitSet(new ulong[]{0x4000000000UL});
+		public static readonly BitSet _38_in_frag_declaration223 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _USING_in_modifier_declaration250 = new BitSet(new ulong[]{0x800000UL});
+		public static readonly BitSet _Modifier_in_modifier_declaration252 = new BitSet(new ulong[]{0x8000000000UL});
+		public static readonly BitSet _39_in_modifier_declaration254 = new BitSet(new ulong[]{0x80000UL});
+		public static readonly BitSet _ID_in_modifier_declaration256 = new BitSet(new ulong[]{0x4000000000UL});
+		public static readonly BitSet _38_in_modifier_declaration258 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _EXTERN_in_extern_declaration279 = new BitSet(new ulong[]{0x10000000UL});
+		public static readonly BitSet _STRING_in_extern_declaration281 = new BitSet(new ulong[]{0x4000000000UL});
+		public static readonly BitSet _38_in_extern_declaration283 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _INTERFACE_in_entity_declaration304 = new BitSet(new ulong[]{0x80000UL});
+		public static readonly BitSet _ID_in_entity_declaration306 = new BitSet(new ulong[]{0x400000000UL});
+		public static readonly BitSet _block_in_entity_declaration308 = new BitSet(new ulong[]{0x10000000000UL});
+		public static readonly BitSet _40_in_entity_declaration310 = new BitSet(new ulong[]{0x20102280840UL});
+		public static readonly BitSet _declaration_in_entity_declaration312 = new BitSet(new ulong[]{0x20102280840UL});
+		public static readonly BitSet _41_in_entity_declaration315 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _ID_in_type_declaration341 = new BitSet(new ulong[]{0x400800000UL});
+		public static readonly BitSet _Modifier_in_type_declaration343 = new BitSet(new ulong[]{0x400000000UL});
+		public static readonly BitSet _block_in_type_declaration346 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _ID_in_member371 = new BitSet(new ulong[]{0x80000UL});
+		public static readonly BitSet _ID_in_member373 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _ID_in_member388 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _34_in_block416 = new BitSet(new ulong[]{0x800080000UL});
+		public static readonly BitSet _member_in_block431 = new BitSet(new ulong[]{0x1800000000UL});
+		public static readonly BitSet _36_in_block434 = new BitSet(new ulong[]{0x80000UL});
+		public static readonly BitSet _member_in_block436 = new BitSet(new ulong[]{0x1800000000UL});
+		public static readonly BitSet _35_in_block450 = new BitSet(new ulong[]{0x402UL});
+		public static readonly BitSet _representation_in_block452 = new BitSet(new ulong[]{0x2UL});
+		public static readonly BitSet _EXPLICIT_in_representation496 = new BitSet(new ulong[]{0x10000000UL});
+		public static readonly BitSet _STRING_in_representation498 = new BitSet(new ulong[]{0x2UL});
 	}
 	#endregion Follow sets
 }

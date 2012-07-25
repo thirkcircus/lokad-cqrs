@@ -20,6 +20,8 @@ tokens
 	ModifierDefinition;
 	EntityDefinition;
 	StringRepresentationToken;
+	NamespaceToken;
+	ExternToken;
 }
 
 @lexer::namespace { MessageContracts }
@@ -34,17 +36,27 @@ declaration
 	| frag_declaration
 	| type_declaration
 	| entity_declaration
+	| namespace_declaration	
+	| extern_declaration
 	;
 
+namespace_declaration
+    :	NAMESPACE (ID ('.' ID)*) ';' 
+    -> ^(NamespaceToken ID*);
+    
+    
+
 frag_declaration 
-	: LET ID '=' ID ID ';' -> ^(FragmentEntry ID ID ID);  
+	: CONST ID '=' ID ID ';' -> ^(FragmentEntry ID ID ID);  
     
 modifier_declaration
 	: USING Modifier '=' ID ';' -> ^(ModifierDefinition Modifier ID);
-    
+extern_declaration
+    : EXTERN STRING ';' -> ^(ExternToken STRING);
 	
 entity_declaration
-	: ENTITY ID block ';' -> ^(EntityDefinition ID block);
+	: lc= INTERFACE ID block '{' declaration* '}' 
+	-> ^(EntityDefinition[$lc,"Block"] ID block declaration*);
 	
 type_declaration
 	: ID Modifier? block -> ^(TypeToken ID block Modifier?);
@@ -63,13 +75,20 @@ block
     ;    
     
 representation
-	:	AS STRING -> ^(StringRepresentationToken STRING);
-AS	:	'as';
+	:	EXPLICIT STRING -> ^(StringRepresentationToken STRING);
+EXPLICIT	
+	:	'explicit';
 USING
 	: 'using';
-LET
-	: 'let';	
-ENTITY 	:	'entity';
+CONST
+	: 'const';	
+INTERFACE 	:	'interface';
+
+NAMESPACE 
+	:	'namespace';
+EXTERN
+    :	'extern';
+    
 ID  :	('a'..'z'|'A'..'Z'|'_')('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'<'|'>'|'['|']')* ;
 
 
