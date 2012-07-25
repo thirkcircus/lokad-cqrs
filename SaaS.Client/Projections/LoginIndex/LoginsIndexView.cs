@@ -25,7 +25,7 @@ namespace SaaS.Client.Projections.LoginIndex
         [DataMember(Order = 3)]
         public IDictionary<string, long> Identities { get; private set; }
 
-        public bool ContainsIdentty(string identity)
+        public bool ContainsIdentity(string identity)
         {
             return Identities.ContainsKey(identity);
         }
