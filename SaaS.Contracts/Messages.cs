@@ -1,8 +1,7 @@
-
+using Lokad;
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-
 
 // ReSharper disable PartialTypeWithSinglePart
 // ReSharper disable UnusedMember.Local
@@ -25,6 +24,11 @@ namespace SaaS
             CodeVersion = codeVersion;
             Role = role;
             Instance = instance;
+        }
+        
+        public override string ToString()
+        {
+            return string.Format(@"Started {0}. {1}", Role, Instance);
         }
     }
     

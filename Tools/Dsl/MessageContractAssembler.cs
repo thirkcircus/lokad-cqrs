@@ -161,8 +161,11 @@ namespace Lokad.CodeDsl
                     var text = t.GetChild(0).Text;
                     context.CurrentExtern = text;
                     break;
+                case MessageContractsLexer.UsingToken:
+                    var us = string.Join(".", t.Children().Select(s => s.Text));
+                    context.Using.Add(us);
+                    break;
                 default:
-                
                     throw new InvalidOperationException("Unexpected token: " + t.Text);
             }
         }

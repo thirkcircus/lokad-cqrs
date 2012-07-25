@@ -6,7 +6,8 @@
    and aggregate state.
 
    In order for the generation to happen on-the-fly (when you press Ctrl+S)
-   start DSL.exe and leave it running in the background (detach debugger).
+   start DSL.exe right from the Visual Studio and leave it running in the
+   background (detach debugger).
 
    In order to get nice syntax coloring, simply use C# or C++ file definition.
    In Visual studio you can do that that via:
@@ -25,39 +26,50 @@
 
 namespace SaaS;             // put all generated classes into this namespace
 extern "Lokad.SaaS";        // namespace for code contracts over the wire
+using Lokad;
+// define some commonly used constants (pairs of member type and name), 
+// to avoid typing them over and over again
 
-// define some common
 const user = UserId UserId;
 const registration = RegistrationId RegistrationId;
 const security = SecurityId SecurityId;
 const customer = CustomerId CustomerId;
 
-// common
 const description = string Description;
 const dateUtc = DateTime DateUtc;
 const timeUtc = DateTime TimeUtc;
 const email = Email Email;
 
-using ? = ISampleCommand;
-using ! = ISampleEvent;
-
-// SERVICES    
- 
-using ? = IFunctionalCommand;
-using ! = IFunctionalEvent;
+// define interface substitutes for the standalone contracts below 
+if ? = IFunctionalCommand;
+if ! = IFunctionalEvent;
 
 InstanceStarted!(string codeVersion, string role, string instance)
+    explicit "Started {role}. {instance}"
 SendMailMessage?(Email[] to, string subject, string body, bool isHtml, Email[] cc,  Email optionalSender, Email optionalReplyTo)
 MailMessageSent!(ref SendMailMessage)
 
-
+/// start new interface for our application service and aggregate state
+/// all events (maked with ?) will be added as method calls to ISecurityState
+/// public interface ISecurityState
+/// {
+///    void When(SecurityAggregateCreated e);
+///    // etc
+/// }
+/// 
+/// while all commands (marked with !) will be added as method calls to app service
+/// public interface ISecurityApplicationService
+/// {
+///    void When(CreateSecurityAggregate c);
+///    // etc
+/// }
+/// We also declare that each event/command in this definition will have first member 
+/// "SecurityId Id" (you can dine more than one default member
 interface Security (SecurityId Id) 
-{
-    // ============================
-    // Matches to the customer/account but represents security details
+{    
+    if ? = ICommand<SecurityId>;
+    if ! = IEvent<SecurityId>;
 
-    using ? = ICommand<SecurityId>;
-    using ! = IEvent<SecurityId>;
     const display = string displayName;
     const token = string token;
 
@@ -71,14 +83,14 @@ interface Security (SecurityId Id)
 
 
     AddSecurityPassword? (display, string login, string password)
-      explicit "Add login '{DisplayName}': {Login}/{Password}"
+      explicit "Add login '{display}': {login}/{password}"
     SecurityPasswordAdded! (user, display, string login, string passwordHash, string passwordSalt, string token)
-      explicit "Added login '{DisplayName}' explicit {UserId} with encrypted pass and salt"
+      explicit "Added login '{display}' explicit {UserId} with encrypted pass and salt"
 
     AddSecurityIdentity? (display, string identity)
-      explicit "Add identity '{DisplayName}': {Identity}"
+      explicit "Add identity '{display}': {identity}"
     SecurityIdentityAdded! (user, display, string identity, string token)
-      explicit "Added identity '{DisplayName}' explicit {UserId}"
+      explicit "Added identity '{display}' explicit {user}"
 
  
     RemoveSecurityItem? (user)
@@ -95,12 +107,11 @@ interface Security (SecurityId Id)
 }
 
 interface User (UserId id) 
-{
-    // =====================
+{    
     // holds login information about specific and unique user
 
-    using ? = ICommand<UserId>;
-    using ! = IEvent<UserId>;
+    if ? = ICommand<UserId>;
+    if ! = IEvent<UserId>;
 
     CreateUser? (security)
         explicit "Create user {Id} for security {SecurityId}"
@@ -135,8 +146,8 @@ interface User (UserId id)
 interface Registration (RegistrationId id) 
 {
     // =====================================
-    using ? = ICommand<RegistrationId>;
-    using ! = IEvent<RegistrationId>;
+    if ? = ICommand<RegistrationId>;
+    if ! = IEvent<RegistrationId>;
 
     RegistrationHttpHeader(string key, string value)
 

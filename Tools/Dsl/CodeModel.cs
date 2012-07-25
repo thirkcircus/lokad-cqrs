@@ -21,16 +21,21 @@ namespace Lokad.CodeDsl
 
         public string CurrentNamespace = "Lokad.Contracts";
         public string CurrentExtern = "Lokad.Contracts";
+        public IList<string> Using; 
 
         public Context()
         {
             Entities = new Stack<Entity>();
+
+            Using = new List<string>()
+                {
+                    "System","System.Collections.Generic",
+                    "System.Runtime.Serialization"
+                };
+
             var entity = new Entity("default");
             entity.Modifiers.Add("?", "ICommand");
             entity.Modifiers.Add("!", "IEvent");
-
-
-
             Entities.Push(entity);
         }
     }

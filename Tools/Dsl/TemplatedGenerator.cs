@@ -34,9 +34,16 @@ public sealed class {0}";
         {
             var writer = new CodeWriter(outer);
 
+            
+            foreach (var source in context.Using.Distinct().OrderBy(s => s))
+            {
+                writer.WriteLine("using {0};", source);
+            }
+
             writer.WriteLine(@"
 // ReSharper disable PartialTypeWithSinglePart
 // ReSharper disable UnusedMember.Local");
+
 
             writer.WriteLine("namespace {0}", context.CurrentNamespace);
             writer.WriteLine("{");

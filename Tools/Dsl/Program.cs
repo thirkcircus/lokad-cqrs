@@ -94,13 +94,8 @@ public partial class {0}",
                     
                 };
 
-            var prefix = @"
-using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
-
-";
-            File.WriteAllText(Path.ChangeExtension(fullPath, "cs"), prefix + GeneratorUtil.Build(dsl, generator));
+  
+            File.WriteAllText(Path.ChangeExtension(fullPath, "cs"), GeneratorUtil.Build(dsl, generator));
         }
     }
 }
