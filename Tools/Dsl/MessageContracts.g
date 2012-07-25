@@ -22,6 +22,7 @@ tokens
 	StringRepresentationToken;
 	NamespaceToken;
 	ExternToken;
+	UsingToken;
 }
 
 @lexer::namespace { MessageContracts }
@@ -38,21 +39,23 @@ declaration
 	| entity_declaration
 	| namespace_declaration	
 	| extern_declaration
+	| using_declaration
 	;
 
 namespace_declaration
     :	NAMESPACE (ID ('.' ID)*) ';' 
     -> ^(NamespaceToken ID*);
     
-    
+using_declaration
+    :	USING (ID ('.' ID)*) ';'
+    -> ^(UsingToken ID*);
+
 
 frag_declaration 
 	: CONST ID '=' ID ID ';' -> ^(FragmentEntry ID ID ID);  
     
 modifier_declaration
-	: USING Modifier '=' ID ';' -> ^(ModifierDefinition Modifier ID);
-extern_declaration
-    : EXTERN STRING ';' -> ^(ExternToken STRING);
+	: IF Modifier '=' ID ';' -> ^(ModifierDefinition Modifier ID);
 	
 entity_declaration
 	: lc= INTERFACE ID block '{' declaration* '}' 
@@ -76,13 +79,20 @@ block
     
 representation
 	:	EXPLICIT STRING -> ^(StringRepresentationToken STRING);
+	
+extern_declaration
+    :   EXTERN STRING ';' -> ^(ExternToken STRING);
+
 EXPLICIT	
 	:	'explicit';
+IF
+	: 'if';
 USING
-	: 'using';
+    :	'using';
 CONST
 	: 'const';	
-INTERFACE 	:	'interface';
+INTERFACE 	
+	:	'interface';
 
 NAMESPACE 
 	:	'namespace';

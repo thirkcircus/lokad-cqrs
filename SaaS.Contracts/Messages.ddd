@@ -26,7 +26,6 @@
 
 namespace SaaS;             // put all generated classes into this namespace
 extern "Lokad.SaaS";        // namespace for code contracts over the wire
-using Lokad;
 // define some commonly used constants (pairs of member type and name), 
 // to avoid typing them over and over again
 
