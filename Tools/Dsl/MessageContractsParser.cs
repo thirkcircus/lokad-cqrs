@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-// $ANTLR 3.4 /Users/abdullin/MessageContracts.g 2012-07-26 13:04:59
+// $ANTLR 3.4 /Users/abdullin/MessageContracts.g 2012-07-26 18:45:35
 
 // The variable 'variable' is assigned but its value is never used.
 #pragma warning disable 168, 219
@@ -1233,7 +1233,7 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 
 			{
 			// AST REWRITE
-			// elements: ID, declaration, block
+			// elements: ID, block, declaration
 			// token labels: 
 			// rule labels: retval
 			// token list labels: 
@@ -1309,7 +1309,7 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 	protected virtual void LeaveRule_type_declaration() {}
 
 	// $ANTLR start "type_declaration"
-	// /Users/abdullin/MessageContracts.g:64:1: type_declaration : ID ( Modifier )? block -> ^( TypeToken ID block ( Modifier )? ) ;
+	// /Users/abdullin/MessageContracts.g:64:1: type_declaration : ID ( Modifier )* block -> ^( TypeToken ID block ( Modifier )* ) ;
 	[GrammarRule("type_declaration")]
 	private AstParserRuleReturnScope<object, IToken> type_declaration()
 	{
@@ -1334,41 +1334,52 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 		DebugLocation(64, 56);
 		try
 		{
-			// /Users/abdullin/MessageContracts.g:65:2: ( ID ( Modifier )? block -> ^( TypeToken ID block ( Modifier )? ) )
+			// /Users/abdullin/MessageContracts.g:65:2: ( ID ( Modifier )* block -> ^( TypeToken ID block ( Modifier )* ) )
 			DebugEnterAlt(1);
-			// /Users/abdullin/MessageContracts.g:65:4: ID ( Modifier )? block
+			// /Users/abdullin/MessageContracts.g:65:4: ID ( Modifier )* block
 			{
 			DebugLocation(65, 4);
 			ID37=(IToken)Match(input,ID,Follow._ID_in_type_declaration368);  
 			stream_ID.Add(ID37);
 
 			DebugLocation(65, 7);
-			// /Users/abdullin/MessageContracts.g:65:7: ( Modifier )?
-			int alt7=2;
+			// /Users/abdullin/MessageContracts.g:65:7: ( Modifier )*
 			try { DebugEnterSubRule(7);
-			try { DebugEnterDecision(7, decisionCanBacktrack[7]);
-			int LA7_0 = input.LA(1);
+			while (true)
+			{
+				int alt7=2;
+				try { DebugEnterDecision(7, decisionCanBacktrack[7]);
+				int LA7_0 = input.LA(1);
 
-			if ((LA7_0==Modifier))
-			{
-				alt7 = 1;
-			}
-			} finally { DebugExitDecision(7); }
-			switch (alt7)
-			{
-			case 1:
-				DebugEnterAlt(1);
-				// /Users/abdullin/MessageContracts.g:65:7: Modifier
+				if ((LA7_0==Modifier))
 				{
-				DebugLocation(65, 7);
-				Modifier38=(IToken)Match(input,Modifier,Follow._Modifier_in_type_declaration370);  
-				stream_Modifier.Add(Modifier38);
-
-
+					alt7 = 1;
 				}
-				break;
 
+
+				} finally { DebugExitDecision(7); }
+				switch ( alt7 )
+				{
+				case 1:
+					DebugEnterAlt(1);
+					// /Users/abdullin/MessageContracts.g:65:7: Modifier
+					{
+					DebugLocation(65, 7);
+					Modifier38=(IToken)Match(input,Modifier,Follow._Modifier_in_type_declaration370);  
+					stream_Modifier.Add(Modifier38);
+
+
+					}
+					break;
+
+				default:
+					goto loop7;
+				}
 			}
+
+			loop7:
+				;
+
 			} finally { DebugExitSubRule(7); }
 
 			DebugLocation(65, 17);
@@ -1381,7 +1392,7 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 
 			{
 			// AST REWRITE
-			// elements: block, Modifier, ID
+			// elements: Modifier, block, ID
 			// token labels: 
 			// rule labels: retval
 			// token list labels: 
@@ -1391,10 +1402,10 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 			RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.Tree:null);
 
 			root_0 = (object)adaptor.Nil();
-			// 65:23: -> ^( TypeToken ID block ( Modifier )? )
+			// 65:23: -> ^( TypeToken ID block ( Modifier )* )
 			{
 				DebugLocation(65, 26);
-				// /Users/abdullin/MessageContracts.g:65:26: ^( TypeToken ID block ( Modifier )? )
+				// /Users/abdullin/MessageContracts.g:65:26: ^( TypeToken ID block ( Modifier )* )
 				{
 				object root_1 = (object)adaptor.Nil();
 				DebugLocation(65, 28);
@@ -1405,8 +1416,8 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 				DebugLocation(65, 41);
 				adaptor.AddChild(root_1, stream_block.NextTree());
 				DebugLocation(65, 47);
-				// /Users/abdullin/MessageContracts.g:65:47: ( Modifier )?
-				if (stream_Modifier.HasNext)
+				// /Users/abdullin/MessageContracts.g:65:47: ( Modifier )*
+				while ( stream_Modifier.HasNext )
 				{
 					DebugLocation(65, 47);
 					adaptor.AddChild(root_1, stream_Modifier.NextNode());
@@ -1799,7 +1810,7 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 
 			{
 			// AST REWRITE
-			// elements: member, representation
+			// elements: representation, member
 			// token labels: 
 			// rule labels: retval
 			// token list labels: 
@@ -2133,7 +2144,7 @@ public partial class MessageContractsParser : Antlr.Runtime.Parser
 		public static readonly BitSet _declaration_in_entity_declaration339 = new BitSet(new ulong[]{0x80204580840UL});
 		public static readonly BitSet _43_in_entity_declaration342 = new BitSet(new ulong[]{0x2UL});
 		public static readonly BitSet _ID_in_type_declaration368 = new BitSet(new ulong[]{0x1001000000UL});
-		public static readonly BitSet _Modifier_in_type_declaration370 = new BitSet(new ulong[]{0x1000000000UL});
+		public static readonly BitSet _Modifier_in_type_declaration370 = new BitSet(new ulong[]{0x1001000000UL});
 		public static readonly BitSet _block_in_type_declaration373 = new BitSet(new ulong[]{0x2UL});
 		public static readonly BitSet _ID_in_member398 = new BitSet(new ulong[]{0x80000UL});
 		public static readonly BitSet _ID_in_member400 = new BitSet(new ulong[]{0x2UL});

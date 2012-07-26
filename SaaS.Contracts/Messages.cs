@@ -205,7 +205,7 @@ namespace SaaS
         
         public override string ToString()
         {
-            return string.Format(@"Added login '{1}' explicit {0} with encrypted pass and salt", UserId, DisplayName);
+            return string.Format(@"Added login '{1}'  {0} with encrypted pass and salt", UserId, DisplayName);
         }
     }
     
@@ -255,7 +255,7 @@ namespace SaaS
         
         public override string ToString()
         {
-            return string.Format(@"Added identity '{1}' explicit {0}", UserId, DisplayName);
+            return string.Format(@"Added identity '{1}' {0}", UserId, DisplayName);
         }
     }
     

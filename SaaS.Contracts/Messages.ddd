@@ -84,12 +84,12 @@ interface Security (SecurityId Id)
     AddSecurityPassword? (display, string login, string password)
       explicit "Add login '{display}': {login}/{password}"
     SecurityPasswordAdded! (user, display, string login, string passwordHash, string passwordSalt, string token)
-      explicit "Added login '{display}' explicit {UserId} with encrypted pass and salt"
+      explicit "Added login '{display}'  {UserId} with encrypted pass and salt"
 
     AddSecurityIdentity? (display, string identity)
       explicit "Add identity '{display}': {identity}"
     SecurityIdentityAdded! (user, display, string identity, string token)
-      explicit "Added identity '{display}' explicit {user}"
+      explicit "Added identity '{display}' {user}"
 
  
     RemoveSecurityItem? (user)
@@ -111,6 +111,7 @@ interface User (UserId id)
 
     if ? = ICommand<UserId>;
     if ! = IEvent<UserId>;
+
 
     CreateUser? (security)
         explicit "Create user {id} for security {security}."
