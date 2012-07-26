@@ -55,7 +55,7 @@ frag_declaration
 	: CONST ID '=' ID ID ';' -> ^(FragmentEntry ID ID ID);  
     
 modifier_declaration
-	: IF Modifier '=' ID ';' -> ^(ModifierDefinition Modifier ID);
+	: IF Modifier '=' ID (',' ID)* ';' -> ^(ModifierDefinition Modifier ID*);
 	
 entity_declaration
 	: lc= INTERFACE ID block '{' declaration* '}' 
