@@ -138,14 +138,14 @@
     <Compile Include="StreamingStorage\StreamErrors.cs" />
     <Compile Include="StreamingStorage\StreamItemNotFoundException.cs" />
     <Compile Include="SystemObserver.cs" />
-    <Compile Include="TapeStorage\FileTapeContainer.cs" />
-    <Compile Include="TapeStorage\FileTapeStream.cs" />
-    <Compile Include="TapeStorage\ITapeContainer.cs" />
-    <Compile Include="TapeStorage\ITapeStream.cs" />
-    <Compile Include="TapeStorage\TapeAppendCondition.cs" />
-    <Compile Include="TapeStorage\TapeAppendConditionException.cs" />
-    <Compile Include="TapeStorage\TapeStorageInitilization.cs" />
-    <Compile Include="TapeStorage\TapeStreamSerializer.cs" />
+    <Compile Include="Obsolete\TapeStorage\FileTapeContainer.cs" />
+    <Compile Include="Obsolete\TapeStorage\FileTapeStream.cs" />
+    <Compile Include="Obsolete\TapeStorage\ITapeContainer.cs" />
+    <Compile Include="Obsolete\TapeStorage\ITapeStream.cs" />
+    <Compile Include="Obsolete\TapeStorage\TapeAppendCondition.cs" />
+    <Compile Include="Obsolete\TapeStorage\TapeAppendConditionException.cs" />
+    <Compile Include="Obsolete\TapeStorage\TapeStorageInitilization.cs" />
+    <Compile Include="Obsolete\TapeStorage\TapeStreamSerializer.cs" />
     <Compile Include="TaskProcess.cs" />
     <Compile Include="unit.cs" />
   </ItemGroup>
