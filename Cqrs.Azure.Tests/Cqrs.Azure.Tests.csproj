@@ -52,8 +52,6 @@
     <Compile Include="BasicClientConfigurationTests.cs" />
     <Compile Include="AtomicStorage\Given_Atomic_Scenarios_When_Azure.cs" />
     <Compile Include="AtomicStorage\Given_Atomic_Scenarios_When_Composite_Azure.cs" />
-    <Compile Include="TapeStorage\BlobTapeStorageTests.cs" />
-    <Compile Include="TapeStorage\BlockBlobTapeStorageTests.cs" />
     <Compile Include="MiscTests.cs" />
     <Compile Include="Performance_tests_for_throughput.cs" />
     <Compile Include="Performance_tests_for_reaction.cs" />

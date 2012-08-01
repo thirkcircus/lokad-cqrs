@@ -8,6 +8,7 @@
 
 using System;
 using System.Threading;
+using Lokad.Cqrs.AppendOnly;
 using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.Evil;
 using Lokad.Cqrs.Partition;
@@ -108,19 +109,7 @@ namespace Lokad.Cqrs
             return config.CreateStreaming().GetContainer(container).Create();
         }
 
-        /// <summary>
-        /// Creates the tape storage factory for windows Azure storage.
-        /// </summary>
-        /// <param name="config">Azure storage configuration to create tape storage with.</param>
-        /// <param name="containerName">Name of the container.</param>
-        /// <param name="initializeForWriting">if set to <c>true</c>, then storage is initialized for writing as needed.</param>
-        /// <returns></returns>
-        public static BlobTapeStorageFactory CreateTape(this IAzureStorageConfig config, string containerName)
-        {
-            var factory = new BlobTapeStorageFactory(config, containerName);
-            factory.InitializeForWriting();
-            return factory;
-        }
+        
 
         public static SimpleMessageSender CreateSimpleSender(this IAzureStorageConfig account,
             IEnvelopeStreamer streamer, string queueName)
@@ -165,6 +154,14 @@ namespace Lokad.Cqrs
         public static StatelessAzureQueueWriter CreateQueueWriter(this IAzureStorageConfig cfg, string queueName)
         {
             return (StatelessAzureQueueWriter) CreateQueueWriterFactory(cfg).GetWriteQueue(queueName);
+        }
+
+        public static BlobAppendOnlyStore CreateAppendOnlyStore(this IAzureStorageConfig config, string s)
+        {
+            var client = config.CreateBlobClient();
+            var store = new BlobAppendOnlyStore(client.GetContainerReference(s));
+            store.InitializeWriter();
+            return store;
         }
     }
 }

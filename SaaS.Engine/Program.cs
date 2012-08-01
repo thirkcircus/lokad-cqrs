@@ -26,7 +26,7 @@ namespace SaaS.Engine
                 SystemObserver.Notify("[{0}] = {1}", setting.Key, setting.Value);
             }
 
-            var setup = new SetupClassThatReplacesIoCContainerFramework();
+            var setup = new Setup();
             
             var integrationPath = settings["DataPath"];
             if (integrationPath.StartsWith("file:"))
@@ -34,7 +34,7 @@ namespace SaaS.Engine
                 var path = integrationPath.Remove(0, 5);
                 var config = FileStorage.CreateConfig(path);
                 setup.Streaming = config.CreateStreaming();
-                setup.Tapes = config.CreateTape;
+                setup.CreateTapes = config.CreateAppendOnlyStore;
                 setup.Docs = config.CreateNuclear(setup.Strategy).Container;
                 setup.CreateInbox = s => config.CreateInbox(s);
                 setup.CreateQueueWriter = config.CreateQueueWriter;
@@ -44,7 +44,7 @@ namespace SaaS.Engine
                 var path = integrationPath.Remove(0, 6);
                 var config = AzureStorage.CreateConfig(path);
                 setup.Streaming = config.CreateStreaming();
-                setup.Tapes = config.CreateTape;
+                setup.CreateTapes = config.CreateAppendOnlyStore;
                 setup.Docs = config.CreateNuclear(setup.Strategy).Container;
                 setup.CreateInbox = s => config.CreateInbox(s);
                 setup.CreateQueueWriter = config.CreateQueueWriter;
@@ -53,29 +53,28 @@ namespace SaaS.Engine
             {
                 throw new InvalidOperationException("Unsupperted environment");
             }
-            var components = setup.AssembleComponents();
-
-
-            var stream = setup.Tapes(Topology.TapesContainer).GetOrCreateStream(Topology.DomainLogName);
-
-            StartupProjectionRebuilder.Rebuild(components.Setup.Docs, stream);
+            
+            
             using (var cts = new CancellationTokenSource())
-            using (var engine = components.Builder.Build())
+            using (var container = setup.BuildContainer())
             {
-                var task = engine.Start(cts.Token);
+                container.ExecuteStartupTasks(cts.Token);
 
                 var version = ConfigurationManager.AppSettings.Get("appharbor.commit_id");
                 var instanceStarted = new InstanceStarted(version, "engine", Process.GetCurrentProcess().ProcessName);
-                components.Simple.SendOne(instanceStarted);
+                container.Simple.SendOne(instanceStarted);
 
-                //startupMessages.ForEach(c => components.Sender.SendCommandsAsBatch(new ISampleCommand[] { c }));
-
-                Console.WriteLine(@"Press enter to stop");
-                Console.ReadLine();
-                cts.Cancel();
-                if (!task.Wait(5000))
+                using (var engine = container.Builder.Build())
                 {
-                    Console.WriteLine(@"Terminating");
+                    var task = engine.Start(cts.Token);
+
+                    Console.WriteLine(@"Press enter to stop");
+                    Console.ReadLine();
+                    cts.Cancel();
+                    if (!task.Wait(5000))
+                    {
+                        Console.WriteLine(@"Terminating");
+                    }
                 }
             }
         }

@@ -40,18 +40,7 @@ namespace Lokad.Cqrs
             return config.CreateStreaming().GetContainer(subfolder).Create();
         }
 
-        public static FileTapeContainer CreateTape(this FileStorageConfig config, string subfolder)
-        {
-            return CreateTape(config.SubFolder(subfolder));
-        }
-
-        public static FileTapeContainer CreateTape(this FileStorageConfig config)
-        {
-            var factory = new FileTapeContainer(config.FullPath);
-            factory.InitializeForWriting();
-            return factory;
-        }
-
+      
         public static FileStorageConfig CreateConfig(string fullPath, string optionalName = null, bool reset = false)
         {
             var folder = new DirectoryInfo(fullPath);
@@ -79,6 +68,15 @@ namespace Lokad.Cqrs
             return inbox;
         }
 
+        public static FileAppendOnlyStore CreateAppendOnlyStore(this FileStorageConfig cfg, string name)
+        {
+
+            var store = new FileAppendOnlyStore(new DirectoryInfo(Path.Combine(cfg.FullPath, name)));
+            store.Initialize();
+            return store;
+        }
+
+
         public static FileQueueWriter CreateQueueWriter(this FileStorageConfig cfg, string queueName)
         {
             var full = Path.Combine(cfg.Folder.FullName, queueName);
@@ -89,6 +87,8 @@ namespace Lokad.Cqrs
             return
                 new FileQueueWriter(new DirectoryInfo(full), queueName);
         }
+
+       
 
         public static SimpleMessageSender CreateSimpleSender(this FileStorageConfig account, IEnvelopeStreamer streamer,
             string queueName)

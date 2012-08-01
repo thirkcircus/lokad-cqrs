@@ -48,17 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppendOnly\AppendOnlyStream.cs" />
+    <Compile Include="AppendOnly\AutoRenewLease.cs" />
+    <Compile Include="AppendOnly\BlobAppendOnlyStore.cs" />
     <Compile Include="AzureStorageConfig.cs" />
     <Compile Include="AzureStorage.cs" />
     <Compile Include="Partition\AzureMessageOverflows.cs" />
-    <Compile Include="Obsolete\TapeStorage\BlobRecordUtil.cs" />
-    <Compile Include="Obsolete\TapeStorage\BlockBlobTapeStorageFactory.cs" />
-    <Compile Include="Obsolete\TapeStorage\BlockBlobTapeStream.cs" />
-    <Compile Include="Obsolete\TapeStorage\PageBlobReadStream.cs" />
-    <Compile Include="Obsolete\TapeStorage\BlobExtensions.cs" />
-    <Compile Include="Obsolete\TapeStorage\BlobTapeStorageFactory.cs" />
-    <Compile Include="Obsolete\TapeStorage\BlobTapeStream.cs" />
-    <Compile Include="Obsolete\TapeStorage\PageBlobAppendStream.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WipeAzureAccount.cs" />
     <Compile Include="AzureSettingsProvider.cs" />

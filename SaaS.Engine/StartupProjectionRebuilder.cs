@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Threading;
 using Lokad.Cqrs;
 using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.TapeStorage;
@@ -15,7 +16,7 @@ namespace SaaS.Engine
 {
     public static class StartupProjectionRebuilder
     {
-        public static void Rebuild(IDocumentStore targetContainer, ITapeStream stream)
+        public static void Rebuild(CancellationToken token, IDocumentStore targetContainer, IAppendOnlyStore stream, Func<IDocumentStore, IEnumerable<object>> projectors)
         {
             var strategy = targetContainer.Strategy;
             var memory = new MemoryStorageConfig();
@@ -24,36 +25,34 @@ namespace SaaS.Engine
             var tracked = new ProjectionInspectingContainer(memoryContainer);
 
             var projections = new List<object>();
-            projections.AddRange(DomainBoundedContext.Projections(tracked));
-            projections.AddRange(ClientBoundedContext.Projections(tracked));
-            //projections.AddRange(ApiOpsBoundedContext.Projections(tracked));
+            projections.AddRange(projectors(tracked));
 
             if (tracked.Buckets.Count != projections.Count())
                 throw new InvalidOperationException("Count mismatch");
 
             var storage = new NuclearStorage(targetContainer);
-            var hashes = storage.GetSingletonOrNew<ProjectionHash>().Entries;
+            var persistedHashes = new Dictionary<string, string>();
+            var name = "domain";
+            storage.GetEntity<ProjectionHash>(name).IfValue(v => persistedHashes = v.BucketHashes);
 
-            var memoryProjections = projections.Select((projection, i) =>
+            var activeMemoryProjections = projections.Select((projection, i) =>
+            {
+                var bucketName = tracked.Buckets[i];
+                var viewType = tracked.Views[i];
+
+                var projectionHash = GetClassHash(projection.GetType()) + "\r\n" + GetClassHash(viewType);
+
+                bool needsRebuild = !persistedHashes.ContainsKey(bucketName) || persistedHashes[bucketName] != projectionHash;
+                return new
                 {
-                    var bucketName = tracked.Buckets[i];
-                    var viewType = tracked.Views[i];
+                    bucketName,
+                    projection,
+                    hash = projectionHash,
+                    needsRebuild
+                };
+            }).ToArray();
 
-                    var projectionHash = GetClassHash(projection.GetType()) + "\r\n" + GetClassHash(viewType);
-
-                    bool needsRebuild = !hashes.ContainsKey(bucketName) || hashes[bucketName] != projectionHash;
-                    return new
-                        {
-                            bucketName,
-                            projection,
-                            hash = projectionHash,
-                            needsRebuild
-                        };
-
-
-                }).ToArray();
-
-            foreach (var memoryProjection in memoryProjections)
+            foreach (var memoryProjection in activeMemoryProjections)
             {
                 if (memoryProjection.needsRebuild)
                 {
@@ -66,13 +65,12 @@ namespace SaaS.Engine
             }
 
 
-            var needRebuild = memoryProjections.Where(x => x.needsRebuild).ToArray();
+            var needRebuild = activeMemoryProjections.Where(x => x.needsRebuild).ToArray();
 
             if (needRebuild.Length == 0)
             {
                 return;
             }
-
 
 
             var watch = Stopwatch.StartNew();
@@ -82,41 +80,79 @@ namespace SaaS.Engine
 
 
             var handlersWatch = Stopwatch.StartNew();
+            var records = stream.ReadRecords(0, Int32.MaxValue).Where(r => r.Name != "audit");
 
-            Observe(stream, wire);
+            ObserveWhileCan(records, wire, token);
+
+            if (token.IsCancellationRequested)
+            {
+                SystemObserver.Notify("[warn] Aborting projections before anything was changed");
+                return;
+            }
+
             var timeTotal = watch.Elapsed.TotalSeconds;
             var handlerTicks = handlersWatch.ElapsedTicks;
             var timeInHandlers = Math.Round(TimeSpan.FromTicks(handlerTicks).TotalSeconds, 1);
-            Console.WriteLine("Total Elapsed: {0}sec ({1}sec in handlers)", Math.Round(timeTotal, 0), timeInHandlers);
+            SystemObserver.Notify("Total Elapsed: {0}sec ({1}sec in handlers)", Math.Round(timeTotal, 0), timeInHandlers);
 
 
-            // delete projections that were rebuilt
-            var bucketNames = needRebuild.Select(x => x.bucketName).ToArray();
-
-            foreach (var name in bucketNames)
+            // update projections that need rebuild
+            foreach (var b in needRebuild)
             {
-                targetContainer.Reset(name);
+                // server might shut down the process soon anyway, but we'll be
+                // in partially consistent mode (not all projections updated)
+                // so at least we blow up between projection buckets
+                token.ThrowIfCancellationRequested();
 
-                var contents = memoryContainer.EnumerateContents(name);
-                targetContainer.WriteContents(name, contents);
-            }
+                var bucketName = b.bucketName;
+                var bucketHash = b.hash;
 
-            var allBuckets = new HashSet<string>(memoryProjections.Select(p => p.bucketName));
-            var obsolete = hashes.Keys.Where(s => !allBuckets.Contains(s)).ToArray();
-            foreach (var name in obsolete)
-            {
-                SystemObserver.Notify("[warn] {0} is obsolete", name);
-                targetContainer.Reset(name);
-            }
-            storage.UpdateSingletonEnforcingNew<ProjectionHash>(x =>
+                // wipe contents
+                targetContainer.Reset(bucketName);
+                // write new versions
+                var contents = memoryContainer.EnumerateContents(bucketName);
+                targetContainer.WriteContents(bucketName, contents);
+
+                // update hash
+                storage.UpdateEntityEnforcingNew<ProjectionHash>(name, x =>
                 {
-                    x.Entries.Clear();
-
-                    foreach (var prj in memoryProjections)
-                    {
-                        x.Entries[prj.bucketName] = prj.hash;
-                    }
+                    x.BucketHashes[bucketName] = bucketHash;
                 });
+
+                SystemObserver.Notify("[good] Updated View bucket {0}.{1}", name, bucketName);
+            }
+
+            // Clean up obsolete views
+            var allBuckets = new HashSet<string>(activeMemoryProjections.Select(p => p.bucketName));
+            var obsoleteBuckets = persistedHashes.Where(s => !allBuckets.Contains(s.Key)).ToArray();
+            foreach (var hash in obsoleteBuckets)
+            {
+                // quit at this stage without any bad side effects
+                if (token.IsCancellationRequested)
+                    return;
+
+                var bucketName = hash.Key;
+                SystemObserver.Notify("[warn] {0} is obsolete", bucketName);
+                targetContainer.Reset(bucketName);
+
+                storage.UpdateEntityEnforcingNew<ProjectionHash>(name, x => x.BucketHashes.Remove(bucketName));
+
+                SystemObserver.Notify("[good] Cleaned up obsolete view bucket {0}.{1}", name, bucketName);
+            }
+        }
+
+
+
+        [DataContract]
+        public sealed class ProjectionHash
+        {
+            [DataMember(Order = 1)]
+            public Dictionary<string, string> BucketHashes { get; set; }
+
+            public ProjectionHash()
+            {
+                BucketHashes = new Dictionary<string, string>();
+            }
         }
 
 
@@ -208,25 +244,28 @@ namespace SaaS.Engine
         }
 
 
-        static void Observe(ITapeStream tapes, RedirectToDynamicEvent wire)
+        static void ObserveWhileCan(IEnumerable<DataWithName> records, RedirectToDynamicEvent wire, CancellationToken token)
         {
             var date = DateTime.MinValue;
             var watch = Stopwatch.StartNew();
-            foreach (var record in tapes.ReadRecords(0, int.MaxValue))
+            foreach (var record in records)
             {
+                if (token.IsCancellationRequested)
+                    return;
+
                 var env = Streamer.ReadAsEnvelopeData(record.Data);
                 if (date.Month != env.CreatedOnUtc.Month)
                 {
                     date = env.CreatedOnUtc;
-                    SystemObserver.Notify("Observing {0:yyyy-MM-dd} {1}", date, Math.Round(watch.Elapsed.TotalSeconds, 2));
+                    SystemObserver.Notify("Observing {0:yyyy-MM-dd} {1}", date,
+                        Math.Round(watch.Elapsed.TotalSeconds, 2));
                     watch.Restart();
                 }
                 foreach (var item in env.Items)
                 {
-                    var e = item.Content as IEvent;
-                    if (e != null)
+                    if ((item.Content is IEvent))
                     {
-                        wire.InvokeEvent(e);
+                        wire.InvokeEvent(item.Content);
                     }
                 }
             }

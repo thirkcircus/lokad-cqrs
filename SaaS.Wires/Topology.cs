@@ -18,20 +18,19 @@ namespace SaaS.Wires
         public const string TapesContainer = "sample-tapes";
 
         public static Action<ImmutableEnvelope> Route(Func<string, IQueueWriter> factory, IEnvelopeStreamer serializer,
-            Func<string,ITapeContainer> tapes)
+            IAppendOnlyStore tape)
         {
             var events = factory(EventsQueue);
             var entityQueue = factory(EntityQueue);
             var services = factory(ServiceQueue);
 
-            var ops = tapes(TapesContainer).GetOrCreateStream(DomainLogName);
+           
             
             
             return envelope =>
                 {
                     var data = serializer.SaveEnvelopeData(envelope);
-                    if (ops.TryAppend(data) == 0)
-                        throw new InvalidOperationException("Failed to record domain log");
+                    tape.Append("audit", data, -1);
 
 
                     if (envelope.Items.All(i => i.Content is ICommand<IIdentity>))

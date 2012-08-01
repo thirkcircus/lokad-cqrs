@@ -44,7 +44,7 @@
   <ItemGroup>
     <Compile Include="CommandSender.cs" />
     <Compile Include="Contracts.cs" />
-    <Compile Include="SetupClassThatReplacesIoCContainerFramework.cs" />
+    <Compile Include="EventStore.cs" />
     <Compile Include="Topology.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -39,6 +39,9 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppendOnly\FileAppendOnlyStore.cs" />
+    <Compile Include="AppendOnly\IAppendOnlyStore.cs" />
+    <Compile Include="AppendOnly\MemoryTape.cs" />
     <Compile Include="AtomicStorage\AddOrUpdateHint.cs" />
     <Compile Include="AtomicStorage\ExtendDocumentReader.cs" />
     <Compile Include="AtomicStorage\ExtendDocumentWriter.cs" />
@@ -138,20 +141,13 @@
     <Compile Include="StreamingStorage\StreamErrors.cs" />
     <Compile Include="StreamingStorage\StreamItemNotFoundException.cs" />
     <Compile Include="SystemObserver.cs" />
-    <Compile Include="Obsolete\TapeStorage\FileTapeContainer.cs" />
-    <Compile Include="Obsolete\TapeStorage\FileTapeStream.cs" />
-    <Compile Include="Obsolete\TapeStorage\ITapeContainer.cs" />
-    <Compile Include="Obsolete\TapeStorage\ITapeStream.cs" />
-    <Compile Include="Obsolete\TapeStorage\TapeAppendCondition.cs" />
-    <Compile Include="Obsolete\TapeStorage\TapeAppendConditionException.cs" />
-    <Compile Include="Obsolete\TapeStorage\TapeStorageInitilization.cs" />
-    <Compile Include="Obsolete\TapeStorage\TapeStreamSerializer.cs" />
     <Compile Include="TaskProcess.cs" />
     <Compile Include="unit.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.markdown" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
