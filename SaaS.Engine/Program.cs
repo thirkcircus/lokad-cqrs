@@ -24,6 +24,8 @@ namespace SaaS.Engine
                 {
                     var task = engine.Start(cts.Token);
 
+                    env.SendToCommandRouter.Send(new CreateSecurityAggregate(new SecurityId(1)));
+
                     Console.WriteLine(@"Press enter to stop");
                     Console.ReadLine();
                     cts.Cancel();
@@ -93,18 +95,5 @@ namespace SaaS.Engine
             }
             throw new InvalidOperationException("Unsupported environment");
         }
-
-
-        static Dictionary<string, string> LoadSettings()
-        {
-            var settings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var setting in ConfigurationManager.AppSettings.AllKeys)
-            {
-                settings[setting] = ConfigurationManager.AppSettings[setting];
-            }
-            return settings;
-
-        }
-
     }
 }

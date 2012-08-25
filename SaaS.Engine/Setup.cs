@@ -123,7 +123,7 @@ namespace SaaS.Wires
             {
                 Builder = builder,
                 Setup = this,
-                MessageSender = toCommandRouter,
+                SendToCommandRouter = toCommandRouter,
                 MessageStore = messageStore,
                 ProjectionFactories = projections,
                 ViewDocs = viewDocs,
@@ -234,7 +234,7 @@ namespace SaaS.Wires
     {
         public Setup Setup;
         public CqrsEngineBuilder Builder;
-        public MessageSender MessageSender;
+        public MessageSender SendToCommandRouter;
         public MessageStore MessageStore;
         public IAppendOnlyStore AppendOnlyStore;
         public IDocumentStore ViewDocs;

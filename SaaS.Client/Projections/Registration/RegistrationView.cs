@@ -51,7 +51,8 @@ namespace SaaS.Client.Projections.Registration
             _entity.Add(e.Id, new RegistrationView
             {
                 Status = "Processing registration",
-                Registration = e.Id
+                Registration = e.Id,
+                
             });
         }
 
