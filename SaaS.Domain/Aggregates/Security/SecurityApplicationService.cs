@@ -38,12 +38,8 @@ namespace SaaS.Aggregates.Security
             var eventStream = _eventStore.LoadEventStream(c.Id);
             var state = new SecurityState(eventStream.Events);
             var agg = new SecurityAggregate(state);
-
-            using (Context.CaptureForThread())
-            {
-                action(agg);
-                _eventStore.AppendToStream(c.Id, eventStream.Version, agg.Changes);
-            }
+            action(agg);
+            _eventStore.AppendEventsToStream(c.Id, eventStream.StreamVersion, agg.Changes);
         }
 
         public void When(CreateSecurityAggregate c)

@@ -10,10 +10,12 @@ using System;
 using System.Threading;
 using Lokad.Cqrs.AppendOnly;
 using Lokad.Cqrs.AtomicStorage;
+using Lokad.Cqrs.Build;
 using Lokad.Cqrs.Evil;
-using Lokad.Cqrs.Partition;
+using Lokad.Cqrs.Feature.AzurePartition;
+using Lokad.Cqrs.Feature.AzurePartition.Inbox;
+using Lokad.Cqrs.Feature.StreamingStorage;
 using Lokad.Cqrs.StreamingStorage;
-using Lokad.Cqrs.TapeStorage;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
 
@@ -28,16 +30,14 @@ namespace Lokad.Cqrs
     public static class AzureStorage
     {
         /// <summary> Creates the simplified nuclear storage wrapper around Atomic storage. </summary>
-        /// <param name="storageConfig">The storage config.</param>
+        /// <param name="config">The storage config.</param>
         /// <param name="strategy">The atomic storage strategy.</param>
         /// <returns></returns>
-        public static NuclearStorage CreateNuclear(this IAzureStorageConfig storageConfig,
+        public static IDocumentStore CreateDocumentStore(this IAzureStorageConfig config,
             IDocumentStrategy strategy)
         {
-            var client = storageConfig.CreateBlobClient();
-            
-            var factory = new AzureDocumentStore(strategy, client);
-            return new NuclearStorage(factory);
+            var client = config.CreateBlobClient();
+            return new AzureDocumentStore(strategy, client);
         }
 
 
@@ -109,15 +109,15 @@ namespace Lokad.Cqrs
             return config.CreateStreaming().GetContainer(container).Create();
         }
 
-        
+       
 
-        public static SimpleMessageSender CreateSimpleSender(this IAzureStorageConfig account,
+        public static MessageSender CreateMessageSender(this IAzureStorageConfig account,
             IEnvelopeStreamer streamer, string queueName)
         {
-            return new SimpleMessageSender(streamer, CreateQueueWriter(account, queueName));
+            return new MessageSender(streamer, CreateQueueWriter(account, queueName));
         }
 
-        static StatelessAzureQueueReader BuildIntake(IAzureStorageConfig cfg, string name,
+        public static StatelessAzureQueueReader BuildIntake(IAzureStorageConfig cfg, string name,
             TimeSpan visibilityTimeout = default(TimeSpan))
         {
             var timeout = visibilityTimeout == default(TimeSpan) ? TimeSpan.FromMinutes(5) : visibilityTimeout;
@@ -146,16 +146,12 @@ namespace Lokad.Cqrs
             return new AzurePartitionInbox(new[] {intake}, waiter);
         }
 
-        public static AzureQueueWriterFactory CreateQueueWriterFactory(this IAzureStorageConfig cfg)
-        {
-            return new AzureQueueWriterFactory(cfg);
-        }
+        
 
         public static StatelessAzureQueueWriter CreateQueueWriter(this IAzureStorageConfig cfg, string queueName)
         {
-            return (StatelessAzureQueueWriter) CreateQueueWriterFactory(cfg).GetWriteQueue(queueName);
+            return StatelessAzureQueueWriter.Create(cfg, queueName);
         }
-
         public static BlobAppendOnlyStore CreateAppendOnlyStore(this IAzureStorageConfig config, string s)
         {
             var client = config.CreateBlobClient();

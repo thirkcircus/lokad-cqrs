@@ -1,13 +1,12 @@
-#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// Copyright (c) Lokad 2010-2011, http://www.lokad.com
 // This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Lokad.Cqrs
@@ -18,46 +17,57 @@ namespace Lokad.Cqrs
     public class ImmutableEnvelope
     {
         public readonly string EnvelopeId;
-        public readonly DateTime DeliverOnUtc;
-        public readonly DateTime CreatedOnUtc;
-        [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)] readonly ImmutableAttribute[] _attributes;
+        public readonly object Message;
+        public DateTime CreatedUtc;
+        public readonly ICollection<MessageAttribute> Attributes;
 
-        [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)] public readonly ImmutableMessage[] Items;
-
-        public ImmutableEnvelope(string envelopeId, ImmutableAttribute[] attributes, ImmutableMessage[] items,
-            DateTime deliverOnUtc, DateTime createdOnUtc)
+        public ImmutableEnvelope(string envelopeId, DateTime createdUtc, object message, MessageAttribute[] attributes)
         {
+            
             EnvelopeId = envelopeId;
-            DeliverOnUtc = deliverOnUtc;
-            _attributes = attributes;
-            Items = items;
-            CreatedOnUtc = createdOnUtc;
+            Message = message;
+            CreatedUtc = createdUtc;
+
+            if (null == attributes)
+            {
+                Attributes = MessageAttribute.Empty;
+            }
+            else
+            {
+                // just ensuring that we have an immutable copy
+                var copy = new MessageAttribute[attributes.Length];
+                Array.Copy(attributes, copy, attributes.Length);
+                Attributes = copy;
+            }
         }
 
         public string GetAttribute(string name)
         {
-            return _attributes.First(n => n.Key == name).Value;
+            return Attributes.First(n => n.Key == name).Value;
         }
 
         public string GetAttribute(string name, string defaultValue)
         {
-            foreach (var attribute in _attributes)
+            foreach (var attribute in Attributes)
             {
                 if (attribute.Key == name)
                     return attribute.Value;
             }
             return defaultValue;
         }
+    }
 
-        public IEnumerable<object> SelectContents()
+    public struct MessageAttribute 
+    {
+        public readonly string Key;
+        public readonly string Value;
+
+        public static readonly MessageAttribute[] Empty = new MessageAttribute[0];
+
+        public MessageAttribute(string key, string value)
         {
-            return Items.Select(i => i.Content);
-        }
-
-
-        public ICollection<ImmutableAttribute> GetAllAttributes()
-        {
-            return _attributes;
+            Key = key;
+            Value = value;
         }
     }
 }

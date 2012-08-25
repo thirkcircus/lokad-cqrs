@@ -55,7 +55,7 @@ namespace SaaS.Web
             Debug.WriteLine("Session initialization attempt");
             FormsAuth
                 .GetSessionIdentityFromRequest()
-                .Apply(InitializeSession);
+                .IfValue(InitializeSession);
         }
 
         /// <summary>

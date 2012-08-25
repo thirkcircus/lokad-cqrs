@@ -1,7 +1,7 @@
-﻿#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+﻿#region (c) 2010-2012 Lokad All rights reserved
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
-// This code is released as Open Source under the terms of the New BSD Licence
+// You must not remove this notice, or any other, from this software.
+// This document is the property of LOKAD SAS and must not be disclosed.
 
 #endregion
 
@@ -17,41 +17,17 @@ namespace Lokad.Cqrs.Envelope
         {
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
             {
-                PrintTo(envelope, writer, serializer);
-                writer.Flush();
-                return writer.GetStringBuilder().ToString();
-            }
-        }
+                writer.WriteLine("{0,12}: {1}", "EnvelopeId", envelope.EnvelopeId);
 
-        public static void PrintTo(this ImmutableEnvelope envelope, TextWriter writer, Func<object, string> serializer)
-        {
-            //.AppendFormat("{0,12}: {1}", attribute.GetName(), attribute.GetValue())
-            writer.WriteLine(string.Format("{0,12}: {1}", "EnvelopeId", envelope.EnvelopeId));
-            writer.WriteLine(string.Format("{0,12}: {1:yyyy-MM-dd HH:mm:ss} (UTC)", "Created", envelope.CreatedOnUtc));
-            if (envelope.DeliverOnUtc != DateTime.MinValue)
-            {
-                writer.WriteLine(string.Format("{0,12}: {1:yyyy-MM-dd HH:mm:ss} (UTC)", "Deliver On",
-                    envelope.DeliverOnUtc));
-            }
-
-            foreach (var attribute in envelope.GetAllAttributes())
-            {
-                writer.WriteLine(string.Format("{0,12}: {1}", attribute.Key, attribute.Value));
-            }
-
-            foreach (var message in envelope.Items)
-            {
-                writer.WriteLine();
-                writer.WriteLine("{0}. {1}", message.Index, message.MappedType);
-
-                foreach (var attribute in message.GetAllAttributes())
+                foreach (var attribute in envelope.Attributes)
                 {
-                    writer.WriteLine(string.Format("{0,12}: {1}", attribute.Key, attribute.Value));
+                    writer.WriteLine("{0,12}: {1}", attribute.Key, attribute.Value);
                 }
 
+                writer.WriteLine(envelope.Message.GetType().Name);
                 try
                 {
-                    var buffer = serializer(message.Content);
+                    var buffer = serializer(envelope.Message);
                     writer.WriteLine(buffer);
                 }
                 catch (Exception ex)
@@ -61,6 +37,8 @@ namespace Lokad.Cqrs.Envelope
                 }
 
                 writer.WriteLine();
+                writer.Flush();
+                return writer.GetStringBuilder().ToString();
             }
         }
     }

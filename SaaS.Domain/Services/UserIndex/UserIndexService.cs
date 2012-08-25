@@ -13,9 +13,9 @@ namespace SaaS.Services.UserIndex
 {
     public sealed class UserIndexService : IUserIndexService
     {
-        readonly NuclearStorage _storage;
+        readonly IDocumentReader<byte, UserIndexLookup> _storage;
 
-        public UserIndexService(NuclearStorage storage)
+        public UserIndexService(IDocumentReader<byte,UserIndexLookup> storage)
         {
             _storage = storage;
         }
@@ -24,7 +24,7 @@ namespace SaaS.Services.UserIndex
         {
             var key = GetKey(email);
             return _storage
-                .GetEntity<UserIndexLookup>(key)
+                .Get(key)
                 .Convert(i => i.Logins.ContainsKey(email), false);
         }
 
@@ -41,7 +41,7 @@ namespace SaaS.Services.UserIndex
         {
             var key = GetKey(identity);
             return _storage
-                .GetEntity<UserIndexLookup>(key)
+                .Get(key)
                 .Convert(i => i.Identities.ContainsKey(identity), false);
         }
     }

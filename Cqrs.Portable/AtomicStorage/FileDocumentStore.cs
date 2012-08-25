@@ -1,11 +1,4 @@
-﻿#region (c) 2010-2012 Lokad - CQRS- New BSD License 
-
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
-// This code is released as Open Source under the terms of the New BSD Licence
-
-#endregion
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -27,14 +20,14 @@ namespace Lokad.Cqrs.AtomicStorage
             return new Uri(Path.GetFullPath(_folderPath)).AbsolutePath;
         }
 
-
+       
         readonly HashSet<Tuple<Type, Type>> _initialized = new HashSet<Tuple<Type, Type>>();
 
 
         public IDocumentWriter<TKey, TEntity> GetWriter<TKey, TEntity>()
         {
             var container = new FileDocumentReaderWriter<TKey, TEntity>(_folderPath, _strategy);
-            if (_initialized.Add(Tuple.Create(typeof(TKey), typeof(TEntity))))
+            if (_initialized.Add(Tuple.Create(typeof(TKey),typeof(TEntity))))
             {
                 container.InitIfNeeded();
             }
@@ -57,7 +50,7 @@ namespace Lokad.Cqrs.AtomicStorage
             var full = Path.Combine(_folderPath, bucket);
             var dir = new DirectoryInfo(full);
             if (!dir.Exists) yield break;
-
+            
             var fullFolder = dir.FullName;
             foreach (var info in dir.EnumerateFiles("*", SearchOption.AllDirectories))
             {
@@ -75,7 +68,7 @@ namespace Lokad.Cqrs.AtomicStorage
             foreach (var pair in records)
             {
                 var recordPath = Path.Combine(buck, pair.Key);
-
+                
                 var path = Path.GetDirectoryName(recordPath) ?? "";
                 if (!Directory.Exists(path))
                 {
@@ -91,7 +84,6 @@ namespace Lokad.Cqrs.AtomicStorage
                 Directory.Delete(_folderPath, true);
             Directory.CreateDirectory(_folderPath);
         }
-
         public void Reset(string bucket)
         {
             var path = Path.Combine(_folderPath, bucket);

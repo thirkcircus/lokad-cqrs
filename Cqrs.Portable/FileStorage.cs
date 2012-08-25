@@ -1,6 +1,6 @@
-﻿#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+﻿#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// Copyright (c) Lokad 2010-2011, http://www.lokad.com
 // This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
@@ -15,15 +15,13 @@ using Lokad.Cqrs.TapeStorage;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
-
 namespace Lokad.Cqrs
 {
     public static class FileStorage
     {
-        public static NuclearStorage CreateNuclear(this FileStorageConfig config, IDocumentStrategy strategy)
+        public static IDocumentStore CreateDocumentStore(this FileStorageConfig config, IDocumentStrategy strategy)
         {
-            var factory = new FileDocumentStore(config.FullPath, strategy);
-            return new NuclearStorage(factory);
+            return new FileDocumentStore(config.FullPath, strategy);
         }
 
 
@@ -34,13 +32,11 @@ namespace Lokad.Cqrs
             container.Create();
             return container;
         }
-
         public static IStreamContainer CreateStreaming(this FileStorageConfig config, string subfolder)
         {
             return config.CreateStreaming().GetContainer(subfolder).Create();
         }
 
-      
         public static FileStorageConfig CreateConfig(string fullPath, string optionalName = null, bool reset = false)
         {
             var folder = new DirectoryInfo(fullPath);
@@ -57,26 +53,15 @@ namespace Lokad.Cqrs
             return new FileStorageConfig(info, optionalName ?? info.Name);
         }
 
-        public static FilePartitionInbox CreateInbox(this FileStorageConfig cfg, string name,
-            Func<uint, TimeSpan> decay = null)
+        public static FilePartitionInbox CreateInbox(this FileStorageConfig cfg, string name, Func<uint, TimeSpan> decay = null)
         {
             var reader = new StatelessFileQueueReader(Path.Combine(cfg.FullPath, name), name);
 
             var waiter = decay ?? DecayEvil.BuildExponentialDecay(250);
-            var inbox = new FilePartitionInbox(new[] {reader,}, waiter);
+            var inbox = new FilePartitionInbox(new[]{reader, }, waiter);
             inbox.Init();
             return inbox;
         }
-
-        public static FileAppendOnlyStore CreateAppendOnlyStore(this FileStorageConfig cfg, string name)
-        {
-
-            var store = new FileAppendOnlyStore(new DirectoryInfo(Path.Combine(cfg.FullPath, name)));
-            store.Initialize();
-            return store;
-        }
-
-
         public static FileQueueWriter CreateQueueWriter(this FileStorageConfig cfg, string queueName)
         {
             var full = Path.Combine(cfg.Folder.FullName, queueName);
@@ -87,13 +72,17 @@ namespace Lokad.Cqrs
             return
                 new FileQueueWriter(new DirectoryInfo(full), queueName);
         }
-
-       
-
-        public static SimpleMessageSender CreateSimpleSender(this FileStorageConfig account, IEnvelopeStreamer streamer,
-            string queueName)
+        public static FileAppendOnlyStore CreateAppendOnlyStore(this FileStorageConfig cfg, string name)
         {
-            return new SimpleMessageSender(streamer, CreateQueueWriter(account, queueName));
+
+            var store = new FileAppendOnlyStore(new DirectoryInfo(Path.Combine(cfg.FullPath, name)));
+            store.Initialize();
+            return store;
+        }
+
+        public static MessageSender CreateMessageSender(this FileStorageConfig account, IEnvelopeStreamer streamer, string queueName)
+        {
+            return new MessageSender(streamer, CreateQueueWriter(account, queueName));
         }
     }
 }

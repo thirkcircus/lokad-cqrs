@@ -1,14 +1,6 @@
-#region (c) 2010-2012 Lokad - CQRS- New BSD License 
-
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
-// This code is released as Open Source under the terms of the New BSD Licence
-
-#endregion
-
 using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Lokad.Cqrs.Dispatch.Events;
 using Lokad.Cqrs.Partition.Events;
 
@@ -16,6 +8,7 @@ namespace Lokad.Cqrs.Partition
 {
     public sealed class StatelessFileQueueReader
     {
+
         readonly DirectoryInfo _queue;
         readonly string _queueName;
 
@@ -83,7 +76,7 @@ namespace Lokad.Cqrs.Partition
         {
             // http://stackoverflow.com/questions/425956/how-do-i-determine-if-an-ioexception-is-thrown-because-of-a-sharing-violation
             // don't ask...
-            var hResult = Marshal.GetHRForException(ex);
+            var hResult = System.Runtime.InteropServices.Marshal.GetHRForException(ex);
             const int sharingViolation = 32;
             return (hResult & 0xFFFF) == sharingViolation;
         }
@@ -100,7 +93,7 @@ namespace Lokad.Cqrs.Partition
         public void AckMessage(MessageTransportContext message)
         {
             if (message == null) throw new ArgumentNullException("message");
-            ((FileInfo) message.TransportMessage).Delete();
+            ((FileInfo)message.TransportMessage).Delete();
         }
     }
 }

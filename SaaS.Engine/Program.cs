@@ -6,6 +6,7 @@ using System.IO;
 using System.Security;
 using System.Threading;
 using Lokad.Cqrs;
+using Lokad.Cqrs.Evil;
 using SaaS.Wires;
 using ServiceStack.Text;
 
@@ -13,58 +14,13 @@ namespace SaaS.Engine
 {
     class Program
     {
-        static void Main(string[] args)
+        static void Main()
         {
-            
-
-            ConfigureObserver();
-
-            var settings = LoadSettings();
-
-            foreach (var setting in settings)
-            {
-                SystemObserver.Notify("[{0}] = {1}", setting.Key, setting.Value);
-            }
-
-            var setup = new Setup();
-            
-            var integrationPath = settings["DataPath"];
-            if (integrationPath.StartsWith("file:"))
-            {
-                var path = integrationPath.Remove(0, 5);
-                var config = FileStorage.CreateConfig(path);
-                setup.Streaming = config.CreateStreaming();
-                setup.CreateTapes = config.CreateAppendOnlyStore;
-                setup.Docs = config.CreateNuclear(setup.Strategy).Container;
-                setup.CreateInbox = s => config.CreateInbox(s);
-                setup.CreateQueueWriter = config.CreateQueueWriter;
-            }
-            else if (integrationPath.StartsWith("azure:"))
-            {
-                var path = integrationPath.Remove(0, 6);
-                var config = AzureStorage.CreateConfig(path);
-                setup.Streaming = config.CreateStreaming();
-                setup.CreateTapes = config.CreateAppendOnlyStore;
-                setup.Docs = config.CreateNuclear(setup.Strategy).Container;
-                setup.CreateInbox = s => config.CreateInbox(s);
-                setup.CreateQueueWriter = config.CreateQueueWriter;
-            }
-            else
-            {
-                throw new InvalidOperationException("Unsupperted environment");
-            }
-            
-            
+            using (var env = BuildEnvironment())
             using (var cts = new CancellationTokenSource())
-            using (var container = setup.BuildContainer())
             {
-                container.ExecuteStartupTasks(cts.Token);
-
-                var version = ConfigurationManager.AppSettings.Get("appharbor.commit_id");
-                var instanceStarted = new InstanceStarted(version, "engine", Process.GetCurrentProcess().ProcessName);
-                container.Simple.SendOne(instanceStarted);
-
-                using (var engine = container.Builder.Build())
+                env.ExecuteStartupTasks(cts.Token);
+                using (var engine = env.BuildEngine())
                 {
                     var task = engine.Start(cts.Token);
 
@@ -79,6 +35,7 @@ namespace SaaS.Engine
             }
         }
 
+
         static void ConfigureObserver()
         {
             Trace.Listeners.Add(new ConsoleTraceListener());
@@ -86,6 +43,55 @@ namespace SaaS.Engine
             var observer = new ConsoleObserver();
             SystemObserver.Swap(observer);
             Context.SwapForDebug(s => SystemObserver.Notify(s));
+        }
+
+        public static Container BuildEnvironment()
+        {
+            //JsConfig.DateHandler = JsonDateHandler.ISO8601;
+            ConfigureObserver();
+            var integrationPath = AzureSettingsProvider.GetStringOrThrow(Conventions.StorageConfigName);
+            //var email = AzureSettingsProvider.GetStringOrThrow(Conventions.SmtpConfigName);
+            
+
+            //var core = new SmtpHandlerCore(email);
+            var setup = new Setup
+            {
+                //Smtp = core,
+                //FreeApiKey = freeApiKey,
+                //WebClientUrl = clientUri,
+                //HttpEndpoint = endPoint,
+                //EncryptorTool = new EncryptorTool(systemKey)
+            };
+
+            if (integrationPath.StartsWith("file:"))
+            {
+                var path = integrationPath.Remove(0, 5);
+
+                SystemObserver.Notify("Using store : {0}", path);
+
+                var config = FileStorage.CreateConfig(path);
+                setup.Streaming = config.CreateStreaming();
+                setup.CreateDocs = config.CreateDocumentStore;
+                setup.CreateInbox = s => config.CreateInbox(s, DecayEvil.BuildExponentialDecay(500));
+                setup.CreateQueueWriter = config.CreateQueueWriter;
+                setup.CreateTapes = config.CreateAppendOnlyStore;
+
+                setup.ConfigureQueues(1, 1);
+
+                return setup.Build();
+            }
+            if (integrationPath.StartsWith("Default") || integrationPath.Equals("UseDevelopmentStorage=true", StringComparison.InvariantCultureIgnoreCase))
+            {
+                var config = AzureStorage.CreateConfig(integrationPath);
+                setup.Streaming = config.CreateStreaming();
+                setup.CreateDocs = config.CreateDocumentStore;
+                setup.CreateInbox = s => config.CreateInbox(s);
+                setup.CreateQueueWriter = config.CreateQueueWriter;
+                setup.CreateTapes = config.CreateAppendOnlyStore;
+                setup.ConfigureQueues(4, 4);
+                return setup.Build();
+            }
+            throw new InvalidOperationException("Unsupported environment");
         }
 
 

@@ -11,50 +11,42 @@ using Lokad.Cqrs;
 using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.Envelope;
 using Lokad.Cqrs.Partition;
+using Lokad.Cqrs.StreamingStorage;
+using SaaS.Wires;
 
 namespace SaaS.Web
 {
-    public sealed class WebEndpoint
+    public sealed class Client
     {
         readonly NuclearStorage _store;
-        readonly IEnvelopeStreamer _streamer;
-        readonly IQueueWriter _writer;
+        readonly TypedMessageSender _sender;
+        readonly IStreamRoot _root;
 
-
-        public WebEndpoint(NuclearStorage store, IEnvelopeStreamer streamer, IQueueWriter writer)
+        public Client(IDocumentStore store, TypedMessageSender sender, IStreamRoot root)
         {
-            _store = store;
-            _streamer = streamer;
-            _writer = writer;
+            _store = new NuclearStorage(store);
+            _sender = sender;
+            _root = root;
         }
 
 
-        public void SendOne(ICommand command, string optionalId = null)
+        public void SendCommand(ICommand cmd, string optionalId = null)
         {
-            SendMessage(command, optionalId);
+            var envelopeId = optionalId ?? Guid.NewGuid().ToString().ToLowerInvariant();
+            _sender.SendFromClient(cmd, envelopeId, GetSessionInfo());
         }
-
-        void SendMessage(object command, string optionalId)
+        static MessageAttribute[] GetSessionInfo()
         {
             var auth = FormsAuth.GetSessionIdentityFromRequest();
-
-
-            var envelopeId = optionalId ?? Guid.NewGuid().ToString().ToLowerInvariant();
-            var eb = new EnvelopeBuilder(envelopeId);
-
             if (auth.HasValue)
             {
-                eb.AddString("web-user", auth.Value.User.Id.ToString(CultureInfo.InvariantCulture));
-                eb.AddString("web-token", auth.Value.Token);
+                return new[]
+                    {
+                        new MessageAttribute("web-user",auth.Value.User.Id.ToString(CultureInfo.InvariantCulture)), 
+                        new MessageAttribute("web-token",auth.Value.Token), 
+                    };
             }
-            eb.AddItem(command);
-
-            _writer.PutMessage(_streamer.SaveEnvelopeData(eb.Build()));
-        }
-
-        public void PublishOne(IEvent e, string optionalId = null)
-        {
-            SendMessage(e, optionalId);
+            return new MessageAttribute[0];
         }
 
         public TSingleton GetSingleton<TSingleton>() where TSingleton : new()
@@ -64,14 +56,33 @@ namespace SaaS.Web
 
         public Maybe<TEntity> GetView<TEntity>(object key)
         {
-            var optional = _store.GetEntity<TEntity>(key);
-            return optional.HasValue ? optional.Value : Maybe<TEntity>.Empty;
+            return _store.GetEntity<TEntity>(key);
         }
-
 
         public TEntity GetViewOrThrow<TEntity>(object key)
         {
-            return GetView<TEntity>(key).ExposeException("Failed to locate view {0} by key {1}", typeof(TEntity), key);
+            var optional = GetView<TEntity>(key);
+            if (optional.HasValue)
+                return optional.Value;
+            throw new InvalidOperationException(string.Format("Failed to locate view {0} by key {1}", typeof(TEntity),
+                key));
         }
+        //public void UnzipTo(BinaryReference reference, Stream outputStream)
+        //{
+        //    using (var output = _root.GetContainer(reference.Container).OpenRead(reference.Name))
+        //    {
+        //        if (reference.Compressed)
+        //        {
+        //            using (var decompress = new GZipStream(output, CompressionMode.Decompress))
+        //            {
+        //                decompress.CopyTo(outputStream);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            output.CopyTo(outputStream);
+        //        }
+        //    }
+        //}
     }
 }

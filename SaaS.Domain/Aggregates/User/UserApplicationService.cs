@@ -27,7 +27,7 @@ namespace SaaS.Aggregates.User
             using (Context.CaptureForThread()) {
                 agg.ThrowOnInvalidStateTransition(c);
                 action(agg);
-                _store.AppendToStream(c.Id, stream.Version, agg.Changes);
+                _store.AppendEventsToStream(c.Id, stream.StreamVersion, agg.Changes);
             }
         }
 

@@ -40,13 +40,16 @@ const timeUtc = DateTime TimeUtc;
 const email = Email Email;
 
 // define interface substitutes for the standalone contracts below 
-if ? = IFunctionalCommand;
-if ! = IFunctionalEvent;
+if ? = IFuncCommand;
+if ! = IFuncEvent;
 
 InstanceStarted!(string codeVersion, string role, string instance)
     explicit "Started {role}. {instance}"
 SendMailMessage?(Email[] to, string subject, string body, bool isHtml, Email[] cc,  Email optionalSender, Email optionalReplyTo)
 MailMessageSent!(ref SendMailMessage)
+EventStreamStarted!()
+MessageQuarantined!(string log, byte[] envelope, string[] contracts, timeUtc)
+
 
 /// start new interface for our application service and aggregate state
 /// all events (maked with ?) will be added as method calls to ISecurityState

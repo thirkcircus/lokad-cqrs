@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Caching;
 using System.Web.Mvc;
 using System.Web.Security;
+using Lokad.Cqrs;
 using Lokad.Cqrs.AtomicStorage;
 using SaaS.Client;
 using SaaS.Client.Projections.LoginView;
@@ -62,8 +63,8 @@ namespace SaaS.Web
             var username = formsPrincipal.Identity.Name;
 
             GetOrLoadRealPrincipal(username)
-                .Apply(p => context.User = p)
-                .Handle(() => context.User = Anonymous);
+                .IfValue(p => context.User = p)
+                .IfEmpty(() => context.User = Anonymous);
         }
 
 

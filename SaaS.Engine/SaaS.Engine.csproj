@@ -67,6 +67,7 @@
     <CodeAnalysisIgnoreBuiltInRules>true</CodeAnalysisIgnoreBuiltInRules>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.WindowsAzure.ServiceRuntime, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Library\Azure\Microsoft.WindowsAzure.ServiceRuntime.dll</HintPath>
@@ -86,6 +87,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConsoleObserver.cs" />
+    <Compile Include="EnvelopeQuarantine.cs" />
+    <Compile Include="MessageStorePublisher.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Setup.cs" />

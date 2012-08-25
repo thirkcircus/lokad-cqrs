@@ -108,7 +108,8 @@ namespace Lokad.Cqrs.AppendOnly
                 _cancelSource.Cancel();
 
                 DoUntilTrue(Try4Times, CancellationToken.None,
-                    () => ReleaseLease(_blob, _leaseId));
+                    () => 
+                        ReleaseLease(_blob, _leaseId));
                 _renewalThread = null;
             }
             _disposed = true;

@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using Lokad.Cqrs.Envelope;
 
-namespace Lokad.Cqrs.Partition
+namespace Lokad.Cqrs.Feature.AzurePartition
 {
     public static class AzureMessageOverflows
     {

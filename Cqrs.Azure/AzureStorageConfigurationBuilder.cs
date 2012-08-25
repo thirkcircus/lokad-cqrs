@@ -9,7 +9,7 @@ using System;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
 
-namespace Lokad.Cqrs
+namespace Lokad.Cqrs.Build
 {
     public sealed class AzureStorageConfigurationBuilder
     {

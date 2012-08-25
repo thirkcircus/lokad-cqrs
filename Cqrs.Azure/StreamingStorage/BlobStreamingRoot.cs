@@ -5,9 +5,12 @@
 
 #endregion
 
+using System.Collections.Generic;
+using Lokad.Cqrs.StreamingStorage;
 using Microsoft.WindowsAzure.StorageClient;
+using System.Linq;
 
-namespace Lokad.Cqrs.StreamingStorage
+namespace Lokad.Cqrs.Feature.StreamingStorage
 {
     /// <summary>
     /// Windows Azure implementation of storage 
@@ -28,6 +31,15 @@ namespace Lokad.Cqrs.StreamingStorage
         public IStreamContainer GetContainer(string name)
         {
             return new BlobStreamingContainer(_client.GetBlobDirectoryReference(name));
+        }
+
+        public IEnumerable<string> ListContainers(string prefix)
+        {
+            if (string.IsNullOrEmpty(prefix))
+            {
+                return _client.ListContainers().Select(c => c.Name);
+            }
+            return _client.ListContainers(prefix).Select(c => c.Name);
         }
     }
 }

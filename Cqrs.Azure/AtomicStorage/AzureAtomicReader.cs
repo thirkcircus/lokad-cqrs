@@ -29,7 +29,7 @@ namespace Lokad.Cqrs.AtomicStorage
 
         CloudBlob GetBlobReference(TKey key)
         {
-            return _container.GetBlobReference(_strategy.GetEntityLocation(typeof(TEntity), key));
+            return _container.GetBlobReference(_strategy.GetEntityLocation<TEntity>(key));
         }
 
         public bool TryGet(TKey key, out TEntity entity)

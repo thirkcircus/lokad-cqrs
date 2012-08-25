@@ -18,6 +18,7 @@ namespace Lokad.Cqrs
     /// </summary>
     public sealed class AzureSettingsProvider
     {
+        [DebuggerNonUserCode]
         static bool DetectCloudEnvironment()
         {
             try
@@ -28,6 +29,10 @@ namespace Lokad.Cqrs
             catch (RoleEnvironmentException)
             {
                 // no environment
+            }
+            catch(Exception)
+            {
+                
             }
             return false;
         }

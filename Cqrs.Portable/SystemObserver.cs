@@ -1,7 +1,7 @@
-#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+#region Copyright (c) 2012 LOKAD SAS. All rights reserved
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
-// This code is released as Open Source under the terms of the New BSD Licence
+// You must not remove this notice, or any other, from this software.
+// This document is the property of LOKAD SAS and must not be disclosed
 
 #endregion
 

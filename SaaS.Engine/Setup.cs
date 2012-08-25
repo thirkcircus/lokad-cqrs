@@ -1,10 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Lokad.Cqrs;
 using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.Build;
+using Lokad.Cqrs.Envelope;
 using Lokad.Cqrs.Partition;
 using Lokad.Cqrs.StreamingStorage;
 using Lokad.Cqrs.TapeStorage;
@@ -15,77 +18,170 @@ namespace SaaS.Wires
 {
     public sealed class Setup
     {
+        static readonly string FunctionalRecorderQueue = Conventions.FunctionalEventRecorderQueue;
+        static readonly string RouterQueue = Conventions.DefaultRouterQueue;
+        static readonly string ErrorsContainer = Conventions.DefaultErrorsFolder;
+
+        const string EventProcessingQueue = Conventions.Prefix + "-handle-events";
+        const string AggregateHandlerQueue = Conventions.Prefix + "-handle-cmd-entity";
+        string[] _serviceQueues;
+        
+
+        public void ConfigureQueues(int serviceQueueCount, int adapterQueueCount)
+        {
+            _serviceQueues = Enumerable
+                .Range(0, serviceQueueCount)
+                .Select((s, i) => Conventions.Prefix + "-handle-cmd-service-" + i)
+                .ToArray();
+        }
+
+        public const string TapesContainer = Conventions.Prefix + "-tapes";
+
+        public static readonly EnvelopeStreamer Streamer = Contracts.CreateStreamer();
+        public static readonly IDocumentStrategy ViewStrategy = new ViewStrategy();
+        public static readonly IDocumentStrategy DocStrategy = new DocumentStrategy();
+
         public IStreamRoot Streaming;
-        public Func<string, IAppendOnlyStore> CreateTapes;
-        public IDocumentStore Docs;
 
         public Func<string, IQueueWriter> CreateQueueWriter;
         public Func<string, IPartitionInbox> CreateInbox;
+        public Func<string, IAppendOnlyStore> CreateTapes;
+        public Func<IDocumentStrategy, IDocumentStore> CreateDocs;
+        
         
 
+        
 
-        public readonly IEnvelopeStreamer Streamer = Contracts.CreateStreamer();
-        public readonly IDocumentStrategy Strategy = new DocumentStrategy();
-
-        public Container BuildContainer()
+        public Container Build()
         {
-            // set up all the variables
-               var tapes = CreateTapes(Topology.TapesContainer);
-            var routerQueue = CreateQueueWriter(Topology.RouterQueue);
+            var appendOnlyStore = CreateTapes(TapesContainer);
+            var messageStore = new MessageStore(appendOnlyStore, Streamer.MessageSerializer);
 
-            var commands = new RedirectToCommand();
+            var toCommandRouter = new MessageSender(Streamer, CreateQueueWriter(RouterQueue));
+            var toFunctionalRecorder = new MessageSender(Streamer, CreateQueueWriter(FunctionalRecorderQueue));
+            var toEventHandlers = new MessageSender(Streamer, CreateQueueWriter(EventProcessingQueue));
+
+            var sender = new TypedMessageSender(toCommandRouter, toFunctionalRecorder);
+
+            var store = new EventStore(messageStore);
+
+            var quarantine = new EnvelopeQuarantine(Streamer, sender, Streaming.GetContainer(ErrorsContainer));
+
+            var builder = new CqrsEngineBuilder(Streamer, quarantine);
+
             var events = new RedirectToDynamicEvent();
+            var commands = new RedirectToCommand();
+            var funcs = new RedirectToCommand();
             
 
-            var eventStore = new EventStore(tapes, Streamer, routerQueue);
-            var simple = new SimpleMessageSender(Streamer, routerQueue);
-            var flow = new CommandSender(simple);
-            var builder = new CqrsEngineBuilder(Streamer);
+            builder.Handle(CreateInbox(EventProcessingQueue), aem => CallHandlers(events, aem), "watch");
+            builder.Handle(CreateInbox(AggregateHandlerQueue), aem => CallHandlers(commands, aem));
+            builder.Handle(CreateInbox(RouterQueue), MakeRouter(messageStore), "watch");
+            // multiple service queues
+            _serviceQueues.ForEach(s => builder.Handle(CreateInbox(s), aem => CallHandlers(funcs, aem)));
+
+            builder.Handle(CreateInbox(FunctionalRecorderQueue), aem => RecordFunctionalEvent(aem, messageStore));
+            var viewDocs = CreateDocs(ViewStrategy);
+            var stateDocs = new NuclearStorage(CreateDocs(DocStrategy));
+
+
+
+            var vector = new DomainIdentityGenerator(stateDocs);
+            //var ops = new StreamOps(Streaming);
             var projections = new ProjectionsConsumingOneBoundedContext();
 
-            // route queue infrastructure together
-            builder.Handle(CreateInbox(Topology.RouterQueue), Topology.Route(CreateQueueWriter, Streamer, tapes), "router");
-            builder.Handle(CreateInbox(Topology.EntityQueue), em => CallHandlers(commands, em));
-            builder.Handle(CreateInbox(Topology.EventsQueue), aem => CallHandlers(events, aem));
 
-
-            // message wiring magic
-            DomainBoundedContext.ApplicationServices(Docs, eventStore).ForEach(commands.WireToWhen);
-            DomainBoundedContext.Receptors(flow).ForEach(events.WireToWhen);
-            DomainBoundedContext.Tasks(flow, Docs, false).ForEach(builder.AddTask);
+            // Domain Bounded Context
+            DomainBoundedContext.EntityApplicationServices(viewDocs, store,vector).ForEach(commands.WireToWhen);
+            DomainBoundedContext.FuncApplicationServices().ForEach(funcs.WireToWhen);
+            DomainBoundedContext.Ports(sender).ForEach(events.WireToWhen);
+            DomainBoundedContext.Tasks(sender, viewDocs, true).ForEach(builder.AddTask);
             projections.RegisterFactory(DomainBoundedContext.Projections);
 
+            // Client Bounded Context
             projections.RegisterFactory(ClientBoundedContext.Projections);
 
-            projections.BuildFor(Docs).ForEach(events.WireToWhen);
+            
 
+            // wire all projections
+
+
+            projections.BuildFor(viewDocs).ForEach(events.WireToWhen);
+
+            // wire in event store publisher
+            var publisher = new MessageStorePublisher(messageStore, toEventHandlers, stateDocs);
+            builder.AddTask(c => Task.Factory.StartNew(() => publisher.Run(c)));
+
+            //var environment = new HttpEnvironment()
+            //{
+            //    Port = HttpEndpoint.Port,
+            //    OptionalHostName = HttpEndpoint.Address.ToString()
+            //};
+            //var listener = new Listener(environment, Handlers(messageStore, EncryptorTool));
+            //builder.AddTask(c => Task.Factory.StartNew(() => listener.Run(c)));
             return new Container
+            {
+                Builder = builder,
+                Setup = this,
+                MessageSender = toCommandRouter,
+                MessageStore = messageStore,
+                ProjectionFactories = projections,
+                ViewDocs = viewDocs,
+                Publisher = publisher,
+                AppendOnlyStore = appendOnlyStore
+            };
+        }
+
+        //IEnumerable<IHttpRequestHandler> Handlers(MessageStore store, EncryptorTool tool)
+        //{
+        //    yield return new DefaultHttpHandler();
+        //    yield return new TooBusyHandlerHandler();
+        //    yield return new EventStreamAuditor(store, tool);
+        //}
+
+        void RecordFunctionalEvent(ImmutableEnvelope envelope, MessageStore store)
+        {
+            if (envelope.Message is IFuncEvent) store.RecordMessage("func", envelope);
+            else throw new InvalidOperationException("Non-func event {0} landed to queue for tracking stateless events");
+        }
+
+        Action<ImmutableEnvelope> MakeRouter(MessageStore tape)
+        {
+            var entities = CreateQueueWriter(AggregateHandlerQueue);
+            var processing = _serviceQueues.Select(CreateQueueWriter).ToArray();
+            
+            return envelope =>
+            {
+                var message = envelope.Message;
+                if (message is ICommand)
                 {
-                    Builder = builder,
-                    Sender = flow,
-                    Setup = this,
-                    Simple = simple,
-                    AppendOnlyStore = tapes,
-                    ProjectionFactories = projections
-                };
+                    // all commands are recorded to audit stream, as they go through router
+                    tape.RecordMessage("audit", envelope);
+                }
+
+                if (message is IEvent)
+                {
+                    throw new InvalidOperationException("Events are not expected in command router queue");
+                }
+
+                var data = Streamer.SaveEnvelopeData(envelope);
+
+                if (message is ICommand<IIdentity>)
+                {
+                    entities.PutMessage(data);
+                    return;
+                }
+                if (message is IFuncCommand)
+                {
+                    // randomly distribute between queues
+                    var i = Environment.TickCount % processing.Length;
+                    processing[i].PutMessage(data);
+                    return;
+                }
+                throw new InvalidOperationException("Unknown message format");
+            };
         }
 
-        static void CallHandlers(RedirectToDynamicEvent functions, ImmutableEnvelope aem)
-        {
-            if (aem.Items.Length != 1)
-                throw new InvalidOperationException(
-                    "Unexpected number of items in envelope that arrived to projections: " +
-                        aem.Items.Length);
-            // we wire envelope contents to both direct message call and sourced call (with date wrapper)
-            var content = aem.Items[0].Content;
-            functions.InvokeEvent(content);
-        }
-
-        static void CallHandlers(RedirectToCommand serviceCommands, ImmutableEnvelope aem)
-        {
-            var content = aem.Items[0].Content;
-            serviceCommands.Invoke(content);
-        }
 
 
         /// <summary>
@@ -108,24 +204,57 @@ namespace SaaS.Wires
             }
         }
 
+        static void CallHandlers(RedirectToDynamicEvent functions, ImmutableEnvelope aem)
+        {
+            var e = aem.Message as IEvent;
+
+            if (e != null)
+            {
+                functions.InvokeEvent(e);
+            }
+        }
+
+        static void CallHandlers(RedirectToCommand serviceCommands, ImmutableEnvelope aem)
+        {
+
+            var content = aem.Message;
+            var watch = Stopwatch.StartNew();
+            serviceCommands.Invoke(content);
+            watch.Stop();
+
+            var seconds = watch.Elapsed.TotalSeconds;
+            if (seconds > 10)
+            {
+                SystemObserver.Notify("[Warn]: {0} took {1:0.0} seconds", content.GetType().Name, seconds);
+            }
+        }
     }
 
     public sealed class Container : IDisposable
     {
         public Setup Setup;
         public CqrsEngineBuilder Builder;
-        public ICommandSender Sender;
-        public SimpleMessageSender Simple;
+        public MessageSender MessageSender;
+        public MessageStore MessageStore;
         public IAppendOnlyStore AppendOnlyStore;
+        public IDocumentStore ViewDocs;
         public Setup.ProjectionsConsumingOneBoundedContext ProjectionFactories;
+        public MessageStorePublisher Publisher;
+
+        public CqrsEngineHost BuildEngine()
+        {
+            return Builder.Build();
+        }
 
         public void ExecuteStartupTasks(CancellationToken token)
         {
+            Publisher.VerifyEventStreamSanity();
+
             // we run S2 projections from 3 different BCs against one domain log
             StartupProjectionRebuilder.Rebuild(
                 token,
-                Setup.Docs,
-                AppendOnlyStore, 
+                ViewDocs,
+                MessageStore,
                 store => ProjectionFactories.BuildFor(store));
         }
 
@@ -133,7 +262,7 @@ namespace SaaS.Wires
         {
             using (AppendOnlyStore)
             {
-                AppendOnlyStore.Close();
+                AppendOnlyStore = null;
             }
         }
     }
@@ -148,5 +277,4 @@ namespace SaaS.Wires
             }
         }
     }
-
 }

@@ -1,6 +1,6 @@
-#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// Copyright (c) Lokad 2010-2011, http://www.lokad.com
 // This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
@@ -19,8 +19,7 @@ namespace Lokad.Cqrs.Build
     {
         readonly ICollection<IEngineProcess> _serverProcesses;
 
-        readonly Stack<IDisposable> _disposables = new Stack<IDisposable>();
-
+        readonly Stack<IDisposable> _disposables = new Stack<IDisposable>(); 
         public CqrsEngineHost(ICollection<IEngineProcess> serverProcesses)
         {
             _serverProcesses = serverProcesses;
@@ -36,12 +35,6 @@ namespace Lokad.Cqrs.Build
             _disposables.Push(disposable);
         }
 
-        public void RunForever()
-        {
-            var token = new CancellationTokenSource();
-            Start(token.Token);
-            token.Token.WaitHandle.WaitOne();
-        }
 
         public Task Start(CancellationToken token)
         {
@@ -49,8 +42,7 @@ namespace Lokad.Cqrs.Build
 
             if (tasks.Length == 0)
             {
-                throw new InvalidOperationException(string.Format("There were no instances of '{0}' registered",
-                    typeof(IEngineProcess).Name));
+                throw new InvalidOperationException(string.Format("There were no instances of '{0}' registered", typeof(IEngineProcess).Name));
             }
 
             var names =
@@ -65,7 +57,8 @@ namespace Lokad.Cqrs.Build
                     {
                         Task.WaitAll(tasks, token);
                     }
-                    catch (OperationCanceledException) {}
+                    catch(OperationCanceledException)
+                    {}
                     SystemObserver.Notify(new EngineStopped(watch.Elapsed));
                 });
         }
@@ -73,7 +66,6 @@ namespace Lokad.Cqrs.Build
 
         internal void Initialize()
         {
-            SystemObserver.Notify(new EngineInitializationStarted());
             foreach (var process in _serverProcesses)
             {
                 process.Initialize();
@@ -81,10 +73,10 @@ namespace Lokad.Cqrs.Build
             SystemObserver.Notify(new EngineInitialized());
         }
 
-
+    
         public void Dispose()
         {
-            while (_disposables.Count > 0)
+            while (_disposables.Count> 0)
             {
                 try
                 {
@@ -92,6 +84,7 @@ namespace Lokad.Cqrs.Build
                 }
                 catch {}
             }
+
         }
     }
 }

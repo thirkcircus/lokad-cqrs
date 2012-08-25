@@ -24,7 +24,7 @@ namespace Lokad.Cqrs.AppendOnly
 
         // Caches
         readonly ConcurrentDictionary<string, DataWithVersion[]> _items = new ConcurrentDictionary<string, DataWithVersion[]>();
-        DataWithName[] _all = new DataWithName[0];
+        DataWithKey[] _all = new DataWithKey[0];
 
         /// <summary>
         /// Used to synchronize access between multiple threads within one process
@@ -44,6 +44,8 @@ namespace Lokad.Cqrs.AppendOnly
         /// </summary>
         AutoRenewLease _lock;
 
+        CloudBlob _lockBlob;
+
         public BlobAppendOnlyStore(CloudBlobContainer container)
         {
             _container = container;
@@ -59,8 +61,8 @@ namespace Lokad.Cqrs.AppendOnly
         {
             CreateIfNotExists(_container, TimeSpan.FromSeconds(60));
             // grab the ownership
-            var blobReference = _container.GetBlobReference("lock");
-            _lock = AutoRenewLease.GetOrThrow(blobReference);
+            _lockBlob = _container.GetBlobReference("lock");
+            _lock = AutoRenewLease.GetOrThrow(_lockBlob);
 
             LoadCaches();
         }
@@ -109,7 +111,7 @@ namespace Lokad.Cqrs.AppendOnly
             return _items.TryGetValue(streamName, out list) ? list : Enumerable.Empty<DataWithVersion>();
         }
 
-        public IEnumerable<DataWithName> ReadRecords(long afterVersion, int maxCount)
+        public IEnumerable<DataWithKey> ReadRecords(long afterVersion, int maxCount)
         {
             // collection is immutable so we don't care about locks
             return _all.Skip((int) afterVersion).Take(maxCount);
@@ -128,6 +130,13 @@ namespace Lokad.Cqrs.AppendOnly
                 _currentWriter = null;
                 tmp.Dispose();
             }
+            // clean up the lock
+            _lockBlob.DeleteIfExists();
+        }
+
+        public long GetCurrentVersion()
+        {
+            return _all.Length;
         }
 
         IEnumerable<Record> EnumerateHistory()
@@ -210,8 +219,9 @@ namespace Lokad.Cqrs.AppendOnly
 
         void AddToCaches(string key, byte[] buffer, long commit)
         {
-            var record = new DataWithVersion(commit, buffer);
-            _all = AddToNewArray(_all, new DataWithName(key, buffer, commit));
+            var storeVersion = _all.Length + 1;
+            var record = new DataWithVersion(commit, buffer, storeVersion);
+            _all = AddToNewArray(_all, new DataWithKey(key, buffer, commit, storeVersion));
             _items.AddOrUpdate(key, s => new[] {record}, (s, records) => AddToNewArray(records, record));
         }
 
@@ -275,7 +285,7 @@ namespace Lokad.Cqrs.AppendOnly
             if (_currentWriter != null)
                 return;
 
-            var fileName = string.Format("{0:00000000}-{1:yyyy-MM-dd-HHmm}.dat", version, DateTime.UtcNow);
+            var fileName = string.Format("{0:00000000}-{1:yyyy-MM-dd-HHmmss}.dat", version, DateTime.UtcNow);
             var blob = _container.GetPageBlobReference(fileName);
             blob.Create(1024 * 512);
 

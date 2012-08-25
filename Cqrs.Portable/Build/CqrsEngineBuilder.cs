@@ -1,10 +1,3 @@
-#region (c) 2010-2012 Lokad - CQRS- New BSD License 
-
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
-// This code is released as Open Source under the terms of the New BSD Licence
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -18,17 +11,16 @@ namespace Lokad.Cqrs.Build
     public sealed class CqrsEngineBuilder : HideObjectMembersFromIntelliSense
     {
         public readonly IEnvelopeQuarantine Quarantine;
-        public readonly MessageDuplicationManager Duplication;
+        public readonly DuplicationManager Duplication;
         public readonly IEnvelopeStreamer Streamer;
-        public readonly List<IEngineProcess> Processes;
+        public readonly List<IEngineProcess> Processes; 
 
-        public CqrsEngineBuilder(IEnvelopeStreamer streamer, IEnvelopeQuarantine quarantine = null,
-            MessageDuplicationManager duplication = null)
+        public CqrsEngineBuilder(IEnvelopeStreamer streamer, IEnvelopeQuarantine quarantine = null, DuplicationManager duplication = null)
         {
             Processes = new List<IEngineProcess>();
             Streamer = streamer;
             Quarantine = quarantine ?? new MemoryQuarantine();
-            Duplication = duplication ?? new MessageDuplicationManager();
+            Duplication = duplication ?? new DuplicationManager();
 
             Processes.Add(Duplication);
         }
@@ -39,7 +31,7 @@ namespace Lokad.Cqrs.Build
             Processes.Add(process);
         }
 
-
+        
         public void AddTask(Func<CancellationToken, Task> factoryToStartTask)
         {
             Processes.Add(new TaskProcess(factoryToStartTask));
@@ -50,7 +42,7 @@ namespace Lokad.Cqrs.Build
             Processes.Add(new DispatcherProcess(lambda, inbox));
         }
 
-        static int _counter;
+        static int _counter = 0;
 
         public void Handle(IPartitionInbox inbox, Action<ImmutableEnvelope> lambda, string name = null)
         {

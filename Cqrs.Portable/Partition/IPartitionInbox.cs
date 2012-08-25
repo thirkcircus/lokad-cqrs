@@ -1,6 +1,6 @@
-﻿#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+﻿#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// Copyright (c) Lokad 2010-2011, http://www.lokad.com
 // This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
@@ -14,14 +14,13 @@ namespace Lokad.Cqrs.Partition
     /// </summary>
     public interface IPartitionInbox
     {
-        void InitIfNeeded();
 
+        void InitIfNeeded();
         /// <summary>
         /// Acks the message (removing it from the original queue).
         /// </summary>
         /// <param name="message">The envelope.</param>
         void AckMessage(MessageTransportContext message);
-
         /// <summary>
         /// Tries to take the message, waiting for it, if needed
         /// </summary>
@@ -29,7 +28,6 @@ namespace Lokad.Cqrs.Partition
         /// <param name="context">The context for the retrieved message.</param>
         /// <returns><em>true</em> if the message was retrieved, <em>false</em> otherwise</returns>
         bool TakeMessage(CancellationToken token, out MessageTransportContext context);
-
         /// <summary>
         /// Tries the notify the original queue that the message was not processed.
         /// </summary>

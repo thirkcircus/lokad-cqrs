@@ -1,6 +1,6 @@
-﻿#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+﻿#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// Copyright (c) Lokad 2010-2011, http://www.lokad.com
 // This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
@@ -10,12 +10,13 @@ using System.Collections.Concurrent;
 using System.Linq;
 using Lokad.Cqrs.AtomicStorage;
 using Lokad.Cqrs.Partition;
+using Lokad.Cqrs.TapeStorage;
 
 // ReSharper disable UnusedMember.Global
 // ReSharper disable MemberCanBePrivate.Global
-
 namespace Lokad.Cqrs
 {
+
     public static class MemoryStorage
     {
         public static MemoryStorageConfig CreateConfig()
@@ -34,15 +35,9 @@ namespace Lokad.Cqrs
             var container = new MemoryDocumentStore(dictionary.Data, strategy);
             return new NuclearStorage(container);
         }
+        
 
-        public static MemoryQueueWriterFactory CreateWriteQueueFactory(this MemoryStorageConfig storageConfig)
-        {
-            return new MemoryQueueWriterFactory(storageConfig);
-        }
-
-
-        public static MemoryPartitionInbox CreateInbox(this MemoryStorageConfig storageConfig,
-            params string[] queueNames)
+        public static MemoryPartitionInbox CreateInbox(this MemoryStorageConfig storageConfig,  params string[] queueNames)
         {
             var queues = queueNames
                 .Select(n => storageConfig.Queues.GetOrAdd(n, s => new BlockingCollection<byte[]>()))
@@ -57,11 +52,9 @@ namespace Lokad.Cqrs
             return new MemoryQueueWriter(collection, queueName);
         }
 
-        public static SimpleMessageSender CreateSimpleSender(this MemoryStorageConfig storageConfig,
-            IEnvelopeStreamer streamer, string queueName, Func<string> idGenerator = null)
+        public static MessageSender CreateMessageSender(this MemoryStorageConfig storageConfig, IEnvelopeStreamer streamer, string queueName)
         {
-            var queueWriter = new[] {CreateQueueWriter(storageConfig, queueName)};
-            return new SimpleMessageSender(streamer, queueWriter, idGenerator);
+            return new MessageSender(streamer, CreateQueueWriter(storageConfig, queueName));
         }
     }
 }

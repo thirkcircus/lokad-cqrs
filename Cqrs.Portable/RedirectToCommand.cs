@@ -1,15 +1,9 @@
-#region (c) 2010-2012 Lokad - CQRS- New BSD License 
-
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
-// This code is released as Open Source under the terms of the New BSD Licence
-
-#endregion
-
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace Lokad.Cqrs
 {
@@ -17,14 +11,13 @@ namespace Lokad.Cqrs
     {
         public readonly IDictionary<Type, Action<object>> Dict = new Dictionary<Type, Action<object>>();
 
-
         static readonly MethodInfo InternalPreserveStackTraceMethod =
             typeof(Exception).GetMethod("InternalPreserveStackTrace", BindingFlags.Instance | BindingFlags.NonPublic);
 
 
         public void WireToWhen(object o)
         {
-            WireToMethod(o, "When");
+            WireToMethod(o,"When");
         }
 
         public void WireToMethod(object o, string methodName)
@@ -39,13 +32,13 @@ namespace Lokad.Cqrs
                 var type = methodInfo.GetParameters().First().ParameterType;
 
                 var info = methodInfo;
-                Dict.Add(type, message => info.Invoke(o, new[] {message}));
+                Dict.Add(type, message => info.Invoke(o, new[] { message }));
             }
         }
 
         public void WireToLambda<T>(Action<T> handler)
         {
-            Dict.Add(typeof(T), o => handler((T) o));
+            Dict.Add(typeof(T), o => handler((T)o));
         }
 
         public void InvokeMany(IEnumerable<object> messages, Action<object> onNull = null)
@@ -63,9 +56,9 @@ namespace Lokad.Cqrs
             var type = message.GetType();
             if (!Dict.TryGetValue(type, out handler))
             {
-                handler = onNull ??
-                    (o => { throw new InvalidOperationException("Failed to locate command handler for " + type); });
+                handler = onNull ?? (o => { throw new InvalidOperationException("Failed to locate command handler for " + type); });
                 //Trace.WriteLine(string.Format("Discarding {0} - failed to locate event handler", type.Name));
+
             }
             try
             {
@@ -87,14 +80,16 @@ namespace Lokad.Cqrs
     {
         public readonly IDictionary<Type, List<Wire>> Dict = new Dictionary<Type, List<Wire>>();
 
+
         public sealed class Wire
         {
-            public MethodInfo Method;
-            public object Instance;
+            public Action<object> Call;
+            public Type ParameterType;
         }
 
         static readonly MethodInfo InternalPreserveStackTraceMethod =
             typeof(Exception).GetMethod("InternalPreserveStackTrace", BindingFlags.Instance | BindingFlags.NonPublic);
+
 
 
         public void WireToWhen(object o)
@@ -106,37 +101,97 @@ namespace Lokad.Cqrs
 
             foreach (var methodInfo in infos)
             {
-                var type = methodInfo.GetParameters().First().ParameterType;
+                if (null == methodInfo)
+                    throw new InvalidOperationException();
 
-                List<Wire> list;
-                if (!Dict.TryGetValue(type, out list))
+                var wires = new HashSet<Type>();
+                var parameterType = methodInfo.GetParameters().First().ParameterType;
+                wires.Add(parameterType);
+
+
+                // if this is an interface, then we wire up to all inheritors in loaded assemblies
+                // TODO: make this explicit
+                if (parameterType.IsInterface)
                 {
-                    list = new List<Wire>();
-                    Dict.Add(type, list);
+                    throw new InvalidOperationException("We don't support wiring to interfaces");
+                    //var inheritors = typeof(StartProjectRun).Assembly.GetExportedTypes().Where(parameterType.IsAssignableFrom);
+                    //foreach (var inheritor in inheritors)
+                    //{
+                    //    wires.Add(inheritor);
+                    //}
                 }
-                list.Add(new Wire
+
+                foreach (var type in wires)
                 {
-                    Instance = o,
-                    Method = methodInfo
-                });
+
+                    List<Wire> list;
+                    if (!Dict.TryGetValue(type, out list))
+                    {
+                        list = new List<Wire>();
+                        Dict.Add(type, list);
+                    }
+                    var wire = BuildWire(o, type, methodInfo);
+                    list.Add(wire);
+                }
             }
+
+
         }
+
+        static Wire BuildWire(object o, Type type, MethodInfo methodInfo)
+        {
+            var info = methodInfo;
+            var dm = new DynamicMethod("MethodWrapper", null, new[] { typeof(object), typeof(object) });
+            var il = dm.GetILGenerator();
+
+            il.Emit(OpCodes.Ldarg_0);
+            il.Emit(OpCodes.Castclass, o.GetType());
+            il.Emit(OpCodes.Ldarg_1);
+            il.Emit(OpCodes.Castclass, type);
+            il.EmitCall(OpCodes.Call, info, null);
+            il.Emit(OpCodes.Ret);
+
+            var call = (Action<object, object>)dm.CreateDelegate(typeof(Action<object, object>));
+            var wire = new Wire
+            {
+                Call = o1 => call(o, o1),
+                ParameterType = type
+            };
+            return wire;
+        }
+
+        public void WireTo<TMessage>(Action<TMessage> msg)
+        {
+            var type = typeof(TMessage);
+
+            List<Wire> list;
+            if (!Dict.TryGetValue(type, out list))
+            {
+                list = new List<Wire>();
+                Dict.Add(type, list);
+            }
+            list.Add(new Wire
+            {
+                Call = o => msg((TMessage)o)
+            });
+        }
+
+
 
         [DebuggerNonUserCode]
         public void InvokeEvent(object @event)
         {
-            List<Wire> info;
             var type = @event.GetType();
+            List<Wire> info;
             if (!Dict.TryGetValue(type, out info))
             {
-                //Trace.WriteLine(string.Format("Discarding {0} - failed to locate event handler", type.Name));
                 return;
             }
             try
             {
                 foreach (var wire in info)
                 {
-                    wire.Method.Invoke(wire.Instance, new[] { @event });
+                    wire.Call(@event);
                 }
             }
             catch (TargetInvocationException ex)

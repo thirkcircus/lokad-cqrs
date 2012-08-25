@@ -39,9 +39,6 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppendOnly\FileAppendOnlyStore.cs" />
-    <Compile Include="AppendOnly\IAppendOnlyStore.cs" />
-    <Compile Include="AppendOnly\MemoryTape.cs" />
     <Compile Include="AtomicStorage\AddOrUpdateHint.cs" />
     <Compile Include="AtomicStorage\ExtendDocumentReader.cs" />
     <Compile Include="AtomicStorage\ExtendDocumentWriter.cs" />
@@ -58,43 +55,21 @@
     <Compile Include="AtomicStorage\NuclearStorageExtensions.cs" />
     <Compile Include="Build\CqrsEngineBuilder.cs" />
     <Compile Include="Build\CqrsEngineHost.cs" />
-    <Compile Include="Build\Events\EngineInitializationStarted.cs" />
-    <Compile Include="Build\Events\EngineInitialized.cs" />
-    <Compile Include="Build\Events\EngineStarted.cs" />
-    <Compile Include="Build\Events\EngineStopped.cs" />
+    <Compile Include="Build\Events.cs" />
+    <Compile Include="DataStreams\CsvStreams.cs" />
     <Compile Include="Dispatch\DispatcherProcess.cs" />
-    <Compile Include="Dispatch\Events\DispatchRecoveryFailed.cs" />
-    <Compile Include="Dispatch\Events\MessageAcked.cs" />
-    <Compile Include="Dispatch\Events\MessageAckFailed.cs" />
-    <Compile Include="Dispatch\Events\MessageDispatchFailed.cs" />
-    <Compile Include="Envelope\AbstractDataSerializer.cs" />
-    <Compile Include="Envelope\DataSerializerWithDataContracts.cs" />
-    <Compile Include="Envelope\EnvelopeAttributeContract.cs" />
-    <Compile Include="Envelope\EnvelopeAttributeTypeContract.cs" />
-    <Compile Include="Envelope\EnvelopeBuilder.cs" />
-    <Compile Include="Envelope\EnvelopeContract.cs" />
-    <Compile Include="Envelope\EnvelopeConvert.cs" />
+    <Compile Include="Dispatch\Events.cs" />
+    <Compile Include="Envelope\AbstractMessageSerializer.cs" />
     <Compile Include="Envelope\EnvelopeDispatcher.cs" />
-    <Compile Include="Envelope\EnvelopeHeaderContract.cs" />
     <Compile Include="Envelope\EnvelopePrinter.cs" />
     <Compile Include="Envelope\EnvelopeReference.cs" />
-    <Compile Include="Envelope\EnvelopeSent.cs" />
-    <Compile Include="Envelope\EnvelopeSerializerWithDataContracts.cs" />
     <Compile Include="Envelope\EnvelopeStreamer.cs" />
-    <Compile Include="Envelope\Events\EnvelopeDeserializationFailed.cs" />
-    <Compile Include="Envelope\Events\EnvelopeDispatched.cs" />
-    <Compile Include="Envelope\Events\EnvelopeDuplicateDiscarded.cs" />
-    <Compile Include="Envelope\Events\EnvelopeQuarantined.cs" />
-    <Compile Include="Envelope\IDataSerializer.cs" />
+    <Compile Include="Envelope\Events.cs" />
+    <Compile Include="Envelope\IMessageSerializer.cs" />
     <Compile Include="Envelope\IEnvelopeQuarantine.cs" />
-    <Compile Include="Envelope\IEnvelopeSerializer.cs" />
     <Compile Include="Envelope\MemoryQuarantine.cs" />
-    <Compile Include="Envelope\MessageAttributeContract.cs" />
-    <Compile Include="Envelope\MessageAttributes.cs" />
-    <Compile Include="Envelope\MessageBuilder.cs" />
-    <Compile Include="Envelope\MessageContract.cs" />
-    <Compile Include="Envelope\MessageDuplicationManager.cs" />
-    <Compile Include="Envelope\MessageDuplicationMemory.cs" />
+    <Compile Include="Envelope\DuplicationManager.cs" />
+    <Compile Include="Envelope\DuplicationMemory.cs" />
     <Compile Include="Evil\AssemblyScanEvil.cs" />
     <Compile Include="Evil\ContractEvil.cs" />
     <Compile Include="Evil\DecayEvil.cs" />
@@ -105,49 +80,44 @@
     <Compile Include="IEngineProcess.cs" />
     <Compile Include="IEnvelopeStreamer.cs" />
     <Compile Include="ImmediateConsoleObserver.cs" />
-    <Compile Include="ImmutableAttribute.cs" />
     <Compile Include="ImmutableEnvelope.cs" />
-    <Compile Include="ImmutableMessage.cs" />
     <Compile Include="ISystemEvent.cs" />
     <Compile Include="MemoryStorage.cs" />
     <Compile Include="MemoryStorageConfig.cs" />
-    <Compile Include="Optional.1.cs" />
-    <Compile Include="Partition\Events\FailedToAccessStorage.cs" />
-    <Compile Include="Partition\Events\FailedToReadMessage.cs" />
+    <Compile Include="Maybe.cs" />
+    <Compile Include="MessageStore.cs" />
+    <Compile Include="Partition\Events.cs" />
     <Compile Include="Partition\FilePartitionInbox.cs" />
     <Compile Include="Partition\FileQueueWriter.cs" />
-    <Compile Include="Partition\FileQueueWriterFactory.cs" />
-    <Compile Include="Partition\GetEnvelopeResult.cs" />
-    <Compile Include="Partition\GetEnvelopeResultState.cs" />
     <Compile Include="Partition\IPartitionInbox.cs" />
     <Compile Include="Partition\IQueueWriter.cs" />
-    <Compile Include="Partition\IQueueWriterFactory.cs" />
     <Compile Include="Partition\MemoryPartitionInbox.cs" />
     <Compile Include="Partition\MemoryQueueWriter.cs" />
-    <Compile Include="Partition\MemoryQueueWriterFactory.cs" />
     <Compile Include="Partition\MessageTransportContext.cs" />
     <Compile Include="Partition\StatelessFileQueueReader.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RedirectToCommand.cs" />
-    <Compile Include="SimpleMessageSender.cs" />
-    <Compile Include="StreamingStorage\ExtendStreamItem.cs" />
-    <Compile Include="StreamingStorage\FileStreamContainer.cs" />
-    <Compile Include="StreamingStorage\FileStreamItem.cs" />
-    <Compile Include="StreamingStorage\IStreamContainer.cs" />
-    <Compile Include="StreamingStorage\IStreamItem.cs" />
-    <Compile Include="StreamingStorage\IStreamRoot.cs" />
-    <Compile Include="StreamingStorage\StreamBaseException.cs" />
-    <Compile Include="StreamingStorage\StreamContainerNotFoundException.cs" />
-    <Compile Include="StreamingStorage\StreamErrors.cs" />
-    <Compile Include="StreamingStorage\StreamItemNotFoundException.cs" />
+    <Compile Include="MessageSender.cs" />
+    <Compile Include="DataStreams\FileStreamContainer.cs" />
+    <Compile Include="DataStreams\IStreamContainer.cs" />
+    <Compile Include="DataStreams\IStreamRoot.cs" />
+    <Compile Include="DataStreams\StreamBaseException.cs" />
+    <Compile Include="DataStreams\BinaryStreams.cs" />
+    <Compile Include="DataStreams\StreamContainerNotFoundException.cs" />
+    <Compile Include="DataStreams\StreamErrors.cs" />
+    <Compile Include="DataStreams\StreamItemNotFoundException.cs" />
+    <Compile Include="StorageFramesEvil.cs" />
     <Compile Include="SystemObserver.cs" />
-    <Compile Include="TaskProcess.cs" />
+    <Compile Include="TapeStorage\FileAppendOnlyStore.cs" />
+    <Compile Include="TapeStorage\IAppendOnlyStore.cs" />
+    <Compile Include="TapeStorage\MemoryTape.cs" />
     <Compile Include="unit.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.markdown" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

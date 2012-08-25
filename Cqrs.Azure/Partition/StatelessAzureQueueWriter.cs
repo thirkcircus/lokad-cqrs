@@ -7,9 +7,10 @@
 
 using System;
 using Lokad.Cqrs.Envelope;
+using Lokad.Cqrs.Partition;
 using Microsoft.WindowsAzure.StorageClient;
 
-namespace Lokad.Cqrs.Partition
+namespace Lokad.Cqrs.Feature.AzurePartition
 {
     public sealed class StatelessAzureQueueWriter : IQueueWriter
     {
@@ -40,6 +41,15 @@ namespace Lokad.Cqrs.Partition
             _cloudBlob = container;
             _queue = queue;
             Name = name;
+        }
+
+        public static StatelessAzureQueueWriter Create(IAzureStorageConfig config, string name)
+        {
+            var queue = config.CreateQueueClient().GetQueueReference(name);
+            var container = config.CreateBlobClient().GetContainerReference(name);
+            var v = new StatelessAzureQueueWriter(container, queue, name);
+            v.Init();
+            return v;
         }
 
         public void Init()

@@ -2,99 +2,55 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Lokad.Cqrs;
-using Lokad.Cqrs.Envelope;
-using Lokad.Cqrs.Partition;
 using Lokad.Cqrs.TapeStorage;
 
 namespace SaaS.Wires
 {
     public sealed class EventStore : IEventStore
     {
-        public EventStore(IAppendOnlyStore appendOnlyStore, IEnvelopeStreamer streamer, IQueueWriter writer)
+        readonly MessageStore _store;
+
+        public EventStore(MessageStore store)
         {
-            _appendOnlyStore = appendOnlyStore;
-            _streamer = streamer;
-            _writer = writer;
+            _store = store;
         }
 
-        readonly IAppendOnlyStore _appendOnlyStore;
-        readonly IEnvelopeStreamer _streamer;
-        readonly IQueueWriter _writer;
-
-        public EventStream LoadEventStream(IIdentity id)
+        public void AppendEventsToStream(IIdentity id, long originalVersion, ICollection<IEvent> events)
         {
-            return LoadEventStream(id, 0, int.MaxValue);
-        }
+            if (events.Count == 0) return;
+            // functional events don't have an identity
+            var name = IdentityToKey(id);
 
-        public EventStream LoadEventStream(IIdentity id, long skipEvents, int maxCount)
-        {
-            var name = IdentityToString(id);
-            var records = _appendOnlyStore.ReadRecords(name, skipEvents, maxCount).ToList();
-
-            var stream = new EventStream();
-            foreach (var tapeRecord in records)
-            {
-                stream.Events.AddRange(DeserializeEvent(tapeRecord.Data));
-                stream.Version = tapeRecord.Version;
-            }
-            return stream;
-        }
-
-        IEnumerable<IEvent> DeserializeEvent(byte[] data)
-        {
-            return _streamer.ReadAsEnvelopeData(data).Items.Select(i => (IEvent)i.Content);
-        }
-
-        public static string IdentityToString(IIdentity identity)
-        {
-            return identity.GetId();
-        }
-
-        public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent> events)
-        {
-            if (events.Count == 0)
-                return;
-
-            var name = IdentityToString(id);
-            var data = SerializeEvents(events);
             try
             {
-                _appendOnlyStore.Append(name, data, originalVersion);
+                _store.AppendToStore(name, MessageAttribute.Empty, originalVersion, events.Cast<object>().ToArray());
             }
             catch (AppendOnlyStoreConcurrencyException e)
             {
                 // load server events
                 var server = LoadEventStream(id);
                 // throw a real problem
-                throw OptimisticConcurrencyException.Create(server.Version, e.ExpectedStreamVersion, id, server.Events);
+                throw OptimisticConcurrencyException.Create(server.StreamVersion, e.ExpectedStreamVersion, id, server.Events);
             }
-            PublishDomainSuccess(id, events, originalVersion);
         }
 
-        byte[] SerializeEvents(IEnumerable<IEvent> events)
+        static string IdentityToKey(IIdentity id)
         {
-            var b = new EnvelopeBuilder("unknown");
-            foreach (var e in events)
-            {
-                b.AddItem((object)e);
-            }
-            var data = _streamer.SaveEnvelopeData(b.Build());
-            return data;
+            return id == null ? "func" : (id.GetTag() + ":" + id.GetId());
         }
 
-        void PublishDomainSuccess(IIdentity id, IEnumerable<IEvent> events, long version)
+        public EventStream LoadEventStream(IIdentity id)
         {
-            var arVersion = version + 1;
-            var arName = id.GetTag() + "-" + id.GetId();
-            var name = String.Format("{0}-{1}", arName, arVersion);
-            var builder = new EnvelopeBuilder(name);
+            var key = IdentityToKey(id);
 
-            foreach (var @event in events)
+            // TODO: make this lazy somehow?
+            var stream = new EventStream();
+            foreach (var record in _store.EnumerateMessages(key, 0, int.MaxValue))
             {
-                builder.AddItem((object)@event);
+                stream.Events.AddRange(record.Items.Cast<IEvent>());
+                stream.StreamVersion = record.StreamVersion;
             }
-
-            _writer.PutMessage(_streamer.SaveEnvelopeData(builder.Build()));
+            return stream;
         }
     }
 }

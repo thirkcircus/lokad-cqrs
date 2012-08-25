@@ -7,10 +7,12 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Lokad.Cqrs.StreamingStorage;
 using Microsoft.WindowsAzure.StorageClient;
 using System.Linq;
 
-namespace Lokad.Cqrs.StreamingStorage
+namespace Lokad.Cqrs.Feature.StreamingStorage
 {
     /// <summary>
     /// Windows Azure implementation of storage 
@@ -35,23 +37,61 @@ namespace Lokad.Cqrs.StreamingStorage
             return new BlobStreamingContainer(_directory.GetSubdirectory(name));
         }
 
-        public IStreamItem GetItem(string name)
+        public Stream OpenRead(string name)
         {
-            if (name == null) throw new ArgumentNullException("name");
-            return new BlobStreamingItem(_directory.GetBlobReference(name));
+            return _directory.GetBlobReference(name).OpenRead();
         }
 
+        public Stream OpenWrite(string name)
+        {
+            return _directory.GetBlobReference(name).OpenWrite();
+        }
+
+        public void TryDelete(string name)
+        {
+            _directory.GetBlobReference(name).DeleteIfExists();
+        }
+
+        public bool Exists(string name)
+        {
+            try
+            {
+                _directory.GetBlobReference(name).FetchAttributes();
+                return true;
+            }
+            catch (StorageClientException ex)
+            {
+                return false;
+            }
+        }
+
+        
         public IStreamContainer Create()
         {
             _directory.Container.CreateIfNotExist();
             return this;
         }
 
+        /// <summary>
+        /// Deletes this container
+        /// </summary>
         public void Delete()
         {
             try
             {
-                _directory.Container.Delete();
+                if (_directory.Uri == _directory.Container.Uri)
+                {
+                    _directory.Container.Delete();
+                }
+                else
+                {
+                    _directory.ListBlobs().AsParallel().ForAll(l =>
+                        {
+                            var name = l.Parent.Uri.MakeRelativeUri(l.Uri).ToString();
+                            var r = _directory.GetBlobReference(name);
+                            r.BeginDeleteIfExists(ar => { }, null);
+                        });
+                }
             }
             catch (StorageClientException e)
             {

@@ -36,7 +36,7 @@ namespace SaaS
         }
 
 
-        public static IEnumerable<object> Receptors(ICommandSender service)
+        public static IEnumerable<object> Ports(ICommandSender service)
         {
             var flow = new DomainSender(service);
             yield return new ReplicationReceptor(flow);
@@ -44,11 +44,9 @@ namespace SaaS
             // more senders go here
         }
 
-        public static IEnumerable<object> ApplicationServices(IDocumentStore docs, IEventStore store)
+        public static IEnumerable<object> EntityApplicationServices(IDocumentStore docs, IEventStore store, DomainIdentityGenerator id)
         {
-            var storage = new NuclearStorage(docs);
-            var id = new DomainIdentityGenerator(storage);
-            var unique = new UserIndexService(storage);
+            var unique = new UserIndexService(docs.GetReader<byte, UserIndexLookup>());
             var passwords = new PasswordGenerator();
 
 
@@ -57,5 +55,10 @@ namespace SaaS
             yield return new RegistrationApplicationService(store, id, unique, passwords);
             yield return id;
         }
+        public static IEnumerable<object> FuncApplicationServices()
+        {
+            yield break;
+            
+        } 
     }
 }

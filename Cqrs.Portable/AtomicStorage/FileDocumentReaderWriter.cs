@@ -1,17 +1,19 @@
-﻿#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+﻿#region (c) 2010-2011 Lokad CQRS - New BSD License 
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// Copyright (c) Lokad SAS 2010-2011 (http://www.lokad.com)
 // This code is released as Open Source under the terms of the New BSD Licence
+// Homepage: http://lokad.github.com/lokad-cqrs/
 
 #endregion
 
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
     public sealed class FileDocumentReaderWriter<TKey, TEntity> : IDocumentReader<TKey, TEntity>,
-                                                                  IDocumentWriter<TKey, TEntity>
+                                                             IDocumentWriter<TKey, TEntity>
     {
         readonly IDocumentStrategy _strategy;
         readonly string _folder;
@@ -39,6 +41,8 @@ namespace Lokad.Cqrs.AtomicStorage
 
                 using (var stream = File.Open(name, FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
+                    if (stream.Length == 0)
+                        return false;
                     view = _strategy.Deserialize<TEntity>(stream);
                     return true;
                 }
@@ -56,7 +60,7 @@ namespace Lokad.Cqrs.AtomicStorage
 
         string GetName(TKey key)
         {
-            return Path.Combine(_folder, _strategy.GetEntityLocation(typeof(TEntity), key));
+            return Path.Combine(_folder, _strategy.GetEntityLocation<TEntity>(key));
         }
 
         public TEntity AddOrUpdate(TKey key, Func<TEntity> addFactory, Func<TEntity, TEntity> update,
@@ -72,11 +76,12 @@ namespace Lokad.Cqrs.AtomicStorage
                 var subfolder = Path.GetDirectoryName(name);
                 if (subfolder != null && !Directory.Exists(subfolder))
                     Directory.CreateDirectory(subfolder);
-
+ 
 
                 // we are locking this file.
                 using (var file = File.Open(name, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None))
                 {
+                    byte[] initial = new byte[0];
                     TEntity result;
                     if (file.Length == 0)
                     {
@@ -89,6 +94,7 @@ namespace Lokad.Cqrs.AtomicStorage
                             file.CopyTo(mem);
                             mem.Seek(0, SeekOrigin.Begin);
                             var entity = _strategy.Deserialize<TEntity>(mem);
+                            initial = mem.ToArray();
                             result = update(entity);
                         }
                     }
@@ -99,10 +105,15 @@ namespace Lokad.Cqrs.AtomicStorage
                     {
                         _strategy.Serialize(result, mem);
                         var data = mem.ToArray();
-                        file.Seek(0, SeekOrigin.Begin);
-                        file.Write(data, 0, data.Length);
-                        // truncate this file
-                        file.SetLength(data.Length);
+
+                        if (!data.SequenceEqual(initial))
+                        {
+                            // upload only if we changed
+                            file.Seek(0, SeekOrigin.Begin);
+                            file.Write(data, 0, data.Length);
+                            // truncate this file
+                            file.SetLength(data.Length);
+                        }
                     }
 
                     return result;

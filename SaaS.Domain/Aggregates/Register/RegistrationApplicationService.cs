@@ -32,7 +32,7 @@ namespace SaaS.Aggregates.Register
 
             using (Context.CaptureForThread()) {
                 action(agg);
-                _eventStore.AppendToStream(c.Id, stream.Version, agg.Changes);
+                _eventStore.AppendEventsToStream(c.Id, stream.StreamVersion, agg.Changes);
             }
         }
 

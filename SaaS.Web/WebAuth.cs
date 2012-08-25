@@ -38,9 +38,9 @@ namespace SaaS.Web
             }
         }
 
-        readonly WebEndpoint _webEndpoint;
+        readonly Client _webEndpoint;
 
-        public WebAuth(WebEndpoint webEndpoint)
+        public WebAuth(Client webEndpoint)
         {
             _webEndpoint = webEndpoint;
         }
@@ -86,7 +86,7 @@ namespace SaaS.Web
             string host = HttpContext.Current.Request.UserHostAddress;
             if ((view.LastLoginUtc == DateTime.MinValue) || ((time - view.LastLoginUtc) > view.LoginTrackingThreshold))
             {
-                _webEndpoint.SendOne(new ReportUserLoginSuccess(id, time, host));
+                _webEndpoint.SendCommand(new ReportUserLoginSuccess(id, time, host));
             }
         }
 
@@ -185,7 +185,7 @@ namespace SaaS.Web
             {
                 // oups.
                 string host = HttpContext.Current.Request.UserHostAddress;
-                _webEndpoint.SendOne(new ReportUserLoginFailure(id, DateTime.UtcNow, host));
+                _webEndpoint.SendCommand(new ReportUserLoginFailure(id, DateTime.UtcNow, host));
                 return new AuthenticationResult(unknownLogin);
             }
 

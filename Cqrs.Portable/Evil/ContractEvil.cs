@@ -1,6 +1,6 @@
-﻿#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+﻿#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// Copyright (c) Lokad 2010-2011, http://www.lokad.com
 // This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
@@ -15,21 +15,21 @@ namespace Lokad.Cqrs.Evil
     {
         public sealed class Helper
         {
-            readonly Tuple<string, object>[] _attributes;
+            readonly Tuple<string,object>[] _attributes;
 
             public Helper(IEnumerable<object> attributes)
             {
-                _attributes = attributes.Select(a => Tuple.Create(a.GetType().Name, a)).ToArray();
+                _attributes = attributes.Select(a => Tuple.Create(a.GetType().Name,a)).ToArray();
             }
 
-            public Optional<string> GetString(string name, string property)
+            public Maybe<string> GetString(string name, string property)
             {
                 if (_attributes.Length == 0)
-                    return Optional<string>.Empty;
+                    return Maybe<string>.Empty;
 
                 var match = _attributes.FirstOrDefault(t => t.Item1 == name);
                 if (null == match)
-                    return Optional<string>.Empty;
+                    return Maybe<string>.Empty;
 
                 var type = match.Item2.GetType();
                 var propertyInfo = type.GetProperty(property);
@@ -37,7 +37,7 @@ namespace Lokad.Cqrs.Evil
                     throw new InvalidOperationException(string.Format("{0}.{1} not found", name, property));
                 var result = propertyInfo.GetValue(match.Item2, null) as string;
                 if (String.IsNullOrEmpty(result))
-                    return Optional<string>.Empty;
+                    return Maybe<string>.Empty;
 
                 return result;
             }
@@ -49,9 +49,9 @@ namespace Lokad.Cqrs.Evil
             var helper = new Helper(attribs);
 
 
-            var s1 = Optional<string>.Empty;
+            var s1 = Maybe<string>.Empty;
             var name = s1
-                .Combine(() => helper.GetString("ProtoContractAttribute", "Name"))
+                .Combine(() => helper.GetString("ProtoContractAttribute","Name"))
                 .Combine(() => helper.GetString("DataContractAttribute", "Name"))
                 .Combine(() => helper.GetString("XmlTypeAttribute", "TypeName"))
                 .GetValue(type.Name);

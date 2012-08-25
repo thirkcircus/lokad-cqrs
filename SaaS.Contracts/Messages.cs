@@ -11,7 +11,7 @@ namespace SaaS
         
     
     [DataContract(Namespace = "Lokad.SaaS")]
-    public partial class InstanceStarted : IFunctionalEvent
+    public partial class InstanceStarted : IFuncEvent
     {
         [DataMember(Order = 1)] public string CodeVersion { get; private set; }
         [DataMember(Order = 2)] public string Role { get; private set; }
@@ -34,7 +34,7 @@ namespace SaaS
         
     
     [DataContract(Namespace = "Lokad.SaaS")]
-    public partial class SendMailMessage : IFunctionalCommand
+    public partial class SendMailMessage : IFuncCommand
     {
         [DataMember(Order = 1)] public Email[] To { get; private set; }
         [DataMember(Order = 2)] public string Subject { get; private set; }
@@ -64,7 +64,7 @@ namespace SaaS
         
     
     [DataContract(Namespace = "Lokad.SaaS")]
-    public partial class MailMessageSent : IFunctionalEvent
+    public partial class MailMessageSent : IFuncEvent
     {
         [DataMember(Order = 1)] public Email[] To { get; private set; }
         [DataMember(Order = 2)] public string Subject { get; private set; }
@@ -88,6 +88,37 @@ namespace SaaS
             Cc = cc;
             OptionalSender = optionalSender;
             OptionalReplyTo = optionalReplyTo;
+        }
+    }
+    
+        
+    
+    [DataContract(Namespace = "Lokad.SaaS")]
+    public partial class EventStreamStarted : IFuncEvent
+    {
+    }
+    
+        
+    
+    [DataContract(Namespace = "Lokad.SaaS")]
+    public partial class MessageQuarantined : IFuncEvent
+    {
+        [DataMember(Order = 1)] public string Log { get; private set; }
+        [DataMember(Order = 2)] public byte[] Envelope { get; private set; }
+        [DataMember(Order = 3)] public string[] Contracts { get; private set; }
+        [DataMember(Order = 4)] public DateTime TimeUtc { get; private set; }
+        
+        MessageQuarantined () 
+        {
+            Envelope = new byte[0];
+            Contracts = new string[0];
+        }
+        public MessageQuarantined (string log, byte[] envelope, string[] contracts, DateTime timeUtc)
+        {
+            Log = log;
+            Envelope = envelope;
+            Contracts = contracts;
+            TimeUtc = timeUtc;
         }
     }
     

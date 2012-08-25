@@ -9,10 +9,11 @@ using System;
 using System.Threading;
 using Lokad.Cqrs.Dispatch.Events;
 using Lokad.Cqrs.Envelope;
+using Lokad.Cqrs.Partition;
 using Lokad.Cqrs.Partition.Events;
 using Microsoft.WindowsAzure.StorageClient;
 
-namespace Lokad.Cqrs.Partition
+namespace Lokad.Cqrs.Feature.AzurePartition
 {
     public sealed class StatelessAzureQueueReader
     {

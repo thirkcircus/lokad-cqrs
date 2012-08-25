@@ -16,19 +16,20 @@ namespace SaaS.Engine
 {
     public static class StartupProjectionRebuilder
     {
-        public static void Rebuild(CancellationToken token, IDocumentStore targetContainer, IAppendOnlyStore stream, Func<IDocumentStore, IEnumerable<object>> projectors)
+        public static void Rebuild(CancellationToken token, IDocumentStore targetContainer, MessageStore stream, Func<IDocumentStore, IEnumerable<object>> projectors)
         {
             var strategy = targetContainer.Strategy;
             var memory = new MemoryStorageConfig();
 
             var memoryContainer = memory.CreateNuclear(strategy).Container;
-            var tracked = new ProjectionInspectingContainer(memoryContainer);
+            var tracked = new ProjectionInspectingStore(memoryContainer);
 
             var projections = new List<object>();
             projections.AddRange(projectors(tracked));
 
-            if (tracked.Buckets.Count != projections.Count())
+            if (tracked.Projections.Count != projections.Count())
                 throw new InvalidOperationException("Count mismatch");
+            tracked.ValidateSanity();
 
             var storage = new NuclearStorage(targetContainer);
             var persistedHashes = new Dictionary<string, string>();
@@ -37,10 +38,14 @@ namespace SaaS.Engine
 
             var activeMemoryProjections = projections.Select((projection, i) =>
             {
-                var bucketName = tracked.Buckets[i];
-                var viewType = tracked.Views[i];
+                var proj = tracked.Projections[i];
+                var bucketName = proj.StoreBucket;
+                var viewType = proj.EntityType;
 
-                var projectionHash = GetClassHash(projection.GetType()) + "\r\n" + GetClassHash(viewType);
+                var projectionHash =
+                    "Global change on 2012-08-24\r\n" +
+                    GetClassHash(projection.GetType()) +
+                    "\r\n " + GetClassHash(viewType) + "\r\n" + GetClassHash(strategy.GetType());
 
                 bool needsRebuild = !persistedHashes.ContainsKey(bucketName) || persistedHashes[bucketName] != projectionHash;
                 return new
@@ -80,9 +85,10 @@ namespace SaaS.Engine
 
 
             var handlersWatch = Stopwatch.StartNew();
-            var records = stream.ReadRecords(0, Int32.MaxValue).Where(r => r.Name != "audit");
 
-            ObserveWhileCan(records, wire, token);
+
+
+            ObserveWhileCan(stream.EnumerateAllItems(0, int.MaxValue), wire, token);
 
             if (token.IsCancellationRequested)
             {
@@ -156,22 +162,69 @@ namespace SaaS.Engine
         }
 
 
-        sealed class ProjectionInspectingContainer : IDocumentStore
+        sealed class ProjectionInspectingStore : IDocumentStore
         {
             readonly IDocumentStore _real;
 
-            public ProjectionInspectingContainer(IDocumentStore real)
+            public ProjectionInspectingStore(IDocumentStore real)
             {
                 _real = real;
             }
 
-            public readonly List<string> Buckets = new List<string>();
-            public readonly List<Type> Views = new List<Type>();
+            public readonly List<Projection> Projections = new List<Projection>();
+
+
+            public sealed class Projection
+            {
+                public Type EntityType;
+                public string StoreBucket;
+            }
+
+            public void ValidateSanity()
+            {
+                if (Projections.Count == 0)
+                    throw new InvalidOperationException("There were no projections registered");
+
+                var viewsWithMultipleProjections = Projections.GroupBy(e => e.EntityType).Where(g => g.Count() > 1).ToList();
+                if (viewsWithMultipleProjections.Count > 0)
+                {
+                    var builder = new StringBuilder();
+                    builder.AppendLine("Please, define only one projection per view. These views were referenced more than once:");
+                    foreach (var projection in viewsWithMultipleProjections)
+                    {
+                        builder.AppendLine("  " + projection.Key);
+                    }
+                    builder.AppendLine("NB: you can use partials or dynamics in edge cases");
+                    throw new InvalidOperationException(builder.ToString());
+                }
+
+                var viewsWithSimilarBuckets = Projections
+                    .GroupBy(e => e.StoreBucket.ToLowerInvariant())
+                    .Where(g => g.Count() > 1)
+                    .ToArray();
+
+                if (viewsWithSimilarBuckets.Length > 0)
+                {
+                    var builder = new StringBuilder();
+                    builder.AppendLine("Following views will be stored in same location, which will cause problems:");
+                    foreach (var i in viewsWithSimilarBuckets)
+                    {
+                        var @join = string.Join(",", i.Select(x => x.EntityType));
+                        builder.AppendFormat(" {0} : {1}", i.Key, @join).AppendLine();
+                    }
+                    throw new InvalidOperationException(builder.ToString());
+                }
+
+            }
 
             public IDocumentWriter<TKey, TEntity> GetWriter<TKey, TEntity>()
             {
-                Buckets.Add(_real.Strategy.GetEntityBucket<TEntity>());
-                Views.Add(typeof(TEntity));
+                Projections.Add(new Projection()
+                {
+                    EntityType = typeof(TEntity),
+                    StoreBucket = _real.Strategy.GetEntityBucket<TEntity>()
+                });
+
                 return _real.GetWriter<TKey, TEntity>();
             }
 
@@ -201,7 +254,7 @@ namespace SaaS.Engine
             }
         }
 
-        static readonly IEnvelopeStreamer Streamer = Contracts.CreateStreamer();
+
 
         static string GetClassHash(Type type1)
         {
@@ -244,45 +297,31 @@ namespace SaaS.Engine
         }
 
 
-        static void ObserveWhileCan(IEnumerable<DataWithName> records, RedirectToDynamicEvent wire, CancellationToken token)
+        static void ObserveWhileCan(IEnumerable<StoreRecord> records, RedirectToDynamicEvent wire, CancellationToken token)
         {
-            var date = DateTime.MinValue;
             var watch = Stopwatch.StartNew();
+            int count = 0;
             foreach (var record in records)
             {
+                count += 1;
+
                 if (token.IsCancellationRequested)
                     return;
-
-                var env = Streamer.ReadAsEnvelopeData(record.Data);
-                if (date.Month != env.CreatedOnUtc.Month)
+                if (count % 50000 == 0)
                 {
-                    date = env.CreatedOnUtc;
-                    SystemObserver.Notify("Observing {0:yyyy-MM-dd} {1}", date,
+                    SystemObserver.Notify("Observing {0} {1}", count,
                         Math.Round(watch.Elapsed.TotalSeconds, 2));
                     watch.Restart();
                 }
-                foreach (var item in env.Items)
+                foreach (var message in record.Items)
                 {
-                    if ((item.Content is IEvent))
+                    if (message is IEvent)
                     {
-                        wire.InvokeEvent(item.Content);
+                        wire.InvokeEvent(message);
                     }
                 }
             }
         }
     }
-
-    [DataContract]
-    public sealed class ProjectionHash
-    {
-        [DataMember(Order = 1)]
-        public IDictionary<string, string> Entries { get; set; }
-
-        public ProjectionHash()
-        {
-            Entries = new Dictionary<string, string>();
-        }
-    }
-
 
 }

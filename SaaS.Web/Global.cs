@@ -18,9 +18,8 @@ namespace SaaS.Web
 {
     public static class Global
     {
-        static readonly FileStorageConfig Root;
         //public static readonly HubClient Client;
-        public static readonly WebEndpoint Client;
+        public static readonly Client Client;
         public static readonly FormsAuth Forms;
         public static readonly WebAuth Auth;
         public static readonly string CommitId;
@@ -30,9 +29,9 @@ namespace SaaS.Web
         {
             CommitId = ConfigurationManager.AppSettings.Get("appharbor.commit_id");
 
-            var settings = LoadSettings();
+            var integrationPath = AzureSettingsProvider.GetStringOrThrow(Conventions.StorageConfigName);
 
-            var integrationPath = settings["DataPath"];
+            
             var contracts = Contracts.CreateStreamer();
             var strategy = new DocumentStrategy();
             if (integrationPath.StartsWith("file:"))
@@ -40,15 +39,23 @@ namespace SaaS.Web
                 var path = integrationPath.Remove(0, 5);
                 var config = FileStorage.CreateConfig(path);
                 
-                Docs = config.CreateNuclear(strategy).Container;
-                Client = new WebEndpoint(new NuclearStorage(Docs), contracts, config.CreateQueueWriter(Topology.RouterQueue));
+                Docs = config.CreateDocumentStore(strategy);
+                var commands = config.CreateMessageSender(contracts, Conventions.DefaultRouterQueue);
+                var events = config.CreateMessageSender(contracts, Conventions.FunctionalEventRecorderQueue);
+
+                var sender = new TypedMessageSender(commands, events);
+                Client = new Client(Docs, sender, config.CreateStreaming());
             }
-            else if (integrationPath.StartsWith("azure:"))
+            else if (integrationPath.StartsWith("Default") || integrationPath.Equals("UseDevelopmentStorage=true", StringComparison.InvariantCultureIgnoreCase))
             {
-                var path = integrationPath.Remove(0, 6);
-                var config = AzureStorage.CreateConfig(path);
-                Docs = config.CreateNuclear(strategy).Container;
-                Client = new WebEndpoint(new NuclearStorage(Docs), contracts, config.CreateQueueWriter(Topology.RouterQueue));
+                
+                var config = AzureStorage.CreateConfig(integrationPath);
+                Docs = config.CreateDocumentStore(strategy);
+                var commands = config.CreateMessageSender(contracts, Conventions.DefaultRouterQueue);
+                var events = config.CreateMessageSender(contracts, Conventions.FunctionalEventRecorderQueue);
+
+                var sender = new TypedMessageSender(commands, events);
+                Client = new Client(Docs, sender, config.CreateStreaming());
             }
             else
             {
@@ -62,16 +69,6 @@ namespace SaaS.Web
             Auth = new WebAuth(Client);
         }
 
-        static Dictionary<string, string> LoadSettings()
-        {
-            var settings = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
-            foreach (var setting in ConfigurationManager.AppSettings.AllKeys)
-            {
-                settings[setting] = ConfigurationManager.AppSettings[setting];
-            }
-            return settings;
-
-        }
 
     }
 }

@@ -1,6 +1,6 @@
-﻿#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+﻿#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// Copyright (c) Lokad 2010-2011, http://www.lokad.com
 // This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
@@ -17,18 +17,17 @@ namespace Lokad.Cqrs.AtomicStorage
         ConcurrentDictionary<string, ConcurrentDictionary<string, byte[]>> _store;
         readonly IDocumentStrategy _strategy;
 
-        public MemoryDocumentStore(ConcurrentDictionary<string, ConcurrentDictionary<string, byte[]>> store,
-            IDocumentStrategy strategy)
+        public MemoryDocumentStore(ConcurrentDictionary<string, ConcurrentDictionary<string, byte[]>> store, IDocumentStrategy strategy)
         {
             _store = store;
             _strategy = strategy;
         }
 
-        public IDocumentWriter<TKey, TEntity> GetWriter<TKey, TEntity>()
+        public IDocumentWriter<TKey,TEntity> GetWriter<TKey,TEntity>()
         {
             var bucket = _strategy.GetEntityBucket<TEntity>();
             var store = _store.GetOrAdd(bucket, s => new ConcurrentDictionary<string, byte[]>());
-            return new MemoryDocumentReaderWriter<TKey, TEntity>(_strategy, store);
+            return new MemoryDocumentReaderWriter<TKey, TEntity>(_strategy,store);
         }
 
 
@@ -42,14 +41,10 @@ namespace Lokad.Cqrs.AtomicStorage
         {
             _store.Clear();
         }
-
         public void Reset(string bucketNames)
         {
-            ConcurrentDictionary<string, byte[]> dict;
-            if (_store.TryGetValue(bucketNames, out dict))
-            {
-                dict.Clear();
-            }
+
+            throw new NotSupportedException();
         }
 
 
@@ -57,7 +52,7 @@ namespace Lokad.Cqrs.AtomicStorage
         {
             var bucket = _strategy.GetEntityBucket<TEntity>();
             var store = _store.GetOrAdd(bucket, s => new ConcurrentDictionary<string, byte[]>());
-            return new MemoryDocumentReaderWriter<TKey, TEntity>(_strategy, store);
+            return new MemoryDocumentReaderWriter<TKey, TEntity>(_strategy,store);
         }
 
         public IDocumentStrategy Strategy
@@ -70,5 +65,7 @@ namespace Lokad.Cqrs.AtomicStorage
             var store = _store.GetOrAdd(bucket, s => new ConcurrentDictionary<string, byte[]>());
             return store.Select(p => new DocumentRecord(p.Key, () => p.Value)).ToArray();
         }
+
+        
     }
 }

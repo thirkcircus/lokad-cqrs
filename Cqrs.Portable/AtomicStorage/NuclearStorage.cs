@@ -1,11 +1,13 @@
-﻿#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+﻿#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// Copyright (c) Lokad 2010-2011, http://www.lokad.com
 // This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
@@ -18,6 +20,7 @@ namespace Lokad.Cqrs.AtomicStorage
     {
         public readonly IDocumentStore Container;
 
+        
 
         public NuclearStorage(IDocumentStore container)
         {
@@ -39,7 +42,7 @@ namespace Lokad.Cqrs.AtomicStorage
 
         public bool TryDeleteSingleton<TEntity>()
         {
-            return Container.GetWriter<unit, TEntity>().TryDelete(unit.it);
+            return Container.GetWriter<unit,TEntity>().TryDelete(unit.it);
         }
 
         public TEntity UpdateEntity<TEntity>(object key, Action<TEntity> update)
@@ -50,11 +53,11 @@ namespace Lokad.Cqrs.AtomicStorage
 
         public TSingleton UpdateSingletonOrThrow<TSingleton>(Action<TSingleton> update)
         {
-            return Container.GetWriter<unit, TSingleton>().UpdateOrThrow(unit.it, update);
+            return Container.GetWriter<unit,TSingleton>().UpdateOrThrow(unit.it, update);
         }
 
 
-        public Optional<TEntity> GetEntity<TEntity>(object key)
+        public Maybe<TEntity> GetEntity<TEntity>(object key)
         {
             return Container.GetReader<object, TEntity>().Get(key);
         }
@@ -74,7 +77,7 @@ namespace Lokad.Cqrs.AtomicStorage
             return Container.GetWriter<object, TEntity>().AddOrUpdate(key, addFactory, update);
         }
 
-        public TEntity AddOrUpdateEntity<TEntity>(object key, Func<TEntity> addFactory, Func<TEntity, TEntity> update)
+        public TEntity AddOrUpdateEntity<TEntity>(object key, Func<TEntity> addFactory, Func<TEntity,TEntity> update)
         {
             return Container.GetWriter<object, TEntity>().AddOrUpdate(key, addFactory, update);
         }
@@ -86,13 +89,13 @@ namespace Lokad.Cqrs.AtomicStorage
 
         public TSingleton AddOrUpdateSingleton<TSingleton>(Func<TSingleton> addFactory, Action<TSingleton> update)
         {
-            return Container.GetWriter<unit, TSingleton>().AddOrUpdate(unit.it, addFactory, update);
+            return Container.GetWriter<unit,TSingleton>().AddOrUpdate(unit.it, addFactory, update);
         }
 
         public TSingleton AddOrUpdateSingleton<TSingleton>(Func<TSingleton> addFactory,
             Func<TSingleton, TSingleton> update)
         {
-            return Container.GetWriter<unit, TSingleton>().AddOrUpdate(unit.it, addFactory, update);
+            return Container.GetWriter<unit,TSingleton>().AddOrUpdate(unit.it, addFactory, update);
         }
 
         public TSingleton UpdateSingletonEnforcingNew<TSingleton>(Action<TSingleton> update) where TSingleton : new()
@@ -102,12 +105,12 @@ namespace Lokad.Cqrs.AtomicStorage
 
         public TSingleton GetSingletonOrNew<TSingleton>() where TSingleton : new()
         {
-            return Container.GetReader<unit, TSingleton>().GetOrNew();
+            return Container.GetReader<unit,TSingleton>().GetOrNew();
         }
 
-        public Optional<TSingleton> GetSingleton<TSingleton>()
+        public Maybe<TSingleton> GetSingleton<TSingleton>()
         {
-            return Container.GetReader<unit, TSingleton>().Get();
+            return Container.GetReader<unit,TSingleton>().Get();
         }
     }
 }

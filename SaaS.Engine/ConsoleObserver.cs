@@ -7,35 +7,58 @@ using ServiceStack.Text;
 
 namespace SaaS.Engine
 {
-    sealed class ConsoleObserver : IObserver<ISystemEvent>
+    public sealed class ConsoleObserver : IObserver<ISystemEvent>
     {
         readonly Stopwatch _watch = Stopwatch.StartNew();
 
-
         public void OnNext(ISystemEvent value)
         {
-            RedirectToWhen.InvokeEventOptional(this, value);
+            ((dynamic)this).When((dynamic)value);
+        }
+
+        void When(EnvelopeDeserializationFailed e)
+        {
+            WriteLine(e.ToString());
         }
 
         void When(EnvelopeDispatched ed)
         {
-            if (ed.Dispatcher == "router")
+            if (ed.Dispatcher != "watch")
+                return;
+
+            var content = ed.Envelope.Message;
+            var eEvent = content as IEvent<IIdentity>;
+            if (eEvent != null)
             {
-                foreach (var item in ed.Envelope.Items)
-                {
-                    var prefix = "";
-                    if (item.Content is ICommand<IIdentity>)
-                    {
-                        prefix = ((ICommand<IIdentity>)(item.Content)).Id + " ";
-                    }
-                    else if (item.Content is IEvent<IIdentity>)
-                    {
-                        prefix = ((IEvent<IIdentity>)(item.Content)).Id + " ";
-                    }
-                    WriteLine(prefix + Describe.Object(item.Content));
-                }
+                WriteLine("D{" + eEvent.Id + "} " + Describe.Object(content), ConsoleColor.DarkGreen);
+                return;
             }
+            if (content is IFuncEvent)
+            {
+                WriteLine("=> " + Describe.Object(content), ConsoleColor.DarkGreen);
+                return;
+            }
+            //var adaptCommand = content as IAdaptCommand<IIdentity>;
+            //if (adaptCommand != null)
+            //{
+            //    WriteLine("A{" + adaptCommand.Id + "} " + Describe.Object(content), ConsoleColor.DarkCyan);
+            //    return;
+            //}
+            if (content is IFuncCommand)
+            {
+                WriteLine("=> " + Describe.Object(content), ConsoleColor.DarkCyan);
+                return;
+            }
+
+            if (content is ICommand)
+            {
+                WriteLine(Describe.Object(content), ConsoleColor.DarkCyan);
+                return;
+            }
+
+            WriteLine(Describe.Object(content));
         }
+
         void When(SystemObserver.MessageEvent e)
         {
             WriteLine(e.Message);
@@ -43,13 +66,23 @@ namespace SaaS.Engine
 
         void When(EnvelopeQuarantined e)
         {
-            WriteLine(e.LastException.ToString());
+            WriteLine("Envelope quarantined: " + e.LastException);
         }
 
-        void WriteLine(string line)
+        void When(object e)
         {
+            // do nothing
+            if (e is ISystemWarningEvent)
+            {
+                WriteLine(e.ToString(), ConsoleColor.DarkYellow);
+            }
+        }
+
+        public void WriteLine(string line, ConsoleColor? passedColor = null)
+        {
+
             var color = Console.ForegroundColor;
-            var newCol = color;
+            var newCol = passedColor ?? color;
             if (line.StartsWithIgnoreCase("[warn"))
             {
                 newCol = ConsoleColor.DarkYellow;
@@ -57,6 +90,10 @@ namespace SaaS.Engine
             else if (line.StartsWithIgnoreCase("[good"))
             {
                 newCol = ConsoleColor.DarkGreen;
+            }
+            else if (line.StartsWithIgnoreCase("[sys"))
+            {
+                newCol = ConsoleColor.DarkGray;
             }
 
             if (newCol == color)

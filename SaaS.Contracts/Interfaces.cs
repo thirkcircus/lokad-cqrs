@@ -35,16 +35,16 @@ namespace SaaS
         TIdentity Id { get; }
     }
 
-    public interface IFunctionalCommand : ICommand {}
+    public interface IFuncCommand : ICommand {}
 
-    public interface IFunctionalEvent : IEvent {}
+    public interface IFuncEvent : IEvent {}
 
     /// <summary>The only messaging endpoint that is available to stateless services
     /// They are not allowed to send any other messages.</summary>
     public interface IEventPublisher
     {
-        void Publish(IFunctionalEvent notification);
-        void PublishBatch(IEnumerable<IFunctionalEvent> events);
+        void Publish(IFuncEvent notification);
+        void PublishBatch(IEnumerable<IFuncEvent> events);
     }
 
 
@@ -73,32 +73,14 @@ namespace SaaS
         /// extensions (that don't allow sending wrong command to wrong location).
         /// </summary>
         /// <param name="commands">The commands.</param>
-        void SendCommandsAsBatch(ICommand[] commands);
+        void SendCommand(ICommand commands, bool idFromContent = false);
     }
 
 
     public interface IEventStore
     {
         EventStream LoadEventStream(IIdentity id);
-        EventStream LoadEventStream(IIdentity id, long skipEvents, int maxCount);
-        /// <summary>
-        /// Appends events to server stream for the provided identity.
-        /// </summary>
-        /// <param name="id">identity to append to.</param>
-        /// <param name="expectedVersion">The expected version (specify -1 to append anyway).</param>
-        /// <param name="events">The events to append.</param>
-        /// <exception cref="OptimisticConcurrencyException">when new events were added to server
-        /// since <paramref name="expectedVersion"/>
-        /// </exception>
-        void AppendToStream(IIdentity id, long expectedVersion, ICollection<IEvent> events);
-    }
-
-    public class EventStream
-    {
-        // version of the event stream returned
-        public long Version;
-        // all events in the stream
-        public List<IEvent> Events = new List<IEvent>();
+        void AppendEventsToStream(IIdentity id, long version, ICollection<IEvent> events);
     }
 
     /// <summary>
@@ -133,6 +115,18 @@ namespace SaaS
             SerializationInfo info,
             StreamingContext context)
             : base(info, context) { }
+    }
+
+    public sealed class EventRecord
+    {
+        public long StreamVersion;
+        public ICollection<IEvent> Events;
+    }
+
+    public sealed class EventStream
+    {
+        public long StreamVersion;
+        public List<IEvent> Events = new List<IEvent>();
     }
 
 }

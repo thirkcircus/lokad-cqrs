@@ -5,6 +5,7 @@
 
 #endregion
 
+using System;
 using System.Runtime.Serialization;
 
 namespace SaaS
@@ -27,6 +28,8 @@ namespace SaaS
         /// between different identities, while deserializing.
         /// </summary>
         string GetTag();
+
+        int GetStableHashCode();
     }
 
     [DataContract(Namespace = "Sample")]
@@ -44,6 +47,11 @@ namespace SaaS
         {
             return "";
         }
+
+        public int GetStableHashCode()
+        {
+            return 42;
+        }
     }
 
     /// <summary>
@@ -60,10 +68,7 @@ namespace SaaS
             return Id.ToString();
         }
 
-        public virtual string GetTag()
-        {
-            return GetType().ToString().ToLowerInvariant();
-        }
+        public abstract string GetTag();
 
         public override bool Equals(object obj)
         {
@@ -74,7 +79,7 @@ namespace SaaS
 
             if (identity != null)
             {
-                return identity.Id.Equals(Id) && string.Equals(identity.GetTag(), GetTag());
+                return Equals(identity);
             }
 
             return false;
@@ -87,10 +92,62 @@ namespace SaaS
 
         public override int GetHashCode()
         {
+            return (Id.GetHashCode());
+        }
+
+        public int GetStableHashCode()
+        {
+            // same as hash code, but works across multiple architectures 
+            var type = typeof(TKey);
+            if (type == typeof(string))
+            {
+                return CalculateStringHash(Id.ToString());
+            }
+            return Id.GetHashCode();
+        }
+
+        static AbstractIdentity()
+        {
+            var type = typeof(TKey);
+            if (type == typeof(int) || type == typeof(long) || type == typeof(uint) || type == typeof(ulong))
+                return;
+            if (type == typeof(Guid) || type == typeof(string))
+                return;
+            throw new InvalidOperationException("Abstract identity inheritors must provide stable hash. It is not supported for:  " + type);
+        }
+
+        static int CalculateStringHash(string value)
+        {
+            if (value == null) return 42;
             unchecked
             {
-                return (Id.GetHashCode() * 397) ^ (GetTag().GetHashCode());
+                var hash = 23;
+                foreach (var c in value)
+                {
+                    hash = hash * 31 + c;
+                }
+                return hash;
             }
+        }
+
+        public bool Equals(AbstractIdentity<TKey> other)
+        {
+            if (other != null)
+            {
+                return other.Id.Equals(Id) && other.GetTag() == GetTag();
+            }
+
+            return false;
+        }
+
+        public static bool operator ==(AbstractIdentity<TKey> left, AbstractIdentity<TKey> right)
+        {
+            return Equals(left, right);
+        }
+
+        public static bool operator !=(AbstractIdentity<TKey> left, AbstractIdentity<TKey> right)
+        {
+            return !Equals(left, right);
         }
     }
 }

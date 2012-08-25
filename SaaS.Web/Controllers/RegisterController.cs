@@ -66,7 +66,7 @@ namespace SaaS.Web.Controllers
                 Headers = coll,
                 OptionalUserName = model.RealName
             };
-            Global.Client.SendOne(new CreateRegistration(new RegistrationId(newGuid), reg.Build()));
+            Global.Client.SendCommand(new CreateRegistration(new RegistrationId(newGuid), reg.Build()));
 
             return View("wait", new RegisterWaitModel
             {

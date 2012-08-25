@@ -9,6 +9,7 @@
 using System;
 using System.IO;
 using Microsoft.WindowsAzure.StorageClient;
+using System.Linq;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
@@ -43,10 +44,11 @@ namespace Lokad.Cqrs.AtomicStorage
             string etag = null;
             var blob = GetBlobReference(key);
             TEntity view;
+            byte[] bytes = new byte[0];
             try
             {
                 // atomic entities should be small, so we can use the simple method
-                var bytes = blob.DownloadByteArray();
+                bytes = blob.DownloadByteArray();
                 using (var stream = new MemoryStream(bytes))
                 {
                     view = _strategy.Deserialize<TEntity>(stream);
@@ -86,7 +88,13 @@ namespace Lokad.Cqrs.AtomicStorage
                 // make sure that upload is not rejected due to cashed content MD5
                 // http://social.msdn.microsoft.com/Forums/hu-HU/windowsazuredata/thread/4764e38f-b200-4efe-ada2-7de442dc4452
                 blob.Properties.ContentMD5 = null;
-                blob.UploadByteArray(memory.ToArray(), bro);
+                var content = memory.ToArray();
+
+                // upload only if content has changed
+                if (!content.SequenceEqual(bytes))
+                {
+                    blob.UploadByteArray(content, bro);
+                }
             }
             return view;
         }
@@ -100,7 +108,7 @@ namespace Lokad.Cqrs.AtomicStorage
 
         CloudBlob GetBlobReference(TKey key)
         {
-            return _container.GetBlobReference(_strategy.GetEntityLocation(typeof(TEntity), key));
+            return _container.GetBlobReference(_strategy.GetEntityLocation<TEntity>(key));
         }
     }
 }

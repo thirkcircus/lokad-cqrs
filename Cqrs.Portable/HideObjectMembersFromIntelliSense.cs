@@ -1,6 +1,6 @@
-#region (c) 2010-2012 Lokad - CQRS- New BSD License 
+#region (c) 2010-2011 Lokad - CQRS for Windows Azure - New BSD License 
 
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
+// Copyright (c) Lokad 2010-2011, http://www.lokad.com
 // This code is released as Open Source under the terms of the New BSD Licence
 
 #endregion
@@ -65,9 +65,9 @@ namespace Lokad.Cqrs
         [EditorBrowsable(EditorBrowsableState.Never)]
         public new Type GetType()
         {
+            
             return base.GetType();
         }
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         protected new object MemberwiseClone()
         {
@@ -79,13 +79,10 @@ namespace Lokad.Cqrs
     {
         [EditorBrowsable(EditorBrowsableState.Never)]
         Type GetType();
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         int GetHashCode();
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         string ToString();
-
         [EditorBrowsable(EditorBrowsableState.Never)]
         bool Equals(object obj);
     }

@@ -360,11 +360,11 @@ namespace Sample
             return new EventStream
             {
                 Events = stream,
-                Version = stream.Count
+                StreamVersion = stream.Count
             };
         }
 
-        public void AppendToStream(IIdentity id, long originalVersion, ICollection<IEvent> events)
+        public void AppendEventsToStream(IIdentity id, long originalVersion, ICollection<IEvent> events)
         {
             foreach (var @event in events)
             {

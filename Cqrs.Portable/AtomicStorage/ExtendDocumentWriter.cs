@@ -1,11 +1,4 @@
-﻿#region (c) 2010-2012 Lokad - CQRS- New BSD License 
-
-// Copyright (c) Lokad 2010-2012, http://www.lokad.com
-// This code is released as Open Source under the terms of the New BSD Licence
-
-#endregion
-
-using System;
+﻿using System;
 
 namespace Lokad.Cqrs.AtomicStorage
 {
@@ -22,8 +15,7 @@ namespace Lokad.Cqrs.AtomicStorage
         /// <param name="update">The update method (called to update an existing entity, if it exists).</param>
         /// <param name="hint">The hint.</param>
         /// <returns></returns>
-        public static TEntity AddOrUpdate<TKey, TEntity>(this IDocumentWriter<TKey, TEntity> self, TKey key,
-            Func<TEntity> addFactory, Action<TEntity> update, AddOrUpdateHint hint = AddOrUpdateHint.ProbablyExists)
+        public static TEntity AddOrUpdate<TKey,TEntity>(this IDocumentWriter<TKey, TEntity> self, TKey key, Func<TEntity> addFactory, Action<TEntity> update, AddOrUpdateHint hint = AddOrUpdateHint.ProbablyExists)
         {
             return self.AddOrUpdate(key, addFactory, entity =>
                 {
@@ -31,7 +23,6 @@ namespace Lokad.Cqrs.AtomicStorage
                     return entity;
                 }, hint);
         }
-
         /// <summary>
         /// Given a <paramref name="key"/> either adds a new <typeparamref name="TEntity"/> OR updates an existing one.
         /// </summary>
@@ -43,14 +34,13 @@ namespace Lokad.Cqrs.AtomicStorage
         /// <param name="updateViewFactory">The update method (called to update an existing entity, if it exists).</param>
         /// <param name="hint">The hint.</param>
         /// <returns></returns>
-        public static TEntity AddOrUpdate<TKey, TEntity>(this IDocumentWriter<TKey, TEntity> self, TKey key,
-            TEntity newView, Action<TEntity> updateViewFactory, AddOrUpdateHint hint = AddOrUpdateHint.ProbablyExists)
+        public static TEntity AddOrUpdate<TKey,TEntity>(this IDocumentWriter<TKey,TEntity> self, TKey key, TEntity newView, Action<TEntity> updateViewFactory, AddOrUpdateHint hint = AddOrUpdateHint.ProbablyExists)
         {
             return self.AddOrUpdate(key, () => newView, view =>
                 {
                     updateViewFactory(view);
                     return view;
-                }, hint);
+                }, hint); 
         }
 
         /// <summary>
@@ -63,11 +53,11 @@ namespace Lokad.Cqrs.AtomicStorage
         /// <param name="key">The key.</param>
         /// <param name="newEntity">The new entity.</param>
         /// <returns></returns>
-        public static TEntity Add<TKey, TEntity>(this IDocumentWriter<TKey, TEntity> self, TKey key, TEntity newEntity)
+        public static TEntity Add<TKey,TEntity>(this IDocumentWriter<TKey, TEntity> self, TKey key, TEntity newEntity)
         {
             return self.AddOrUpdate(key, newEntity, e =>
                 {
-                    var txt = String.Format("Entity '{0}' with key '{1}' should not exist.", typeof(TEntity).Name, key);
+                    var txt = String.Format("Entity '{0}' with key '{1}' should not exist.", typeof (TEntity).Name, key);
                     throw new InvalidOperationException(txt);
                 }, AddOrUpdateHint.ProbablyDoesNotExist);
         }
@@ -82,16 +72,14 @@ namespace Lokad.Cqrs.AtomicStorage
         /// <param name="key">The key.</param>
         /// <param name="change">The change.</param>
         /// <returns></returns>
-        public static TEntity UpdateOrThrow<TKey, TEntity>(this IDocumentWriter<TKey, TEntity> self, TKey key,
-            Func<TEntity, TEntity> change)
+        public static TEntity UpdateOrThrow<TKey,TEntity>(this IDocumentWriter<TKey,TEntity> self, TKey key, Func<TEntity, TEntity> change)
         {
             return self.AddOrUpdate(key, () =>
                 {
-                    var txt = String.Format("Failed to load '{0}' with key '{1}'.", typeof(TEntity).Name, key);
+                    var txt = String.Format("Failed to load '{0}' with key '{1}'.", typeof (TEntity).Name, key);
                     throw new InvalidOperationException(txt);
                 }, change, AddOrUpdateHint.ProbablyExists);
         }
-
         /// <summary>
         /// Updates already existing entity, throwing exception, if it does not already exist.
         /// </summary>
@@ -101,12 +89,11 @@ namespace Lokad.Cqrs.AtomicStorage
         /// <param name="key">The key.</param>
         /// <param name="change">The change.</param>
         /// <returns></returns>
-        public static TEntity UpdateOrThrow<TKey, TEntity>(this IDocumentWriter<TKey, TEntity> self, TKey key,
-            Action<TEntity> change)
+        public static TEntity UpdateOrThrow<TKey,TEntity>(this IDocumentWriter<TKey,TEntity> self, TKey key, Action<TEntity> change)
         {
             return self.AddOrUpdate(key, () =>
                 {
-                    var txt = String.Format("Failed to load '{0}' with key '{1}'.", typeof(TEntity).Name, key);
+                    var txt = String.Format("Failed to load '{0}' with key '{1}'.", typeof (TEntity).Name, key);
                     throw new InvalidOperationException(txt);
                 }, change, AddOrUpdateHint.ProbablyExists);
         }
@@ -121,7 +108,7 @@ namespace Lokad.Cqrs.AtomicStorage
         /// <param name="update">The update.</param>
         /// <param name="hint">The hint.</param>
         /// <returns></returns>
-        public static TView UpdateEnforcingNew<TKey, TView>(this IDocumentWriter<TKey, TView> self, TKey key,
+        public static TView UpdateEnforcingNew<TKey,TView>(this IDocumentWriter<TKey,TView> self, TKey key,
             Action<TView> update, AddOrUpdateHint hint = AddOrUpdateHint.ProbablyExists)
             where TView : new()
         {
@@ -137,11 +124,11 @@ namespace Lokad.Cqrs.AtomicStorage
                     }, hint);
         }
 
-        public static TView UpdateEnforcingNew<TView>(this IDocumentWriter<unit, TView> self, Action<TView> update,
-            AddOrUpdateHint hint = AddOrUpdateHint.ProbablyExists)
+        public static TView UpdateEnforcingNew<TView>(this IDocumentWriter<unit, TView> self, Action<TView> update, AddOrUpdateHint hint = AddOrUpdateHint.ProbablyExists)
             where TView : new()
         {
             return self.UpdateEnforcingNew(unit.it, update, hint);
+
         }
     }
 }
