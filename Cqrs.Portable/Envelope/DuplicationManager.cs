@@ -25,7 +25,7 @@ namespace Lokad.Cqrs.Envelope
         {
         }
 
-        public void Initialize()
+        public void Initialize(CancellationToken token)
         {
         }
 

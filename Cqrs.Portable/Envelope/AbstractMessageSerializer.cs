@@ -82,15 +82,12 @@ namespace Lokad.Cqrs.Envelope
             using (var bin = new BitWriter(stream))
             {
                 bin.Write(formatter.ContractName);
-                byte[] buffer;
                 using (var inner = new MemoryStream())
                 {
                     formatter.SerializeDelegate(message, inner);
-                    // serializer might close stream by now
-                    buffer = inner.ToArray();
+                    bin.Write7BitInt((int)inner.Position);
+                    bin.Write(inner.ToArray());
                 }
-                bin.Write7BitInt(buffer.Length);
-                bin.Write(buffer);
             }
         }
 

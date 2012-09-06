@@ -5,8 +5,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 using Lokad.Cqrs.TapeStorage;
 using Microsoft.WindowsAzure.StorageClient;
@@ -20,9 +18,8 @@ namespace Lokad.Cqrs.AppendOnly
     /// </summary>
     public sealed class BlobAppendOnlyStore : IAppendOnlyStore
     {
-        readonly CloudBlobContainer _container;
-
         // Caches
+        readonly CloudBlobContainer _container;
         readonly ConcurrentDictionary<string, DataWithVersion[]> _items = new ConcurrentDictionary<string, DataWithVersion[]>();
         DataWithKey[] _all = new DataWithKey[0];
 
@@ -39,13 +36,6 @@ namespace Lokad.Cqrs.AppendOnly
         /// </summary>
         AppendOnlyStream _currentWriter;
 
-        /// <summary>
-        /// Renewable Blob lease, used to prohibit multiple writers outside a given process
-        /// </summary>
-        AutoRenewLease _lock;
-
-        CloudBlob _lockBlob;
-
         public BlobAppendOnlyStore(CloudBlobContainer container)
         {
             _container = container;
@@ -60,10 +50,6 @@ namespace Lokad.Cqrs.AppendOnly
         public void InitializeWriter()
         {
             CreateIfNotExists(_container, TimeSpan.FromSeconds(60));
-            // grab the ownership
-            _lockBlob = _container.GetBlobReference("lock");
-            _lock = AutoRenewLease.GetOrThrow(_lockBlob);
-
             LoadCaches();
         }
         public void InitializeReader()
@@ -119,19 +105,14 @@ namespace Lokad.Cqrs.AppendOnly
 
         public void Close()
         {
-            using (_lock)
-            {
-                _closed = true;
+            _closed = true;
 
-                if (_currentWriter == null)
-                    return;
+            if (_currentWriter == null)
+                return;
 
-                var tmp = _currentWriter;
-                _currentWriter = null;
-                tmp.Dispose();
-            }
-            // clean up the lock
-            _lockBlob.DeleteIfExists();
+            var tmp = _currentWriter;
+            _currentWriter = null;
+            tmp.Dispose();
         }
 
         public long GetCurrentVersion()
@@ -139,7 +120,7 @@ namespace Lokad.Cqrs.AppendOnly
             return _all.Length;
         }
 
-        IEnumerable<Record> EnumerateHistory()
+        IEnumerable<StorageFrameDecoded> EnumerateHistory()
         {
             // cleanup old pending files
             // load indexes
@@ -152,10 +133,9 @@ namespace Lokad.Cqrs.AppendOnly
             foreach (var fileInfo in datFiles)
             {
                 using (var stream = new MemoryStream(fileInfo.DownloadByteArray()))
-                using (var reader = new BinaryReader(stream, Encoding.UTF8))
                 {
-                    Record result;
-                    while (TryReadRecord(reader, out result))
+                    StorageFrameDecoded result;
+                    while (StorageFramesEvil.TryReadFrame(stream, out result))
                     {
                         yield return result;
                     }
@@ -163,42 +143,6 @@ namespace Lokad.Cqrs.AppendOnly
             }
         }
 
-        static bool TryReadRecord(BinaryReader binary, out Record result)
-        {
-            result = null;
-
-            try
-            {
-                var version = binary.ReadInt64();
-                var name = binary.ReadString();
-                var len = binary.ReadInt32();
-                var bytes = binary.ReadBytes(len);
-
-                var sha1 = binary.ReadBytes(20);
-                if (sha1.All(s => s == 0))
-                    throw new InvalidOperationException("definitely failed (zero hash)");
-
-                byte[] actualSha1;
-                PersistRecord(name, bytes, version, out actualSha1);
-
-                if (!sha1.SequenceEqual(actualSha1))
-                    throw new InvalidOperationException("hash mismatch");
-
-                result = new Record(bytes, name, version);
-                return true;
-            }
-            catch (EndOfStreamException)
-            {
-                // we are done
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(ex);
-                // Auto-clean?
-                return false;
-            }
-        }
 
         void LoadCaches()
         {
@@ -208,7 +152,7 @@ namespace Lokad.Cqrs.AppendOnly
 
                 foreach (var record in EnumerateHistory())
                 {
-                    AddToCaches(record.Name, record.Bytes, record.Version);
+                    AddToCaches(record.Name, record.Bytes, record.Stamp);
                 }
             }
             finally
@@ -235,38 +179,16 @@ namespace Lokad.Cqrs.AppendOnly
 
         void Persist(string key, byte[] buffer, long commit)
         {
-            byte[] hash;
-            var bytes = PersistRecord(key, buffer, commit, out hash);
-
-            if (!_currentWriter.Fits(bytes.Length + hash.Length))
+            var frame = StorageFramesEvil.EncodeFrame(key, buffer, commit);
+            if (!_currentWriter.Fits(frame.Data.Length + frame.Hash.Length))
             {
                 CloseWriter();
                 EnsureWriterExists(_all.Length);
             }
 
-            _currentWriter.Write(bytes);
-            _currentWriter.Write(hash);
+            _currentWriter.Write(frame.Data);
+            _currentWriter.Write(frame.Hash);
             _currentWriter.Flush();
-        }
-
-        static byte[] PersistRecord(string key, byte[] buffer, long commit, out byte[] hash)
-        {
-            using (var sha1 = new SHA1Managed())
-            using (var memory = new MemoryStream())
-            {
-                using (var crypto = new CryptoStream(memory, sha1, CryptoStreamMode.Write))
-                using (var binary = new BinaryWriter(crypto, Encoding.UTF8))
-                {
-                    // version, ksz, vsz, key, value, sha1
-                    binary.Write(commit);
-                    binary.Write(key);
-                    binary.Write(buffer.Length);
-                    binary.Write(buffer);
-                }
-
-                hash = sha1.Hash;
-                return memory.ToArray();
-            }
         }
 
         void CloseWriter()
@@ -277,11 +199,6 @@ namespace Lokad.Cqrs.AppendOnly
 
         void EnsureWriterExists(long version)
         {
-            
-
-            if (_lock.Exception != null)
-                throw new InvalidOperationException("Can not renew lease", _lock.Exception);
-
             if (_currentWriter != null)
                 return;
 
@@ -312,20 +229,6 @@ namespace Lokad.Cqrs.AppendOnly
             }
 
             throw new TimeoutException(string.Format("Can not create container within {0} seconds.", timeout.TotalSeconds));
-        }
-
-        sealed class Record
-        {
-            public readonly byte[] Bytes;
-            public readonly string Name;
-            public readonly long Version;
-
-            public Record(byte[] bytes, string name, long version)
-            {
-                Bytes = bytes;
-                Name = name;
-                Version = version;
-            }
         }
     }
 }

@@ -72,7 +72,6 @@ namespace Lokad.Cqrs
             }
         }
     }
-
     /// <summary>
     /// Creates convention-based routing rules
     /// </summary>

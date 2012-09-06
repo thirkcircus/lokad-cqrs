@@ -24,7 +24,7 @@ namespace Lokad.Cqrs
         /// <summary>
         /// Is executed by the engine on initialization phase.
         /// </summary>
-        void Initialize();
+        void Initialize(CancellationToken token);
 
         /// <summary>
         /// Creates and starts a long-running task, given the cancellation token to stop it.
@@ -45,7 +45,7 @@ namespace Lokad.Cqrs
 
         public void Dispose() { }
 
-        public void Initialize() { }
+        public void Initialize(CancellationToken token) { }
 
         public Task Start(CancellationToken token)
         {

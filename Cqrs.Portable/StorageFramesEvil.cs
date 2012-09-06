@@ -6,11 +6,14 @@ using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Lokad.Cqrs.Envelope
+namespace Lokad.Cqrs
 {
+    /// <summary>
+    /// Helps to persist sha1 hashed binary frames to stream
+    /// and load them back. Good for key-value storage
+    /// </summary>
     public static class StorageFramesEvil
     {
-
         sealed class BitReader : BinaryReader
         {
             public BitReader(Stream input) : base(input, Encoding.UTF8) { }
@@ -18,6 +21,11 @@ namespace Lokad.Cqrs.Envelope
             public int Read7BitInt()
             {
                 return Read7BitEncodedInt();
+            }
+            protected override void Dispose(bool disposing)
+            {
+                // we don't want to close underlying stream
+                //base.Dispose(disposing);
             }
         }
 
@@ -34,7 +42,7 @@ namespace Lokad.Cqrs.Envelope
             }
         }
 
-        public static EncodedFrame EncodeFrame(string key, byte[] buffer, long stamp)
+        public static StorageFrameEncoded EncodeFrame(string key, byte[] buffer, long stamp)
         {
             using (var sha1 = new SHA1Managed())
             {
@@ -53,44 +61,18 @@ namespace Lokad.Cqrs.Envelope
                     data = memory.ToArray();
 
                 }
-                return new EncodedFrame(data, sha1.Hash);
+                return new StorageFrameEncoded(data, sha1.Hash);
             }
         }
 
         public static void WriteFrame(string key, long stamp, byte[] buffer, Stream stream)
         {
             var frame = EncodeFrame(key, buffer, stamp);
-            stream.Write(frame.Data,0, frame.Data.Length);
-            stream.Write(frame.Hash,0, frame.Hash.Length);
+            stream.Write(frame.Data, 0, frame.Data.Length);
+            stream.Write(frame.Hash, 0, frame.Hash.Length);
         }
 
-        public struct EncodedFrame
-        {
-            public readonly byte[] Data;
-            public readonly byte[] Hash;
-
-            public EncodedFrame(byte[] data, byte[] hash)
-            {
-                Data = data;
-                Hash = hash;
-            }
-        }
-
-        public struct DecodedFrame
-        {
-            public readonly byte[] Bytes;
-            public readonly string Name;
-            public readonly long Version;
-            
-            public DecodedFrame(byte[] bytes, string name, long version)
-            {
-                Bytes = bytes;
-                Name = name;
-                Version = version;
-            }
-        }
-
-        public static DecodedFrame ReadFrame(Stream source)
+        public static StorageFrameDecoded ReadFrame(Stream source)
         {
             using (var binary = new BitReader(source))
             {
@@ -99,22 +81,30 @@ namespace Lokad.Cqrs.Envelope
                 var len = binary.Read7BitInt();
                 var bytes = binary.ReadBytes(len);
                 var sha1Expected = binary.ReadBytes(20);
+
+                var decoded = new StorageFrameDecoded(bytes, name, version);
+                if (decoded.IsEmpty && sha1Expected.All(b => b == 0))
+                {
+                    // this looks like end of the stream.
+                    return decoded;
+                }
+
                 //SHA1. TODO: compute hash nicely
                 var sha1Actual = EncodeFrame(name, bytes, version).Hash;
                 if (!sha1Expected.SequenceEqual(sha1Actual))
                     throw new StorageFrameException("SHA mismatch in data frame");
-
-                return new DecodedFrame(bytes, name, version);
+                
+                return decoded;
             }
         }
 
-        public static bool TryReadFrame(Stream source, out DecodedFrame result)
+        public static bool TryReadFrame(Stream source, out StorageFrameDecoded result)
         {
-            result = default(DecodedFrame);
+            result = default(StorageFrameDecoded);
             try
             {
                 result = ReadFrame(source);
-                return true;
+                return !result.IsEmpty;
             }
             catch (EndOfStreamException)
             {
@@ -128,16 +118,49 @@ namespace Lokad.Cqrs.Envelope
                 return false;
             }
         }
+    }
 
-        [Serializable]
-        public class StorageFrameException : Exception
+    /// <summary>
+    /// Is thrown when there is a big problem with reading storage frame
+    /// </summary>
+    [Serializable]
+    public class StorageFrameException : Exception
+    {
+        public StorageFrameException(string message) : base(message) { }
+        protected StorageFrameException(
+            SerializationInfo info,
+            StreamingContext context)
+            : base(info, context) { }
+    }
+
+    public struct StorageFrameEncoded
+    {
+        public readonly byte[] Data;
+        public readonly byte[] Hash;
+
+        public StorageFrameEncoded(byte[] data, byte[] hash)
         {
-            public StorageFrameException(string message) : base(message) { }
-            protected StorageFrameException(
-                SerializationInfo info,
-                StreamingContext context)
-                : base(info, context) { }
+            Data = data;
+            Hash = hash;
         }
+    }
 
+    public struct StorageFrameDecoded
+    {
+        public readonly byte[] Bytes;
+        public readonly string Name;
+        public readonly long Stamp;
+
+        public bool IsEmpty
+        {
+            get { return Bytes.Length == 0 && Stamp == 0 && string.IsNullOrEmpty(Name); }
+        }
+            
+        public StorageFrameDecoded(byte[] bytes, string name, long stamp)
+        {
+            Bytes = bytes;
+            Name = name;
+            Stamp = stamp;
+        }
     }
 }

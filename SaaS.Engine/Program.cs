@@ -20,7 +20,7 @@ namespace SaaS.Engine
             using (var cts = new CancellationTokenSource())
             {
                 env.ExecuteStartupTasks(cts.Token);
-                using (var engine = env.BuildEngine())
+                using (var engine = env.BuildEngine(cts.Token))
                 {
                     var task = engine.Start(cts.Token);
 

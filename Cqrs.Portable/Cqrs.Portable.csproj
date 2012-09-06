@@ -86,6 +86,7 @@
     <Compile Include="MemoryStorageConfig.cs" />
     <Compile Include="Maybe.cs" />
     <Compile Include="MessageStore.cs" />
+    <Compile Include="MessageStorePublisher.cs" />
     <Compile Include="Partition\Events.cs" />
     <Compile Include="Partition\FilePartitionInbox.cs" />
     <Compile Include="Partition\FileQueueWriter.cs" />

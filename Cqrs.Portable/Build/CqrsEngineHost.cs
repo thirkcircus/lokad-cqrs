@@ -60,15 +60,15 @@ namespace Lokad.Cqrs.Build
                     catch(OperationCanceledException)
                     {}
                     SystemObserver.Notify(new EngineStopped(watch.Elapsed));
-                });
+                }, TaskCreationOptions.LongRunning);
         }
 
 
-        internal void Initialize()
+        internal void Initialize(CancellationToken token)
         {
             foreach (var process in _serverProcesses)
             {
-                process.Initialize();
+                process.Initialize(token);
             }
             SystemObserver.Notify(new EngineInitialized());
         }

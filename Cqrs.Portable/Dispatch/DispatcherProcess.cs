@@ -33,7 +33,7 @@ namespace Lokad.Cqrs.Dispatch
             _disposal.Dispose();
         }
 
-        public void Initialize()
+        public void Initialize(CancellationToken token)
         {
             _inbox.InitIfNeeded();
         }

@@ -51,10 +51,10 @@ namespace Lokad.Cqrs.Build
             AddTask(new DispatcherProcess(dispatcher.Dispatch, inbox));
         }
 
-        public CqrsEngineHost Build()
+        public CqrsEngineHost Build(CancellationToken token)
         {
             var host = new CqrsEngineHost(Processes.AsReadOnly());
-            host.Initialize();
+            host.Initialize(token);
             return host;
         }
     }

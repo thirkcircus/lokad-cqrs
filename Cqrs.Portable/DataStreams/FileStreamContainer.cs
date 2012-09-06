@@ -96,11 +96,28 @@ namespace Lokad.Cqrs.StreamingStorage
             return _root.Exists;
         }
 
-        public IEnumerable<string> ListItems()
+        public IEnumerable<string> ListAllNestedItems()
         {
             try
             {
                 return _root.GetFiles().Select(f => f.Name).ToArray();
+            }
+            catch (DirectoryNotFoundException e)
+            {
+                throw StreamErrors.ContainerNotFound(this, e);
+            }
+        }
+
+        public IEnumerable<StreamItemDetail> ListAllNestedItemsWithDetail()
+        {
+            try
+            {
+                return _root.GetFiles("*", SearchOption.AllDirectories).Select(f => new StreamItemDetail()
+                    {
+                        LastModifiedUtc = f.LastWriteTimeUtc,
+                        Length = f.Length,
+                        Name = f.Name
+                    }).ToArray();
             }
             catch (DirectoryNotFoundException e)
             {

@@ -105,12 +105,38 @@ namespace Lokad.Cqrs.Feature.StreamingStorage
             }
         }
 
-        public IEnumerable<string> ListItems()
+        public IEnumerable<string> ListAllNestedItems()
         {
             try
             {
                 return _directory.ListBlobs()
                     .Select(item => _directory.Uri.MakeRelativeUri(item.Uri).ToString())
+                    .ToArray();
+            }
+            catch (StorageClientException e)
+            {
+                switch (e.ErrorCode)
+                {
+                    case StorageErrorCode.ContainerNotFound:
+                        throw StreamErrors.ContainerNotFound(this, e);
+                    default:
+                        throw;
+                }
+            }
+        }
+
+        public IEnumerable<StreamItemDetail> ListAllNestedItemsWithDetail()
+        {
+            try
+            {
+                return _directory.ListBlobs(new BlobRequestOptions())
+                    .OfType<CloudBlob>()
+                    .Select(item => new StreamItemDetail()
+                        {
+                            Name = _directory.Uri.MakeRelativeUri(item.Uri).ToString(),
+                            LastModifiedUtc = item.Properties.LastModifiedUtc,
+                            Length = item.Properties.Length
+                        })
                     .ToArray();
             }
             catch (StorageClientException e)

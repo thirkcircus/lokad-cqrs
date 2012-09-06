@@ -6,6 +6,10 @@ using Lokad.Cqrs.TapeStorage;
 
 namespace Lokad.Cqrs
 {
+    /// <summary>
+    /// Helper class that knows how to store arbitrary messages in append-only store
+    /// (including envelopes, audit batches etc)
+    /// </summary>
     public class MessageStore 
     {
         readonly IAppendOnlyStore _appendOnlyStore;
@@ -69,7 +73,7 @@ namespace Lokad.Cqrs
             }
         }
 
-        public void AppendToStore(string name, ICollection<MessageAttribute> attribs, long version, ICollection<object> messages)
+        public void AppendToStore(string name, ICollection<MessageAttribute> attribs, long streamVersion, ICollection<object> messages)
         {
             using (var mem = new MemoryStream())
             {
@@ -79,7 +83,7 @@ namespace Lokad.Cqrs
                 {
                     _serializer.WriteMessage(message, message.GetType(), mem);
                 }
-                _appendOnlyStore.Append(name, mem.ToArray(), version);
+                _appendOnlyStore.Append(name, mem.ToArray(), streamVersion);
             }
         }
 

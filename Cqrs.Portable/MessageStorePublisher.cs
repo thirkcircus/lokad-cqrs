@@ -1,12 +1,11 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Runtime.Serialization;
 using System.Threading;
-using Lokad.Cqrs;
 using Lokad.Cqrs.AtomicStorage;
+using System.Linq;
 
-namespace SaaS.Wires
+namespace Lokad.Cqrs
 {
     /// <summary>
     /// Is responsible for publishing events from the event store
@@ -16,31 +15,32 @@ namespace SaaS.Wires
         readonly MessageStore _store;
         readonly MessageSender _sender;
         readonly NuclearStorage _storage;
+        readonly Predicate<StoreRecord> _recordShouldBePublished;
 
-        public MessageStorePublisher(MessageStore store, MessageSender sender, NuclearStorage storage)
+        public MessageStorePublisher(MessageStore store, MessageSender sender, NuclearStorage storage, Predicate<StoreRecord> recordShouldBePublished)
         {
             _store = store;
             _sender = sender;
             _storage = storage;
+            _recordShouldBePublished = recordShouldBePublished;
         }
 
         public sealed class PublishResult
         {
-            public readonly long InitialVersion;
-            public readonly long FinalVersion;
-            public readonly int BatchSize;
-
+            public readonly long InitialPosition;
+            public readonly long FinalPosition;
             public readonly bool Changed;
             public readonly bool HasMoreWork;
 
-            public PublishResult(long initialVersion, long finalVersion, int batchSize)
+            public PublishResult(long initialPosition, long finalPosition, int requestedBatchSize)
             {
-                InitialVersion = initialVersion;
-                FinalVersion = finalVersion;
-                BatchSize = batchSize;
+                InitialPosition = initialPosition;
+                FinalPosition = finalPosition;
+                
 
-                Changed = InitialVersion != FinalVersion;
-                HasMoreWork = (FinalVersion - InitialVersion) < BatchSize;
+                Changed = InitialPosition != FinalPosition;
+                // thanks to Slav Ivanyuk for fixing finding this typo
+                HasMoreWork = (FinalPosition - InitialPosition) >= requestedBatchSize;
             }
         }
 
@@ -48,14 +48,14 @@ namespace SaaS.Wires
         {
             var records = _store.EnumerateAllItems(initialPosition, count);
             var currentPosition = initialPosition;
-            int evts = 0;
+            var publishedCount = 0;
             foreach (var e in records)
             {
                 if (e.StoreVersion <= currentPosition)
                 {
                     throw new InvalidOperationException("Retrieved record with wrong position");
                 }
-                if (e.Key != "audit")
+                if (_recordShouldBePublished(e))
                 {
                     for (int i = 0; i < e.Items.Length; i++)
                     {
@@ -64,7 +64,7 @@ namespace SaaS.Wires
                         var envelopeId = "esp-" + e.StoreVersion + "-" + i;
                         var item = e.Items[i];
 
-                        evts += 1;
+                        publishedCount += 1;
                         _sender.Send(item, envelopeId);
                     }
                 }
@@ -73,7 +73,7 @@ namespace SaaS.Wires
             var result = new PublishResult(initialPosition, currentPosition, count);
             if (result.Changed)
             {
-                SystemObserver.Notify("[sys ] ES marker moved to {0} ({1} events published)", result.FinalVersion, evts);
+                SystemObserver.Notify("[sys ] Message store pointer moved to {0} ({1} published)", result.FinalPosition, publishedCount);
             }
             return result;
         }
@@ -99,12 +99,12 @@ namespace SaaS.Wires
                         // ok, we are changed, persist that to survive crashes
                         var output = _storage.UpdateSingletonEnforcingNew<PublishCounter>(c =>
                             {
-                                if (c.Position != publishResult.InitialVersion)
+                                if (c.Position != publishResult.InitialPosition)
                                 {
                                     throw new InvalidOperationException("Somebody wrote in parallel. Blow up!");
                                 }
                                 // we are good - update ES
-                                c.Position = publishResult.FinalVersion;
+                                c.Position = publishResult.FinalPosition;
 
                             });
                         currentPosition = output.Position;
@@ -137,16 +137,17 @@ namespace SaaS.Wires
             if (store.Length == 0)
             {
                 SystemObserver.Notify("Opening new event stream");
-                _sender.SendHashed(new EventStreamStarted());
+                //_sender.SendHashed(new EventStreamStarted());
                 return;
             }
             if (store.Length == 100)
             {
                 throw new InvalidOperationException(
-                    "It looks like event stream really went ahead. Do you mean to resend all events?");
+                    "It looks like event stream really went ahead (or storage pointer was reset). Do you REALLY mean to resend all events?");
             }
         }
 
+        /// <summary>  Storage contract used to persist current position  </summary>
         [DataContract]
         public sealed class PublishCounter
         {

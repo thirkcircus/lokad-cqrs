@@ -55,7 +55,7 @@ namespace Lokad.Cqrs.Envelope
                 {
                     var attributes = MessageSerializer.ReadAttributes(mem1);
                     var item = MessageSerializer.ReadMessage(mem1);
-                    var created = new DateTime(frame.Version, DateTimeKind.Utc);
+                    var created = new DateTime(frame.Stamp, DateTimeKind.Utc);
                     return new ImmutableEnvelope(frame.Name, created, item, attributes);
                 }
             }

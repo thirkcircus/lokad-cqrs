@@ -47,12 +47,18 @@ namespace Lokad.Cqrs
         /// <returns><em>True</em> if configuration value is available, <em>False</em> otherwise</returns>
         public static bool TryGetString(string key, out string result)
         {
-            result = null;
+            result = TryGetString(key);
+            return !string.IsNullOrEmpty(result);
+        }
+
+        public static string TryGetString(string key)
+        {
+            string result = null;
             if (HasCloudEnvironment.Value)
             {
                 try
                 {
-                    result = RoleEnvironment.GetConfigurationSettingValue(key);
+                    result =  RoleEnvironment.GetConfigurationSettingValue(key);
                 }
                 catch (RoleEnvironmentException)
                 {
@@ -63,10 +69,9 @@ namespace Lokad.Cqrs
             {
                 result = ConfigurationManager.AppSettings[key];
             }
-            if (string.IsNullOrEmpty(result))
-                return false;
-            return true;
+            return result;
         }
+
 
         /// <summary>
         /// Attempts to get the configuration string from cloud environment or app settings. Throws the exception if not available.

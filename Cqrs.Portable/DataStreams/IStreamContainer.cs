@@ -5,6 +5,7 @@
 
 #endregion
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -51,10 +52,13 @@ namespace Lokad.Cqrs.StreamingStorage
         /// <returns></returns>
         bool Exists();
 
-        IEnumerable<string> ListItems();
-      
+        IEnumerable<string> ListAllNestedItems();
+        IEnumerable<StreamItemDetail> ListAllNestedItemsWithDetail();
     }
-
-
-
+    public sealed class StreamItemDetail
+    {
+        public string Name;
+        public DateTime LastModifiedUtc;
+        public long Length;
+    }
 }

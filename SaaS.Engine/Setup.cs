@@ -109,7 +109,7 @@ namespace SaaS.Wires
             projections.BuildFor(viewDocs).ForEach(events.WireToWhen);
 
             // wire in event store publisher
-            var publisher = new MessageStorePublisher(messageStore, toEventHandlers, stateDocs);
+            var publisher = new MessageStorePublisher(messageStore, toEventHandlers, stateDocs, RecordShouldBePublished);
             builder.AddTask(c => Task.Factory.StartNew(() => publisher.Run(c)));
 
             //var environment = new HttpEnvironment()
@@ -130,6 +130,11 @@ namespace SaaS.Wires
                 Publisher = publisher,
                 AppendOnlyStore = appendOnlyStore
             };
+        }
+
+        bool RecordShouldBePublished(StoreRecord storeRecord)
+        {
+            return storeRecord.Key != "audit";
         }
 
         //IEnumerable<IHttpRequestHandler> Handlers(MessageStore store, EncryptorTool tool)
@@ -241,9 +246,9 @@ namespace SaaS.Wires
         public Setup.ProjectionsConsumingOneBoundedContext ProjectionFactories;
         public MessageStorePublisher Publisher;
 
-        public CqrsEngineHost BuildEngine()
+        public CqrsEngineHost BuildEngine(CancellationToken token)
         {
-            return Builder.Build();
+            return Builder.Build(token);
         }
 
         public void ExecuteStartupTasks(CancellationToken token)

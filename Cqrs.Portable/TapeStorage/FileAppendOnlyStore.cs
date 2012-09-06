@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
 using System.Threading;
 
 namespace Lokad.Cqrs.TapeStorage
@@ -16,20 +13,6 @@ namespace Lokad.Cqrs.TapeStorage
     /// </summary>
     public class FileAppendOnlyStore : IAppendOnlyStore
     {
-        sealed class Record
-        {
-            public readonly byte[] Bytes;
-            public readonly string Name;
-            public readonly long Version;
-
-            public Record(byte[] bytes, string name, long version)
-            {
-                Bytes = bytes;
-                Name = name;
-                Version = version;
-            }
-        }
-
         readonly DirectoryInfo _info;
         
         // used to synchronize access between threads within a process
@@ -66,7 +49,7 @@ namespace Lokad.Cqrs.TapeStorage
                 _cacheFull = new DataWithKey[0];
                 foreach (var record in EnumerateHistory())
                 {
-                    AddToCaches(record.Name, record.Bytes, record.Version);
+                    AddToCaches(record.Name, record.Bytes, record.Stamp);
                 }
                 
             }
@@ -76,7 +59,7 @@ namespace Lokad.Cqrs.TapeStorage
             }
         }
 
-        IEnumerable<Record> EnumerateHistory()
+        IEnumerable<StorageFrameDecoded> EnumerateHistory()
         {
             // cleanup old pending files
             // load indexes
@@ -92,43 +75,13 @@ namespace Lokad.Cqrs.TapeStorage
                 }
 
                 using (var reader = fileInfo.OpenRead())
-                using (var binary = new BinaryReader(reader, Encoding.UTF8))
                 {
-                    Record result;
-                    while (TryReadRecord(binary,out result))
+                    StorageFrameDecoded result;
+                    while (StorageFramesEvil.TryReadFrame(reader,out result))
                     {
                         yield return result;
                     }
                 }
-            }
-        }
-        static bool TryReadRecord(BinaryReader binary, out Record result)
-        {
-            result = null;
-            try
-            {
-                var version = binary.ReadInt64();
-                var name = binary.ReadString();
-                var len = binary.ReadInt32();
-                var bytes = binary.ReadBytes(len);
-                var sha = binary.ReadBytes(20); // SHA1. TODO: verify data
-                
-                if (sha.All(s => s == 0))
-                    throw new InvalidOperationException("definitely failed");
-
-                result = new Record(bytes, name, version);
-                return true;
-            }
-            catch (EndOfStreamException)
-            {
-                // we are done
-                return false;
-            }
-            catch (Exception ex)
-            {
-                Trace.WriteLine(ex);
-                // Auto-clean?
-                return false;
             }
         }
 
@@ -176,28 +129,10 @@ namespace Lokad.Cqrs.TapeStorage
 
         void PersistInFile(string key, byte[] buffer, long commit)
         {
-            using (var sha1 = new SHA1Managed())
-            {
-                // version, ksz, vsz, key, value, sha1
-                using (var memory = new MemoryStream())
-                {
-                    using (var crypto = new CryptoStream(memory, sha1, CryptoStreamMode.Write))
-                    using (var binary = new BinaryWriter(crypto, Encoding.UTF8))
-                    {
-                        binary.Write(commit);
-                        binary.Write(key);
-                        binary.Write(buffer.Length);
-                        binary.Write(buffer);
-                    }
-                    var bytes = memory.ToArray();
-
-                    _currentWriter.Write(bytes, 0, bytes.Length);
-                }
-                _currentWriter.Write(sha1.Hash, 0, sha1.Hash.Length);
-                // make sure that we persist
-                // NB: this is not guaranteed to work on Linux
-                _currentWriter.Flush(true);
-            }
+            StorageFramesEvil.WriteFrame(key, commit, buffer, _currentWriter);
+            // make sure that we persist
+            // NB: this is not guaranteed to work on Linux
+            _currentWriter.Flush(true);
         }
 
         void EnsureWriterExists(long version)
