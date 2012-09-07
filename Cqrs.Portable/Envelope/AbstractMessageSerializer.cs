@@ -82,12 +82,16 @@ namespace Lokad.Cqrs.Envelope
             using (var bin = new BitWriter(stream))
             {
                 bin.Write(formatter.ContractName);
+                byte[] buffer;
                 using (var inner = new MemoryStream())
                 {
+                    // Some formatter implementations close the stream after writing.
+                    // kudos to Slav for reminding that
                     formatter.SerializeDelegate(message, inner);
-                    bin.Write7BitInt((int)inner.Position);
-                    bin.Write(inner.ToArray());
+                    buffer = inner.ToArray();
                 }
+                bin.Write7BitInt(buffer.Length);
+                bin.Write(buffer);
             }
         }
 
