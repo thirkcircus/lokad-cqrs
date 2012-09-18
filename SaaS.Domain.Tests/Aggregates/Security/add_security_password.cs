@@ -5,21 +5,25 @@
 
 #endregion
 
+using NUnit.Framework;
 using Sample;
 
 namespace SaaS.Aggregates.Security
 {
-    public class add_security_password : specs
+    public class add_security_password : security_syntax
     {
         static readonly SecurityId id = new SecurityId(42);
         static readonly UserId user = new UserId(15);
 
-        public spec given_aggregate = new security_spec
-            {
-                Identity = TestIdentityService.start_from(15),
-                Given = {new SecurityAggregateCreated(id),},
-                When = new AddSecurityPassword(id, "my user", "login", "pass"),
-                Expect = {new SecurityPasswordAdded(id, user, "my user", "login", "pass+salt", "salt", "generated-32")}
-            };
+        [Test]
+        public void valid_creation_scenario()
+        {
+            Given(
+                Identity.SetNextId(15),
+                new SecurityAggregateCreated(id)
+                );
+            When(new AddSecurityPassword(id, "my user", "login", "pass"));
+            Expect(new SecurityPasswordAdded(id, user, "my user", "login", "pass+salt", "salt", "generated-32"));
+        }
     }
 }

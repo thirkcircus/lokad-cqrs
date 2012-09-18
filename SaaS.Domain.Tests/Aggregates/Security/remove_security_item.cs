@@ -5,46 +5,34 @@
 
 #endregion
 
+using NUnit.Framework;
 using Sample;
 
 namespace SaaS.Aggregates.Security
 {
-    public class remove_security_item : specs
+    public class remove_security_item : security_syntax
     {
         public static readonly SecurityId id = new SecurityId(42);
         public static readonly UserId user = new UserId(15);
 
-        public spec given_password = new security_spec
-            {
-                Given =
-                    {
-                        new SecurityAggregateCreated(id),
-                        new SecurityPasswordAdded(id, new UserId(15), "my pass", "user", "hash", "salt", "generated-32")
-                    },
-                When = new RemoveSecurityItem(id, user),
-                Expect = {new SecurityItemRemoved(id, user, "user", "password")}
-            };
+        [Test]
+        public void given_password()
+        {
+            Given(new SecurityAggregateCreated(id),
+                        new SecurityPasswordAdded(id, new UserId(15), "my pass", "user", "hash", "salt", "token"));
+            When(new RemoveSecurityItem(id, user));
+            Expect(new SecurityItemRemoved(id, user, "user", "password"));
+        }
 
-        //public spec given_key = new security_spec
-        //    {
-        //        Given =
-        //            {
-        //                new SecurityAggregateCreated(id),
-        //                new SecurityIdentityAdded(id, new UserId(15), "my key", "legacy-key", "generated-32")
-        //            },
-        //        When = new RemoveSecurityItem(id, user),
-        //        Expect = {new SecurityItemRemoved(id, user, "legacy-key", "key")}
-        //    };
+        
 
-        public spec given_identity = new security_spec
-            {
-                Given =
-                    {
-                        new SecurityAggregateCreated(id),
-                        new SecurityIdentityAdded(id, new UserId(15), "my ID", "openId", "generated-32")
-                    },
-                When = new RemoveSecurityItem(id, user),
-                Expect = {new SecurityItemRemoved(id, user, "openId", "identity")}
-            };
+        [Test]
+        public void given_identity()
+        {
+            Given(new SecurityAggregateCreated(id),
+                        new SecurityIdentityAdded(id, new UserId(15), "my ID", "openId", "token"));
+            When(new RemoveSecurityItem(id, user));
+            Expect(new SecurityItemRemoved(id, user, "openId", "identity"));
+        }
     }
 }

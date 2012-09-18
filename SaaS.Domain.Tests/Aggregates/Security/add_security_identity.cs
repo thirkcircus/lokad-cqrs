@@ -5,21 +5,33 @@
 
 #endregion
 
+using NUnit.Framework;
 using Sample;
 
 namespace SaaS.Aggregates.Security
 {
-    public class add_security_identity : specs
+    public class add_security_identity : security_syntax
     {
         static readonly SecurityId id = new SecurityId(42);
         static readonly UserId user = new UserId(15);
 
-        public spec add_identity = new security_spec
-            {
-                Identity = TestIdentityService.start_from(15),
-                Given = {new SecurityAggregateCreated(id),},
-                When = new AddSecurityIdentity(id, "my ID", "openID"),
-                Expect = {new SecurityIdentityAdded(id, user, "my ID", "openID", "generated-32")}
-            };
+        [Test]
+        public void add_identity()
+        {
+            Given(
+                Identity.SetNextId(15),
+                new SecurityAggregateCreated(id));
+            When(new AddSecurityIdentity(id, "my ID", "openID"));
+            Expect(new SecurityIdentityAdded(id, user, "my ID", "openID", "generated-32"));
+        }
+
+        [Test]
+        public void when_duplicate()
+        {
+            Given(new SecurityAggregateCreated(id),
+                        new SecurityIdentityAdded(id, user, "my ID", "openID", "generated-32"));
+            When(new AddSecurityIdentity(id, "my ID", "openID"));
+            Expect();
+        }
     }
 }

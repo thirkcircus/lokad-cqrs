@@ -43,6 +43,8 @@ namespace SaaS.Aggregates.Security
 
         public void AddIdentity(IDomainIdentityService ids, PasswordGenerator pwds, string display, string identity)
         {
+            if (_state.ContainsIdentity(identity))
+                return;
             var user = new UserId(ids.GetId());
             var token = pwds.CreateToken();
             Apply(new SecurityIdentityAdded(_state.Id, user, display, identity, token));

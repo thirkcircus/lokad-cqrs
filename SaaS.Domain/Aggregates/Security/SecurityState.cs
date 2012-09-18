@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SaaS.Aggregates.Security
 {
@@ -43,7 +44,12 @@ namespace SaaS.Aggregates.Security
 
         readonly IDictionary<UserId, User> _globals = new Dictionary<UserId, User>();
 
-
+        public bool ContainsIdentity(string identity)
+        {
+            return _globals.Values
+                .Where(v => v.Kind == SecurityItemType.Identity)
+                .Any(v => string.Equals(v.Lookup, identity, StringComparison.InvariantCultureIgnoreCase));
+        }
         public SecurityId Id { get; private set; }
 
         public User GetUser(UserId userNum)

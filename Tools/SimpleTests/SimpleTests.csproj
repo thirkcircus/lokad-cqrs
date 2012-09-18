@@ -45,28 +45,8 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AggregateAssertion.cs" />
-    <Compile Include="AggregateSpecification.cs" />
     <Compile Include="CompareObjects.cs" />
-    <Compile Include="FailingSpecification.cs" />
-    <Compile Include="PAssert\Annotations.cs" />
-    <Compile Include="PAssert\Extensions.cs" />
-    <Compile Include="PAssert\Infrastructure\ExpressionParser.cs" />
-    <Compile Include="PAssert\Infrastructure\NaturalExpressionProcessor.cs" />
-    <Compile Include="PAssert\Infrastructure\NodeFormatter.cs" />
-    <Compile Include="PAssert\Infrastructure\Nodes\ArrayIndexNode.cs" />
-    <Compile Include="PAssert\Infrastructure\Nodes\BinaryNode.cs" />
-    <Compile Include="PAssert\Infrastructure\Nodes\ConditionalNode.cs" />
-    <Compile Include="PAssert\Infrastructure\Nodes\ConstantNode.cs" />
-    <Compile Include="PAssert\Infrastructure\Nodes\MemberAccessNode.cs" />
-    <Compile Include="PAssert\Infrastructure\Nodes\MethodCallNode.cs" />
-    <Compile Include="PAssert\Infrastructure\Nodes\NewArrayNode.cs" />
-    <Compile Include="PAssert\Infrastructure\Nodes\Node.cs" />
-    <Compile Include="PAssert\Infrastructure\Nodes\UnaryNode.cs" />
-    <Compile Include="PAssert\Infrastructure\Util.Generated.cs" />
-    <Compile Include="PAssert\PAssert.cs" />
-    <Compile Include="SimpleTests.cs" />
-    <Compile Include="Specs.cs" />
+    <Compile Include="spec_syntax.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\SaaS.Contracts\SaaS.Contracts.csproj">

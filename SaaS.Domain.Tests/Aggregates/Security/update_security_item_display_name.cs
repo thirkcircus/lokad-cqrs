@@ -5,34 +5,33 @@
 
 #endregion
 
+using NUnit.Framework;
 using Sample;
 
 namespace SaaS.Aggregates.Security
 {
-    public sealed class update_security_item_display_name : specs
+    public sealed class update_security_item_display_name : security_syntax
     {
+
         public static readonly SecurityId id = new SecurityId(42);
         public static readonly UserId user = new UserId(15);
 
-        public spec update_display = new security_spec
-            {
-                Given =
-                    {
-                        new SecurityAggregateCreated(id),
-                        new SecurityIdentityAdded(id, new UserId(15), "my key", "legacy-key", "generated-32")
-                    },
-                When = new UpdateSecurityItemDisplayName(id, user, "new display"),
-                Expect = {new SecurityItemDisplayNameUpdated(id, user, "new display")}
-            };
+        [Test]
+        public void update_display()
+        {
+            Given(new SecurityAggregateCreated(id),
+                        new SecurityIdentityAdded(id, new UserId(15), "my key", "legacy-key", "token"));
+            When(new UpdateSecurityItemDisplayName(id, user, "new display"));
+            Expect(new SecurityItemDisplayNameUpdated(id, user, "new display"));
+        }
 
-        public spec update_dispay_duplicate = new security_spec
-            {
-                Given =
-                    {
-                        new SecurityAggregateCreated(id),
-                        new SecurityIdentityAdded(id, new UserId(15), "same display", "legacy-key", "generated-32")
-                    },
-                When = new UpdateSecurityItemDisplayName(id, user, "same display"),
-            };
+        [Test]
+        public void update_dispay_duplicate()
+        {
+            Given(new SecurityAggregateCreated(id),
+                        new SecurityIdentityAdded(id, user, "same display", "legacy-key", "generated-32"));
+            When(new UpdateSecurityItemDisplayName(id, user, "same display"));
+            Expect();
+        }
     }
 }

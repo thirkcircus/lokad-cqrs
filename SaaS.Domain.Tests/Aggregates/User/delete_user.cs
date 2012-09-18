@@ -6,27 +6,28 @@
 #endregion
 
 using System;
+using NUnit.Framework;
 using Sample;
 
 // ReSharper disable InconsistentNaming
 
 namespace SaaS.Aggregates.User
 {
-    public class delete_user : specs
+    public class delete_user : user_syntax
     {
         static readonly UserId id = new UserId(1);
         static readonly SecurityId sec = new SecurityId(1);
         static readonly TimeSpan fiveMins = TimeSpan.FromMinutes(5);
 
-        public spec given_locked_user = new user_spec
-            {
-                Given =
-                    {
-                        new UserCreated(id, sec, fiveMins),
+
+        [Test]
+        public void given_locked_user()
+        {
+            Given(new UserCreated(id, sec, fiveMins),
                         new UserLocked(id, "locked", sec, Time(1, 10))
-                    },
-                When = new DeleteUser(id),
-                Expect = {new UserDeleted(id, sec)}
-            };
+                  );
+            When(new DeleteUser(id));
+            Expect(new UserDeleted(id, sec));
+        }
     }
 }

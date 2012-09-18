@@ -5,45 +5,46 @@
 
 #endregion
 
+using NUnit.Framework;
 using Sample;
 
 namespace SaaS.Aggregates.Security
 {
-    public sealed class add_permission_to_security_item : specs
+    public class add_permission_to_security_item : security_syntax
     {
         public static readonly SecurityId id = new SecurityId(42);
         public static readonly UserId user = new UserId(15);
 
-        public spec when_valid_item = new security_spec
-            {
-                Given =
-                    {
-                        new SecurityAggregateCreated(id),
-                        new SecurityIdentityAdded(id, new UserId(15), "my key", "legacy-key", "generated-32")
-                    },
-                When = new AddPermissionToSecurityItem(id, user, "root"),
-                Expect = {new PermissionAddedToSecurityItem(id, user, "my key", "root", "generated-32")}
-            };
+        [Test]
+        public void when_duplicate_permission()
+        {
+            Given(
+                new SecurityAggregateCreated(id),
+                new SecurityIdentityAdded(id, new UserId(15), "my key", "legacy-key", "generated-32"),
+                new PermissionAddedToSecurityItem(id, user, "my key", "root", "generated-32"));
 
-        public spec when_duplicate_permission = new security_spec
-            {
-                Given =
-                    {
-                        new SecurityAggregateCreated(id),
-                        new SecurityIdentityAdded(id, new UserId(15), "my key", "legacy-key", "generated-32"),
-                        new PermissionAddedToSecurityItem(id, user, "my key", "root", "generated-32")
-                    },
-                When = new AddPermissionToSecurityItem(id, user, "root"),
-            };
+            When(new AddPermissionToSecurityItem(id, user, "root"));
 
-        public spec when_nonexistent_item = new security_fail
-            {
-                Given =
-                    {
-                        new SecurityAggregateCreated(id),
-                    },
-                When = new AddPermissionToSecurityItem(id, user, "root"),
-                Expect = {error => error.Name == "invalid-user"}
-            };
+            Expect();
+        }
+
+        [Test]
+        public void when_valid_item()
+        {
+            Given(
+                new SecurityAggregateCreated(id),
+                new SecurityIdentityAdded(id, new UserId(15), "my key", "legacy-key", "generated-32"));
+
+            When(new AddPermissionToSecurityItem(id, user, "root"));
+            Expect(new PermissionAddedToSecurityItem(id, user, "my key", "root", "generated-32"));
+        }
+
+        [Test]
+        public void non_existent_item()
+        {
+            Given(new SecurityAggregateCreated(id));
+            When(new AddPermissionToSecurityItem(id, user, "root"));
+            Expect(new ExceptionThrown("invalid-user"));
+        }
     }
 }

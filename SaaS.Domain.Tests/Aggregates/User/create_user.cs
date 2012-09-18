@@ -6,6 +6,7 @@
 #endregion
 
 using System;
+using NUnit.Framework;
 using Sample;
 
 // ReSharper disable InconsistentNaming
@@ -13,22 +14,25 @@ using Sample;
 
 namespace SaaS.Aggregates.User
 {
-    public class create_user : specs
+    public class create_user : user_syntax
     {
         static UserId id = new UserId(1);
         static SecurityId sec = new SecurityId(1);
 
-        public spec given_no_prior_history = new user_spec
-            {
-                When = new CreateUser(id, sec),
-                Expect = {new UserCreated(id, sec, TimeSpan.FromMinutes(10))}
-            };
+        [Test]
+        public void given_no_prior_history()
+        {
+            Given();
+            When(new CreateUser(id, sec));
+            Expect(new UserCreated(id, sec, TimeSpan.FromMinutes(10)));
+        }
 
-        public spec given_created_user = new user_fail
-            {
-                Given = {new UserCreated(id, sec, TimeSpan.FromMinutes(5))},
-                When = new CreateUser(id, sec),
-                Expect = {error => error.Name == "rebirth"}
-            };
+        [Test]
+        public void given_created_user()
+        {
+            Given(new UserCreated(id, sec, TimeSpan.FromMinutes(5)));
+            When(new CreateUser(id, sec));
+            Expect("rebirth");
+        }
     }
 }

@@ -5,36 +5,21 @@
 
 #endregion
 
+using Sample;
+
 namespace SaaS.Aggregates
 {
-    public sealed class TestIdentityService : IDomainIdentityService
+    public sealed class TestIdentityService<T> : IDomainIdentityService where T : IIdentity
     {
-        long _initialId;
-
-        public static IDomainIdentityService start_from(long id)
+        public IEvent<T> SetNextId(int id)
         {
-            return new TestIdentityService
-                {
-                    _initialId = id,
-                    _identity = id
-                };
+            return new SpecSetupEvent<T>(() => _nextId = id, "Identity starts with " + id);
         }
+        int _nextId;
 
-
-        long _identity;
-
-        public long GetId()
+        long IDomainIdentityService.GetId()
         {
-            var id = _identity;
-            _identity += 1;
-            return id;
-        }
-
-        public override string ToString()
-        {
-            if (_identity != 0)
-                return string.Format("Domain numbers start at {0}", _initialId);
-            return null;
+            return _nextId++;
         }
     }
 }

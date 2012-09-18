@@ -5,40 +5,26 @@
 
 #endregion
 
+using NUnit.Framework;
 using Sample;
 
 namespace SaaS.Aggregates.Security
 {
-    public sealed class security_spec : AggregateSpecification<SecurityId>
+    public abstract class security_syntax : spec_syntax<SecurityId>
     {
-        public IUserIndexService Index = new TestUserIndexService();
-        public IDomainIdentityService Identity = new TestIdentityService();
-        public TestPassword Passwords = new TestPassword();
+        public TestIdentityService<SecurityId> Identity;
+        public PasswordGenerator Password = new TestPassword();
+        public IMailSender Sender = new TestSendEmail();
 
-        public security_spec()
+        [SetUp]
+        public void Setup()
         {
-            Docs.Add(() => Index);
-            Docs.Add(() => Identity);
-            Docs.Add(() => Passwords);
-
-
-            Handler = () => new SecurityApplicationService(Factory, Identity, Passwords, Index);
+            Identity = new TestIdentityService<SecurityId>();
         }
-    }
 
-    public sealed class security_fail : AggregateFailSpecification<SecurityId, DomainError>
-    {
-        public IUserIndexService Index = new TestUserIndexService();
-        public IDomainIdentityService Identity = new TestIdentityService();
-        public TestPassword Passwords = new TestPassword();
-
-        public security_fail()
+        protected override void ExecuteCommand(IEventStore store, ICommand<SecurityId> cmd)
         {
-            Docs.Add(() => Index);
-            Docs.Add(() => Identity);
-            Docs.Add(() => Passwords);
-
-            Handler = () => new SecurityApplicationService(Factory, Identity, Passwords, Index);
+            new SecurityApplicationService(store, Identity, Password, new TestUserIndexService<SecurityId>()).Execute(cmd);
         }
     }
 }

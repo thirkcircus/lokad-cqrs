@@ -8,48 +8,36 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Sample;
 
 namespace SaaS.Aggregates
 {
-    public sealed class TestUserIndexService : IUserIndexService
+    public sealed class TestUserIndexService<T> : IUserIndexService
+        where T : IIdentity
     {
-        readonly HashSet<string> _records = new HashSet<string>();
+        readonly List<string> _records = new List<string>();
 
-        public TestUserIndexService includes_email(string email)
-        {
-            _records.Add("email:" + email);
-            return this;
-        }
-
-        public bool IsLoginRegistered(string email)
+        bool IUserIndexService.IsLoginRegistered(string email)
         {
             return _records.Contains("email:" + email);
         }
 
-        public bool IsIdentityRegistered(string identity)
+        bool IUserIndexService.IsIdentityRegistered(string identity)
         {
             return _records.Contains("id:" + identity);
         }
 
-        public TestUserIndexService includes_identity(string identity)
+        public IEvent<T> EmailRegistered(string email)
         {
-            _records.Add("id:" + identity);
-            return this;
+            return new SpecSetupEvent<T>(
+                () => _records.Add("email:" + email),
+                "Setup IUserIndexService with email: " + email);
         }
-
-        public void Clear()
+        public IEvent<T> IdentityRegistered(string login)
         {
-            _records.Clear();
-        }
-
-        public override string ToString()
-        {
-            var builder = new StringBuilder();
-            foreach (var record in _records)
-            {
-                builder.AppendFormat("index includes {0}", record);
-            }
-            return builder.ToString();
+            return new SpecSetupEvent<T>(
+                () => _records.Add("id:" + login),
+                "Setup IUserIndexService with id: " + login);
         }
     }
 
