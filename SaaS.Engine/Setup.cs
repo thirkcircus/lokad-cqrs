@@ -47,10 +47,6 @@ namespace SaaS.Wires
         public Func<string, IPartitionInbox> CreateInbox;
         public Func<string, IAppendOnlyStore> CreateTapes;
         public Func<IDocumentStrategy, IDocumentStore> CreateDocs;
-        
-        
-
-        
 
         public Container Build()
         {
@@ -89,8 +85,6 @@ namespace SaaS.Wires
             var vector = new DomainIdentityGenerator(stateDocs);
             //var ops = new StreamOps(Streaming);
             var projections = new ProjectionsConsumingOneBoundedContext();
-
-
             // Domain Bounded Context
             DomainBoundedContext.EntityApplicationServices(viewDocs, store,vector).ForEach(commands.WireToWhen);
             DomainBoundedContext.FuncApplicationServices().ForEach(funcs.WireToWhen);
@@ -101,24 +95,13 @@ namespace SaaS.Wires
             // Client Bounded Context
             projections.RegisterFactory(ClientBoundedContext.Projections);
 
-            
-
             // wire all projections
-
-
             projections.BuildFor(viewDocs).ForEach(events.WireToWhen);
 
             // wire in event store publisher
-            var publisher = new MessageStorePublisher(messageStore, toEventHandlers, stateDocs, RecordShouldBePublished);
+            var publisher = new MessageStorePublisher(messageStore, toEventHandlers, stateDocs, DoWePublishThisRecord);
             builder.AddTask(c => Task.Factory.StartNew(() => publisher.Run(c)));
 
-            //var environment = new HttpEnvironment()
-            //{
-            //    Port = HttpEndpoint.Port,
-            //    OptionalHostName = HttpEndpoint.Address.ToString()
-            //};
-            //var listener = new Listener(environment, Handlers(messageStore, EncryptorTool));
-            //builder.AddTask(c => Task.Factory.StartNew(() => listener.Run(c)));
             return new Container
             {
                 Builder = builder,
@@ -132,19 +115,12 @@ namespace SaaS.Wires
             };
         }
 
-        bool RecordShouldBePublished(StoreRecord storeRecord)
+        static bool DoWePublishThisRecord(StoreRecord storeRecord)
         {
             return storeRecord.Key != "audit";
         }
 
-        //IEnumerable<IHttpRequestHandler> Handlers(MessageStore store, EncryptorTool tool)
-        //{
-        //    yield return new DefaultHttpHandler();
-        //    yield return new TooBusyHandlerHandler();
-        //    yield return new EventStreamAuditor(store, tool);
-        //}
-
-        void RecordFunctionalEvent(ImmutableEnvelope envelope, MessageStore store)
+        static void RecordFunctionalEvent(ImmutableEnvelope envelope, MessageStore store)
         {
             if (envelope.Message is IFuncEvent) store.RecordMessage("func", envelope);
             else throw new InvalidOperationException("Non-func event {0} landed to queue for tracking stateless events");
