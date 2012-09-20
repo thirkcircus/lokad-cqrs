@@ -17,6 +17,11 @@ namespace SaaS.Aggregates.User
         {
             new UserApplicationService(store).Execute(cmd);
         }
+
+        protected override void SetupServices()
+        {
+            
+        }
     }
 
 }

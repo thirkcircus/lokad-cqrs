@@ -6,7 +6,7 @@
 #endregion
 
 using NUnit.Framework;
-using Sample;
+
 
 namespace SaaS.Aggregates.Security
 {

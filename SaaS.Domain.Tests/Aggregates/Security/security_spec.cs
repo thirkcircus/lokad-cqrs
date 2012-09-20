@@ -16,8 +16,9 @@ namespace SaaS.Aggregates.Security
         public PasswordGenerator Password = new TestPassword();
         public IMailSender Sender = new TestSendEmail();
 
-        [SetUp]
-        public void Setup()
+        
+
+        protected override void SetupServices()
         {
             Identity = new TestIdentityService<SecurityId>();
         }

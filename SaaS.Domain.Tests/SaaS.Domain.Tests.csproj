@@ -35,8 +35,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Library\NUnit\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\SaaS.Wires\bin\Debug\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="ServiceStack.Text">
+      <HintPath>..\SaaS.Wires\bin\Debug\ServiceStack.Text.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Aggregates\Security\add_permission_to_security_item.cs" />
@@ -57,6 +64,7 @@
     <Compile Include="Aggregates\User\user_syntax.cs" />
     <Compile Include="DocumentedFixture.cs" />
     <Compile Include="ExtendTimeSpan.cs" />
+    <Compile Include="TestMessageSerialization.cs" />
     <Compile Include="TestPassword.cs" />
   </ItemGroup>
   <ItemGroup>

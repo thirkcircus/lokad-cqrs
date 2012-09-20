@@ -8,13 +8,13 @@ using SaaS;
 namespace Sample
 {
     // ReSharper disable InconsistentNaming
-    public abstract class spec_syntax<T> where T : IIdentity
+    public abstract class spec_syntax<T> : IListSpecifications where T : IIdentity
     {
         readonly List<IEvent<T>> _given = new List<IEvent<T>>();
 
         ICommand<T> _when;
         readonly List<IEvent<T>> _then = new List<IEvent<T>>();
-        readonly List<IEvent<T>> _expectedEvents = new List<IEvent<T>>();
+        readonly List<IEvent<T>> _givenEvents = new List<IEvent<T>>();
         bool _thenWasCalled;
 
         protected static DateTime Date(int year, int month = 1, int day = 1, int hour = 0)
@@ -27,7 +27,9 @@ namespace Sample
             return new DateTime(2011, 1, 1, hour, minute, second, DateTimeKind.Unspecified);
         }
 
-        protected class ExceptionThrown : IEvent<T>
+        protected abstract void SetupServices();
+
+        protected class ExceptionThrown : IEvent<T>, IAmUsedByUnitTests
         {
             public T Id { get; set; }
             public string Name { get; set; }
@@ -64,7 +66,7 @@ namespace Sample
                 {
                     setup.Apply();
                 }
-                else _expectedEvents.Add(@event);
+                else _givenEvents.Add(@event);
             }
         }
 
@@ -80,7 +82,8 @@ namespace Sample
             _given.Clear();
             _then.Clear();
             _thenWasCalled = false;
-            _expectedEvents.Clear();
+            _givenEvents.Clear();
+            SetupServices();
         }
         [TearDown]
         public void Teardown()
@@ -159,17 +162,22 @@ namespace Sample
             Expect(new ExceptionThrown(error));
         }
 
+        bool _dontExecuteOnExpect;
+
         public void Expect(params IEvent<T>[] g)
         {
             _thenWasCalled = true;
             _then.AddRange(g);
 
             IEnumerable<IEvent<T>> actual;
-            var store = new InMemoryStore(_expectedEvents.Cast<IEvent<IIdentity>>().ToArray());
+            var givenEvents = _givenEvents.Cast<IEvent<IIdentity>>().ToArray();
+
+            if (_dontExecuteOnExpect) return;
+            var store = new InMemoryStore(givenEvents);
             try
             {
                 ExecuteCommand(store, _when);
-                actual = store.Store.Skip(_expectedEvents.Count).Cast<IEvent<T>>().ToArray();
+                actual = store.Store.Skip(_givenEvents.Count).Cast<IEvent<T>>().ToArray();
             }
             catch (DomainError e)
             {
@@ -266,9 +274,32 @@ namespace Sample
                 }
             }
         }
+
+        public IEnumerable<Specification> GetAll()
+        {
+            var type = GetType();
+            if (type.IsAbstract)
+                yield break;
+            _dontExecuteOnExpect = true;
+
+            var myMethods = GetType().GetMethods().Where(m => m.IsDefined(typeof(TestAttribute), true)).ToArray();
+            foreach (var method in myMethods)
+            {
+                Clear();
+                method.Invoke(this, null);
+                yield return new Specification()
+                {
+                    CaseName = method.Name.Replace("_", " "),
+                    GroupName = type.Name.Replace("_", " "),
+                    Given = _givenEvents.ToArray(),
+                    When = _when,
+                    Then = _then.ToArray()
+                };
+            }
+        }
     }
 
-    public sealed class SpecSetupEvent<T> : IEvent<T> where T : IIdentity
+    public sealed class SpecSetupEvent<T> : IEvent<T>, IAmUsedByUnitTests where T : IIdentity
     {
         public T Id { get; set; }
 
@@ -285,4 +316,19 @@ namespace Sample
             return _describe;
         }
     }
+
+    public interface IListSpecifications
+    {
+        IEnumerable<Specification> GetAll();
+    }
+
+    public class Specification
+    {
+        public string GroupName;
+        public string CaseName;
+        public IEvent[] Given;
+        public ICommand When;
+        public IEvent[] Then;
+    }
+    public interface IAmUsedByUnitTests { }
 }
