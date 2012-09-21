@@ -39,8 +39,8 @@ namespace SaaS
         public static IEnumerable<object> Ports(ICommandSender service)
         {
             var flow = new DomainSender(service);
-            yield return new ReplicationReceptor(flow);
-            yield return new RegistrationReceptor(flow);
+            yield return new ReplicationPort(flow);
+            yield return new RegistrationPort(flow);
             // more senders go here
         }
 

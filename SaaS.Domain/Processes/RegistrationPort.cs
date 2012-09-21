@@ -1,10 +1,10 @@
 namespace SaaS.Processes
 {
-    public sealed class RegistrationReceptor
+    public sealed class RegistrationPort
     {
         readonly DomainSender _flow;
 
-        public RegistrationReceptor(DomainSender flow)
+        public RegistrationPort(DomainSender flow)
         {
             _flow = flow;
         }

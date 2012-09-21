@@ -11,13 +11,13 @@ namespace SaaS.Processes
     /// Replicates changes between <see cref="ISecurityAggregate"/> and 
     /// individual instances of <see cref="IUserAggregate"/>
     /// </summary>
-    public sealed class ReplicationReceptor
+    public sealed class ReplicationPort
     {
         // 'Domain' is the name of the primary Bounded Context
         // in this system
         readonly DomainSender _send;
 
-        public ReplicationReceptor(DomainSender send)
+        public ReplicationPort(DomainSender send)
         {
             _send = send;
         }

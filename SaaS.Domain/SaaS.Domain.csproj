@@ -49,7 +49,7 @@
     <Compile Include="DomainBoundedContext.cs" />
     <Compile Include="DomainIdentityGenerator.cs" />
     <Compile Include="Aggregates\User\UserAggregate.cs" />
-    <Compile Include="Processes\RegistrationReceptor.cs" />
+    <Compile Include="Processes\RegistrationPort.cs" />
     <Compile Include="Processes\ReplicationProcess.cs" />
     <Compile Include="PasswordGenerator.cs" />
     <Compile Include="RedirectToWhen.cs" />
