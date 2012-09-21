@@ -5,13 +5,10 @@ bin
 *.orig
 output
 publish
-packages
 _ReSharper.*
 *.Resharper
+*.DotSettings
 *.Cache
 *.cache
 ~$*
 *~
-*.pidb
-*.userprefs
-test-results
